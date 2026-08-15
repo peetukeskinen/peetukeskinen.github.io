@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Local secrets / environment — never commit these
+.env
+.env.*
+*.pem
+*.key
+id_rsa*
+
+# Local previews and logs
+*.log
+.cache/
