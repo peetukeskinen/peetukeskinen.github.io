@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Publications — Peetu Keskinen</title>
-<meta name="description" content="Publications by Peetu Keskinen: journal articles, fiscal policy monitoring reports for the National Audit Office of Finland, government reports and policy writing.">
+<meta name="description" content="Publications by Peetu Keskinen: journal articles, fiscal policy monitoring reports for the National Audit Office of Finland, policy work and writing.">
 <meta name="author" content="Peetu Keskinen">
 <link rel="canonical" href="https://peetukeskinen.github.io/publications.html">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -34,80 +34,119 @@
 
     <h1>Publications</h1>
     <p class="page-intro">
-      Listed in reverse chronological order within each category.
+      Grouped by type and listed in reverse chronological order. Each entry gives the
+      title and year, then coauthors and outlet, then the link.
     </p>
 
     <!-- ====================================================================
          Bibliography entry template — copy a <li> and fill it in.
-         .biblio-authors, .biblio-outlet and .biblio-links are all optional.
+
+           line 1  title …………………………………………… year
+           line 2  coauthors · outlet
+           line 3  link
 
          <li class="biblio-item">
-           <span class="biblio-title">Title</span>
-           <span class="biblio-year">(2026)</span>
-           <span class="biblio-authors">with Coauthor One and Coauthor Two</span>
-           <span class="biblio-outlet">Journal or series</span>
-           <span class="biblio-links"><a href="https://…">Link</a></span>
+           <p class="biblio-head">
+             <span class="biblio-title">Title</span>
+             <span class="biblio-year">2026</span>
+           </p>
+           <p class="biblio-meta">
+             <span class="biblio-authors">with A and B</span><span class="biblio-outlet">Series 1/2026</span>
+           </p>
+           <p class="biblio-links"><a href="https://…">link</a></p>
          </li>
+
+         Drop .biblio-meta entirely when there are no coauthors and no outlet.
+         Keep the two meta spans adjacent — CSS inserts the "·" between them.
          ==================================================================== -->
 
     <section aria-labelledby="articles">
       <h2 id="articles">Journal articles</h2>
       <ul class="biblio">
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi">EU:n finanssipoliittiset säännöt uudistuksen jälkeen – ensimmäisiä havaintoja toimeenpanosta</span>
-          <span class="biblio-year">(2025)</span>
-          <span class="biblio-authors">with Simo Pesola and Mika Sainio</span>
-          <span class="biblio-outlet" lang="fi">Kansantaloudellinen aikakauskirja 1/2025</span>
-          <span class="biblio-links"><a href="https://journal.fi/kak/article/view/157475">journal.fi/kak/article/view/157475</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi">EU:n finanssipoliittiset säännöt uudistuksen jälkeen – ensimmäisiä havaintoja toimeenpanosta</span>
+            <span class="biblio-year">2025</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Simo Pesola and Mika Sainio</span><span class="biblio-outlet" lang="fi">Kansantaloudellinen aikakauskirja 1/2025</span>
+          </p>
+          <p class="biblio-links"><a href="https://journal.fi/kak/article/view/157475">journal.fi</a></p>
         </li>
       </ul>
     </section>
 
     <section aria-labelledby="naof">
-      <h2 id="naof">Fiscal policy monitoring — National Audit Office of Finland</h2>
+      <h2 id="naof">National Audit Office of Finland</h2>
       <ul class="biblio">
         <li class="biblio-item">
-          <span class="biblio-title">Fiscal policy monitoring report</span>
-          <span class="biblio-year">(2025)</span>
-          <span class="biblio-authors">with Jenni Kellokumpu, Arto Kokkinen, Mika Sainio, Sini Salmi and Matthias Strifler</span>
-          <span class="biblio-links"><a href="https://vtv.fi/raportti/finanssipolitiikan-valvonnan-raportti-2025/">vtv.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Fiscal policy monitoring report</span>
+            <span class="biblio-year">2025</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Jenni Kellokumpu, Arto Kokkinen, Mika Sainio, Sini Salmi and Matthias Strifler</span>
+          </p>
+          <p class="biblio-links"><a href="https://vtv.fi/raportti/finanssipolitiikan-valvonnan-raportti-2025/">vtv.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">State budget expenditure increases during the COVID-19 pandemic</span>
-          <span class="biblio-year">(2025)</span>
-          <span class="biblio-authors">with Suvi Kangasrääsiö</span>
-          <span class="biblio-outlet">Fiscal policy monitoring reports 2/2025</span>
-          <span class="biblio-links"><a href="https://vtv.fi/raportti/valtion-budjetin-menolisaykset-covid-19-pandemian-aikana/">vtv.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">State budget expenditure increases during the COVID-19 pandemic</span>
+            <span class="biblio-year">2025</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Suvi Kangasrääsiö</span><span class="biblio-outlet">Fiscal policy monitoring reports 2/2025</span>
+          </p>
+          <p class="biblio-links"><a href="https://vtv.fi/raportti/valtion-budjetin-menolisaykset-covid-19-pandemian-aikana/">vtv.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Fiscal policy monitoring assessment on the management of general government finances</span>
-          <span class="biblio-year">(2025)</span>
-          <span class="biblio-authors">with Arto Kokkinen, Suvi Kangasrääsiö, Mika Sainio, Sini Salmi and Matthias Strifler</span>
+          <p class="biblio-head">
+            <span class="biblio-title">Fiscal policy monitoring assessment on the management of general government finances</span>
+            <span class="biblio-year">2025</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Arto Kokkinen, Suvi Kangasrääsiö, Mika Sainio, Sini Salmi and Matthias Strifler</span>
+          </p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Fiscal policy monitoring report</span>
-          <span class="biblio-year">(2024)</span>
-          <span class="biblio-authors">with Arto Kokkinen, Simo Pesola, Mika Sainio, Sini Salmi and Matthias Strifler</span>
-          <span class="biblio-links"><a href="http://urn.fi/urn:nbn:vtv-R222024vp">urn.fi/urn:nbn:vtv-R222024vp</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Fiscal policy monitoring report</span>
+            <span class="biblio-year">2024</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Arto Kokkinen, Simo Pesola, Mika Sainio, Sini Salmi and Matthias Strifler</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/urn:nbn:vtv-R222024vp">urn.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Fiscal policy monitoring assessment on the management of general government finances</span>
-          <span class="biblio-year">(2024)</span>
-          <span class="biblio-authors">with Arto Kokkinen, Simo Pesola, Suvi Kangasrääsiö, Mika Sainio, Sini Salmi and Matthias Strifler</span>
-          <span class="biblio-links"><a href="https://vtv.fi/en/report/fiscal-policy-monitoring-assessment-on-the-management-of-general-government-finances-spring-2024/">vtv.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Fiscal policy monitoring assessment on the management of general government finances</span>
+            <span class="biblio-year">2024</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Arto Kokkinen, Simo Pesola, Suvi Kangasrääsiö, Mika Sainio, Sini Salmi and Matthias Strifler</span>
+          </p>
+          <p class="biblio-links"><a href="https://vtv.fi/en/report/fiscal-policy-monitoring-assessment-on-the-management-of-general-government-finances-spring-2024/">vtv.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Methods of forecasting general government debt</span>
-          <span class="biblio-year">(2024)</span>
-          <span class="biblio-authors">with Simo Pesola and Mika Sainio</span>
-          <span class="biblio-outlet">Audit reports 13/2024</span>
-          <span class="biblio-links"><a href="https://vtv.fi/en/report/methods-of-forecasting-general-government-debt/">vtv.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Methods of forecasting general government debt</span>
+            <span class="biblio-year">2024</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Simo Pesola and Mika Sainio</span><span class="biblio-outlet">Audit reports 13/2024</span>
+          </p>
+          <p class="biblio-links"><a href="https://vtv.fi/en/report/methods-of-forecasting-general-government-debt/">vtv.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Fiscal policy monitoring report</span>
-          <span class="biblio-year">(2023)</span>
-          <span class="biblio-authors">with Suvi Kangasrääsiö, Arto Kokkinen, Simo Pesola, Mika Sainio, Sini Salmi and Matthias Strifler</span>
-          <span class="biblio-links"><a href="http://urn.fi/urn:nbn:vtv-R212023vp">urn.fi/urn:nbn:vtv-R212023vp</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Fiscal policy monitoring report</span>
+            <span class="biblio-year">2023</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Suvi Kangasrääsiö, Arto Kokkinen, Simo Pesola, Mika Sainio, Sini Salmi and Matthias Strifler</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/urn:nbn:vtv-R212023vp">urn.fi</a></p>
         </li>
       </ul>
     </section>
@@ -116,52 +155,74 @@
       <h2 id="policy">Policy work</h2>
       <ul class="biblio">
         <li class="biblio-item">
-          <span class="biblio-title">Public procurement – total volume and utilization of data</span>
-          <span class="biblio-year">(2021)</span>
-          <span class="biblio-authors">with Maria Merisalo, Mika Naumanen, Janne Huovari, Saila Eskola, Mia Toivanen, Arash Hajikhani, Juha Oksanen and Salla Rausmaa</span>
-          <span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 46/2021</span>
-          <span class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-383-267-1">urn.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Public procurement – total volume and utilization of data</span>
+            <span class="biblio-year">2021</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Maria Merisalo, Mika Naumanen, Janne Huovari, Saila Eskola, Mia Toivanen, Arash Hajikhani, Juha Oksanen and Salla Rausmaa</span><span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 46/2021</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-383-267-1">urn.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Determinants of housing prices in regional markets</span>
-          <span class="biblio-year">(2020)</span>
-          <span class="biblio-outlet">Publications of the Ministry of the Environment 29/2020</span>
-          <span class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-361-431-4">urn.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Determinants of housing prices in regional markets</span>
+            <span class="biblio-year">2020</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-outlet">Publications of the Ministry of the Environment 29/2020</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-361-431-4">urn.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Assessment of short-term cost competitiveness</span>
-          <span class="biblio-year">(2020)</span>
-          <span class="biblio-authors">with Janne Huovari, Ilkka Kiema, Sakari Lähdemäki and Juuso Villanen</span>
-          <span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 53/2020</span>
-          <span class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-383-069-1">urn.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Assessment of short-term cost competitiveness</span>
+            <span class="biblio-year">2020</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Janne Huovari, Ilkka Kiema, Sakari Lähdemäki and Juuso Villanen</span><span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 53/2020</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-383-069-1">urn.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">Assessing the impacts of the diesel fuel tax subsidy</span>
-          <span class="biblio-year">(2020)</span>
-          <span class="biblio-authors">with Juha Honkatukia, Olli-Pekka Ruuskanen and Juuso Villanen</span>
-          <span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 4/2020</span>
-          <span class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-287-824-3">urn.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">Assessing the impacts of the diesel fuel tax subsidy</span>
+            <span class="biblio-year">2020</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Juha Honkatukia, Olli-Pekka Ruuskanen and Juuso Villanen</span><span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 4/2020</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-287-824-3">urn.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi">Kaupunkiseutujen asukkaiden asumispreferenssit – Miten ja missä kaupunkilaiset haluavat asua</span>
-          <span class="biblio-year">(2019)</span>
-          <span class="biblio-authors">with Emmi Haltia, Hanna Karikallio, Eeva Alho, Lauri Vuori and Naufal Alimov</span>
-          <span class="biblio-outlet">PTT Reports 260</span>
-          <span class="biblio-links"><a href="https://www.ptt.fi/wp-content/uploads/media/ptt_rap260_yhdistetty1.pdf">ptt.fi (PDF)</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi">Kaupunkiseutujen asukkaiden asumispreferenssit – Miten ja missä kaupunkilaiset haluavat asua</span>
+            <span class="biblio-year">2019</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Emmi Haltia, Hanna Karikallio, Eeva Alho, Lauri Vuori and Naufal Alimov</span><span class="biblio-outlet">PTT Reports 260</span>
+          </p>
+          <p class="biblio-links"><a href="https://www.ptt.fi/wp-content/uploads/media/ptt_rap260_yhdistetty1.pdf">ptt.fi (PDF)</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title">The overall costs of unemployment for the national economy</span>
-          <span class="biblio-year">(2019)</span>
-          <span class="biblio-authors">with Juho Alasalmi, Naufal Alimov, Laura Ansala, Henna Busk, Ville-Valtteri Huhtala, Antti Kekäläinen, Olli-Pekka Ruuskanen and Lauri Vuori</span>
-          <span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 16/2019</span>
-          <span class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-287-645-4">urn.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title">The overall costs of unemployment for the national economy</span>
+            <span class="biblio-year">2019</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Juho Alasalmi, Naufal Alimov, Laura Ansala, Henna Busk, Ville-Valtteri Huhtala, Antti Kekäläinen, Olli-Pekka Ruuskanen and Lauri Vuori</span><span class="biblio-outlet">Publications of the Government's analysis, assessment and research activities 16/2019</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/URN:ISBN:978-952-287-645-4">urn.fi</a></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi">Pienten asuntojen osuus asuntotuotannossa ja vaikutukset asuinalueiden eriytymiseen</span>
-          <span class="biblio-year">(2019)</span>
-          <span class="biblio-authors">with Hanna Karikallio, Sanni Kiviholma, Johanna Reijonen, Olli-Pekka Ruuskanen, Lauri Vuori, Valtteri Härmälä and Helka Lamminkoski</span>
-          <span class="biblio-outlet">PTT Reports</span>
-          <span class="biblio-links"><a href="https://www.ptt.fi/wp-content/uploads/media/pttrap262.pdf">ptt.fi (PDF)</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi">Pienten asuntojen osuus asuntotuotannossa ja vaikutukset asuinalueiden eriytymiseen</span>
+            <span class="biblio-year">2019</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Hanna Karikallio, Sanni Kiviholma, Johanna Reijonen, Olli-Pekka Ruuskanen, Lauri Vuori, Valtteri Härmälä and Helka Lamminkoski</span><span class="biblio-outlet">PTT Reports</span>
+          </p>
+          <p class="biblio-links"><a href="https://www.ptt.fi/wp-content/uploads/media/pttrap262.pdf">ptt.fi (PDF)</a></p>
         </li>
       </ul>
     </section>
@@ -170,44 +231,77 @@
       <h2 id="early">Early academic work</h2>
       <ul class="biblio">
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi">Päätösperäisen finanssipolitiikan vaikutukset Suomen kansantaloudessa: rakenteellinen VAR-analyysi</span>
-          <span class="biblio-year">(2019)</span>
-          <span class="biblio-outlet">Master's thesis, University of Tampere</span>
-          <span class="biblio-links"><a href="http://urn.fi/URN:NBN:fi:uta-201811262900">urn.fi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi">Päätösperäisen finanssipolitiikan vaikutukset Suomen kansantaloudessa: rakenteellinen VAR-analyysi</span>
+            <span class="biblio-year">2019</span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-outlet">Master's thesis, University of Tampere</span>
+          </p>
+          <p class="biblio-links"><a href="http://urn.fi/URN:NBN:fi:uta-201811262900">urn.fi</a></p>
         </li>
       </ul>
     </section>
 
     <section aria-labelledby="writing">
-      <h2 id="writing">Selected policy writing (in Finnish)</h2>
+      <h2 id="writing">Selected policy writing</h2>
+      <p class="page-intro">Blog posts and commentary, in Finnish.</p>
       <ul class="biblio">
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://vtv.fi/2025/12/29/eun-alijaamamenettely-mita-se-tarkoittaa-suomelle/">EU:n alijäämämenettely: mitä se tarkoittaa Suomelle?</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://vtv.fi/2025/12/29/eun-alijaamamenettely-mita-se-tarkoittaa-suomelle/">EU:n alijäämämenettely: mitä se tarkoittaa Suomelle?</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">vtv.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.vtv.fi/blogit/eun-finanssipoliittiset-saannot-ratkaisu-vai-kompromissi/">EU:n finanssipoliittiset säännöt – ratkaisu vai kompromissi?</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.vtv.fi/blogit/eun-finanssipoliittiset-saannot-ratkaisu-vai-kompromissi/">EU:n finanssipoliittiset säännöt – ratkaisu vai kompromissi?</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">vtv.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.vtv.fi/blogit/eun-uudistuneissa-velkasaannoissa-sopeutusjakson-kestolla-on-suuri-merkitys-suomelle/">EU:n uudistuneissa velkasäännöissä sopeutusjakson kestolla on suuri merkitys Suomelle</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.vtv.fi/blogit/eun-uudistuneissa-velkasaannoissa-sopeutusjakson-kestolla-on-suuri-merkitys-suomelle/">EU:n uudistuneissa velkasäännöissä sopeutusjakson kestolla on suuri merkitys Suomelle</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">vtv.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://vtv.fi/2024/03/22/eun-velkasaannot-uudistuvat-painopiste-siirtyy-vahvasti-jasenmaakohtaiseen-tarkasteluun/">EU:n velkasäännöt uudistuvat – painopiste siirtyy vahvasti jäsenmaakohtaiseen tarkasteluun</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://vtv.fi/2024/03/22/eun-velkasaannot-uudistuvat-painopiste-siirtyy-vahvasti-jasenmaakohtaiseen-tarkasteluun/">EU:n velkasäännöt uudistuvat – painopiste siirtyy vahvasti jäsenmaakohtaiseen tarkasteluun</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">vtv.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/janne-huovari-ja-peetu-keskinen-automaattiset-vakauttajat-tasoittavat-talouden-huojuntaa-koronakriisissa/">Automaattiset vakauttajat tasoittavat talouden huojuntaa koronakriisissä</a></span>
-          <span class="biblio-authors">with Janne Huovari</span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/janne-huovari-ja-peetu-keskinen-automaattiset-vakauttajat-tasoittavat-talouden-huojuntaa-koronakriisissa/">Automaattiset vakauttajat tasoittavat talouden huojuntaa koronakriisissä</a></span>
+          </p>
+          <p class="biblio-meta">
+            <span class="biblio-authors">with Janne Huovari</span><span class="biblio-outlet">ptt.fi</span>
+          </p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/kehysriihen-paatokset-nostavat-suorien-koronatukien-koon-eurooppalaisessa-vertailussa-suureksi/">Kehysriihen päätökset nostavat suorien koronatukien koon eurooppalaisessa vertailussa suureksi</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/kehysriihen-paatokset-nostavat-suorien-koronatukien-koon-eurooppalaisessa-vertailussa-suureksi/">Kehysriihen päätökset nostavat suorien koronatukien koon eurooppalaisessa vertailussa suureksi</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">ptt.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/koronakriisin-tukipaketit-koostuvat-paaosin-takauksista-ja-lainoista-vertailu-maiden-kesken-on-mutkikasta/">Koronakriisin tukipaketit koostuvat pääosin takauksista ja lainoista – vertailu maiden kesken on mutkikasta</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/koronakriisin-tukipaketit-koostuvat-paaosin-takauksista-ja-lainoista-vertailu-maiden-kesken-on-mutkikasta/">Koronakriisin tukipaketit koostuvat pääosin takauksista ja lainoista – vertailu maiden kesken on mutkikasta</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">ptt.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.doria.fi/bitstream/handle/10024/185074/Taloustieteen-taju-Web.pdf?sequence=1">Asuntohinnat määräytyvät kysynnän ja tarjonnan vuorovaikutuksessa</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.doria.fi/bitstream/handle/10024/185074/Taloustieteen-taju-Web.pdf?sequence=1">Asuntohinnat määräytyvät kysynnän ja tarjonnan vuorovaikutuksessa</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">doria.fi</span></p>
         </li>
         <li class="biblio-item">
-          <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/nouseeko-julkinen-velka-jo-sietamattomaksi/">Nouseeko julkinen velka jo sietämättömäksi?</a></span>
+          <p class="biblio-head">
+            <span class="biblio-title" lang="fi"><a href="https://www.ptt.fi/nouseeko-julkinen-velka-jo-sietamattomaksi/">Nouseeko julkinen velka jo sietämättömäksi?</a></span>
+          </p>
+          <p class="biblio-meta"><span class="biblio-outlet">ptt.fi</span></p>
         </li>
       </ul>
     </section>

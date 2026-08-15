@@ -33,14 +33,24 @@
   <div class="container">
 
     <div class="identity">
-      <h1>Peetu Keskinen</h1>
-      <p class="role">Economist &nbsp;|&nbsp; Doctoral Researcher</p>
+      <div class="identity-text">
+        <h1>Peetu Keskinen</h1>
+        <p class="role">Economist &nbsp;·&nbsp; Doctoral Researcher</p>
+      </div>
+
+      <!-- Portrait: save the photo as assets/portrait.jpg and it appears here.
+           Until that file exists the figure hides itself, so the page never
+           shows a broken image. A square crop of about 400x400 is plenty. -->
+      <figure class="portrait">
+        <img src="assets/portrait.jpg" alt="Peetu Keskinen" width="155" height="155"
+             onerror="this.closest('.portrait').hidden = true">
+      </figure>
     </div>
 
     <p class="lead">
-      I am an economist at the National Audit Office of Finland (NAOF) in the Fiscal
-      Policy Monitoring Unit and a doctoral researcher in economics at the University
-      of Helsinki. My work focuses on fiscal policy, macroeconometrics and sovereign debt.
+      I am an economist at the National Audit Office of Finland and a doctoral
+      researcher in economics at the University of Helsinki. My work focuses on
+      fiscal policy, macroeconometrics and sovereign debt.
     </p>
 
     <section aria-labelledby="interests">
@@ -61,11 +71,10 @@
     <section aria-labelledby="current">
       <h2 id="current">Current work</h2>
       <p>
-        My dissertation consists of three studies: on EU fiscal rules and multiple
-        equilibria, on the mechanisms of fiscal consolidation, and on debt-dependent
-        fiscal policy under sovereign default risk. Details are on the
-        <a href="research.html">research page</a>; earlier reports and articles are
-        listed under <a href="publications.html">publications</a>.
+        My dissertation is in progress, with current projects on EU fiscal rules and
+        multiple equilibria and on the mechanisms of fiscal consolidation. Details are
+        on the <a href="research.html">research page</a>; earlier reports and articles
+        are listed under <a href="publications.html">publications</a>.
       </p>
     </section>
 

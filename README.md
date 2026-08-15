@@ -36,12 +36,20 @@ Two reusable patterns are documented as HTML comments in the files themselves:
 - **Research entry** — see the template comment in `research.html`. A block takes a
   title, coauthors, status, abstract, and a list of links (PDF, code, supplementary
   material, replication files). Every part below the title is optional.
-- **Bibliography entry** — see the template comment in `publications.html`. A `<li>`
-  takes title, year, coauthors, outlet and links.
+- **Bibliography entry** — see the template comment in `publications.html`. Each `<li>`
+  is three lines: title and year, then coauthors and outlet, then links, with a
+  hairline rule between entries. Keep the coauthor and outlet spans adjacent — CSS
+  inserts the separating `·` only when both are present.
 
 For a resource that is announced but does not exist yet, use
 `<span class="pending">Draft not yet available</span>` instead of an anchor, so no
 link points at a missing file.
+
+### Adding the portrait
+
+Save a square photo as `assets/portrait.jpg` (about 400×400 is plenty) and it
+appears on the homepage automatically. Until that file exists the figure hides
+itself, so the page never shows a broken image.
 
 ### Adding a PDF
 
