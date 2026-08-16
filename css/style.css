@@ -411,8 +411,12 @@ main { padding-block: var(--space-lg) var(--space-xl); }
   margin: 0 0 0.6rem;
 }
 
-/* Status marker. A hairline outline, not a coloured pill. */
-.entry-status {
+/* Status marker. A hairline outline, not a coloured pill.
+   .entry-status is the version used inside .entry-meta; .status is the same
+   marker for use inline anywhere else (for example in a CV list item). */
+.entry-status,
+.status {
+  font-family: var(--sans);
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -422,6 +426,12 @@ main { padding-block: var(--space-lg) var(--space-xl); }
   border-radius: 2px;
   padding: 0.12rem 0.45rem;
   white-space: nowrap;
+}
+
+.status {
+  display: inline-block;
+  margin-left: 0.5rem;
+  vertical-align: 0.09em;
 }
 
 .entry-abstract { margin-bottom: 0.7rem; }
