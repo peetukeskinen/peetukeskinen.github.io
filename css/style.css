@@ -412,10 +412,9 @@ main { padding-block: var(--space-lg) var(--space-xl); }
 }
 
 /* Status marker. A hairline outline, not a coloured pill.
-   .entry-status is the version used inside .entry-meta; .status is the same
-   marker for use inline anywhere else (for example in a CV list item). */
-.entry-status,
-.status {
+   Always sits on its own line inside .entry-meta — on research entries and,
+   in the same form, on CV items. */
+.entry-status {
   font-family: var(--sans);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -426,12 +425,6 @@ main { padding-block: var(--space-lg) var(--space-xl); }
   border-radius: 2px;
   padding: 0.12rem 0.45rem;
   white-space: nowrap;
-}
-
-.status {
-  display: inline-block;
-  margin-left: 0.5rem;
-  vertical-align: 0.09em;
 }
 
 .entry-abstract { margin-bottom: 0.7rem; }
@@ -585,6 +578,12 @@ main { padding-block: var(--space-lg) var(--space-xl); }
   color: var(--ink-muted);
   margin-top: 0.1rem;
 }
+
+/* Status marker inside a CV list item, spaced to match a research entry. */
+.plain-list .entry-meta { margin: 0.35rem 0 0.3rem; }
+
+/* Status marker directly under a section heading. */
+h2 + .entry-meta { margin-top: 0.9rem; }
 
 
 /* 10. Responsive ----------------------------------------------------------- */
