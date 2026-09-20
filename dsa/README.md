@@ -49,11 +49,10 @@ What makes a change visible:
   value.
 - **Preset chips** set a scenario in one tap; a second tap returns to baseline.
 - **Euros.** Public debate is conducted in billions, not points of GDP, so the
-  headline carries a euro restatement: the first year's step, the permanent
-  adjustment reached after four years (the horizon Finnish commentary usually
-  quotes) and the adjustment once the plan is complete. The year table adds a
-  cumulative euro column. These follow the controls, because they are valued at
-  the model's own nominal GDP path.
+  headline restates the requirement as the permanent adjustment reached after
+  four years — the horizon Finnish commentary uses. The year table carries the
+  running euro total for every plan year. Both follow the controls, because they
+  value each year's adjustment at the model's own nominal GDP path.
 
 The chart keeps a stable frame while a line moves: the y axis snaps to 20-pp
 steps and always contains 40–80, and the baseline path is included in the

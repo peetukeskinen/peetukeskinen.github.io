@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-20e">
+<link rel="stylesheet" href="css/style.css?v=2026-09-20f">
 </head>
 <body>
 
@@ -46,18 +46,32 @@
       <h1>EU debt rule calculator</h1>
 
       <p class="lead">
-        Under the reformed EU fiscal rules, a member state's required fiscal effort
-        comes out of a debt sustainability analysis rather than a single deficit
-        number. This page runs that analysis for <span id="dsa-country">Finland</span>
-        in your browser. Move a control and watch the debt trajectory bend, the
-        required adjustment change, and the binding rule switch.
+        The reformed EU fiscal rules turn on a single operational commitment: each
+        member state agrees a medium-term fiscal-structural plan that fixes how fast
+        net expenditure may grow, and that path has to leave debt on a plausibly
+        declining trajectory. How much consolidation this takes is the output of a
+        debt sustainability analysis rather than a fixed deficit target, so it moves
+        with interest rates, growth and the starting debt ratio — and a set of
+        safeguards can bind before the analysis itself does.
+      </p>
+
+      <p class="lead">
+        This page runs that analysis for <span id="dsa-country">Finland</span> in your
+        browser, following the European Commission's Debt Sustainability Monitor
+        methodology. Move a control and watch the debt trajectory bend, the required
+        adjustment change, and the binding rule switch. Finland's own plan, endorsed
+        by the Council in January 2025, spreads the adjustment over
+        <a href="https://economy-finance.ec.europa.eu/economic-surveillance-eu-member-states/country-pages/finland/fiscal-surveillance-finland_en">seven
+        years</a> — the setting the page opens with.
       </p>
 
       <p class="note">
         An independent replication for teaching and illustration, built from my
         <a href="https://github.com/peetukeskinen/DSA5.1v">open MATLAB tool</a>. It is
-        not an official calculation of the European Commission or of the National
-        Audit Office of Finland, and it carries no institutional endorsement.
+        personal work: not an official calculation, and endorsed by no institution.
+        The figures that bind Finland are the Commission's, and under the reformed
+        framework Finland's independent fiscal institution — the body that assesses
+        whether the plan is being kept to — is the Economic Policy Council.
       </p>
 
       <noscript>
@@ -346,13 +360,13 @@
       </ul>
 
       <p>
-        The euro figures are the same requirement in the unit public debate uses.
-        Each year's step is that year's adjustment applied to that year's nominal
-        GDP, and the cumulative figure is the permanent improvement reached by then:
-        an adjustment held for seven years ends as a package worth several billion
-        euros a year, not a one-off payment. Finnish commentary usually quotes the
-        effort over a four-year government term rather than over a full seven-year
-        plan, which is the middle figure in the headline.
+        The euro figure is the same requirement in the unit public debate uses.
+        Finnish commentary quotes the effort over a four-year government term rather
+        than over a full seven-year plan, so the headline reports what the first four
+        years add up to: each year's adjustment valued at that year's nominal GDP and
+        accumulated, which is a permanent improvement worth that much every year, not
+        a one-off payment. The year-by-year table carries the same running total for
+        every plan year, so the figure at the end of the plan is there too.
       </p>
 
       <p>
@@ -436,7 +450,7 @@
 <script src="dsa/data/shocks.js"></script>
 <script src="dsa/model.js"></script>
 <script src="dsa/criteria.js"></script>
-<script src="dsa/chart.js?v=2026-09-20e"></script>
-<script src="dsa/app.js?v=2026-09-20e"></script>
+<script src="dsa/chart.js?v=2026-09-20f"></script>
+<script src="dsa/app.js?v=2026-09-20f"></script>
 </body>
 </html>

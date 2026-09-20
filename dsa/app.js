@@ -601,12 +601,13 @@
       /* The SPB path is linear in the adjustment, so the floored total adds exactly. */
       setText('stat-spb', (r.inputs.spb[r.inputs.adjustmentStart - 1] + total).toFixed(1) + '%');
       if (euroNode) {
+        /* One figure, on the horizon public debate uses: what the first four
+           years of the plan add up to as a permanent annual adjustment. */
         var eur = euroPath(r);
-        var lastYear = eur.cumulative.length - 1;
-        var parts = ['about ' + bn(eur.step[0]) + ' in the first year'];
-        if (params.plan > 4) parts.push(bn(eur.cumulative[3]) + ' after four years');
-        parts.push(bn(eur.cumulative[lastYear]) + ' a year once the plan is complete in ' + planLast);
-        euroNode.textContent = 'In euros: ' + joinNames(parts) + '.';
+        var i4 = Math.min(3, eur.cumulative.length - 1);
+        euroNode.textContent = 'In euros: about ' + bn(eur.cumulative[i4]) +
+          ' a year of permanent adjustment by ' + r.planYears[i4] +
+          (params.plan > 4 ? ', the first four years of the plan.' : ', the whole plan.');
         euroNode.hidden = false;
       }
     }
