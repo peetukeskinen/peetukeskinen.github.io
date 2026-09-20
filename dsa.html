@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-20">
+<link rel="stylesheet" href="css/style.css?v=2026-09-20b">
 </head>
 <body>
 
@@ -42,186 +42,253 @@
 <main id="main">
   <div class="container container-wide">
 
-    <h1>EU debt rule calculator</h1>
+    <div class="dsa-intro">
+      <h1>EU debt rule calculator</h1>
 
-    <p class="lead">
-      Under the reformed EU fiscal rules, a member state's required fiscal effort
-      comes out of a debt sustainability analysis rather than a single deficit
-      number. This page runs that analysis for <span id="dsa-country">Finland</span>
-      in your browser: change the assumptions and see how much annual consolidation
-      the rules demand, and which rule it is that binds.
-    </p>
-
-    <p class="note">
-      An independent replication for teaching and illustration, built from my
-      <a href="https://github.com/peetukeskinen/DSA5.1v">open MATLAB tool</a>. It is
-      not an official calculation of the European Commission or of the National
-      Audit Office of Finland, and it carries no institutional endorsement.
-    </p>
-
-    <noscript>
-      <p class="note">
-        This calculator needs JavaScript. The underlying model is available as
-        MATLAB code in the <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1
-        repository</a>.
+      <p class="lead">
+        Under the reformed EU fiscal rules, a member state's required fiscal effort
+        comes out of a debt sustainability analysis rather than a single deficit
+        number. This page runs that analysis for <span id="dsa-country">Finland</span>
+        in your browser. Move a control and watch the debt trajectory bend, the
+        required adjustment change, and the binding rule switch.
       </p>
-    </noscript>
 
-    <section aria-labelledby="controls">
-      <h2 id="controls">Assumptions</h2>
+      <p class="note">
+        An independent replication for teaching and illustration, built from my
+        <a href="https://github.com/peetukeskinen/DSA5.1v">open MATLAB tool</a>. It is
+        not an official calculation of the European Commission or of the National
+        Audit Office of Finland, and it carries no institutional endorsement.
+      </p>
 
-      <form id="dsa-form" class="dsa-form">
-
-        <fieldset class="dsa-fieldset">
-          <legend>Adjustment plan</legend>
-          <div class="dsa-radios">
-            <label><input type="radio" name="plan" value="4"> 4 years</label>
-            <label><input type="radio" name="plan" value="7" checked> 7 years (with reforms and investment)</label>
-          </div>
-          <p class="dsa-hint">
-            A country can extend the plan from four to seven years by committing to
-            reforms and investment. The same total effort is then spread more thinly.
-          </p>
-        </fieldset>
-
-        <fieldset class="dsa-fieldset">
-          <legend>Economy</legend>
-
-          <div class="dsa-control">
-            <label for="debtInitial">Starting debt ratio</label>
-            <input type="range" id="debtInitial" name="debtInitial" min="40" max="160" step="0.1" value="75.8">
-            <output id="out-debtInitial" for="debtInitial">75.8% of GDP</output>
-          </div>
-
-          <div class="dsa-control">
-            <label for="rateShift">Interest rates</label>
-            <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
-            <output id="out-rateShift" for="rateShift">+0.0 pp</output>
-            <p class="dsa-hint">Shifts short and long market rates from the first plan year on.</p>
-          </div>
-
-          <div class="dsa-control">
-            <label for="growthShift">Potential growth</label>
-            <input type="range" id="growthShift" name="growthShift" min="-1.5" max="1.5" step="0.05" value="0">
-            <output id="out-growthShift" for="growthShift">+0.0 pp</output>
-            <p class="dsa-hint">Shifts potential output growth from the first plan year on.</p>
-          </div>
-
-          <div class="dsa-control">
-            <label for="phi">Fiscal multiplier</label>
-            <input type="range" id="phi" name="phi" min="0" max="1.5" step="0.05" value="0.75">
-            <output id="out-phi" for="phi">0.75</output>
-            <p class="dsa-hint">
-              How much output is lost per point of consolidation. The Commission uses 0.75.
-            </p>
-          </div>
-        </fieldset>
-
-        <fieldset class="dsa-fieldset">
-          <legend>Which rules apply</legend>
-          <div class="dsa-checks">
-            <label><input type="checkbox" name="useStochastic" checked> DSA stochastic criterion</label>
-            <label><input type="checkbox" name="useDebtSafeguard" checked> Debt sustainability safeguard</label>
-            <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
-            <label><input type="checkbox" name="useDeficitSafeguard" checked> Deficit resilience safeguard</label>
-          </div>
-          <p class="dsa-hint">
-            The four deterministic DSA scenarios always apply. Switching a safeguard
-            off shows what the analysis alone would have required.
-          </p>
-        </fieldset>
-
-        <details class="dsa-advanced">
-          <summary>Method options</summary>
-
-          <div class="dsa-control">
-            <label for="plausibility">Probability of declining debt</label>
-            <select id="plausibility" name="plausibility">
-              <option value="7" selected>70% of simulated paths</option>
-              <option value="8">80% of simulated paths</option>
-              <option value="9">90% of simulated paths</option>
-            </select>
-          </div>
-
-          <div class="dsa-control">
-            <label for="method">Shock generation</label>
-            <select id="method" name="method">
-              <option value="normal" selected>Normal draws from the historical covariance</option>
-              <option value="bootstrap">Block bootstrap of historical deviations</option>
-            </select>
-          </div>
-
-          <div class="dsa-control">
-            <label for="sfaMethod">Stock-flow adjustment</label>
-            <select id="sfaMethod" name="sfaMethod">
-              <option value="0" selected>Commission's revised assumption</option>
-              <option value="-1">Zero after the forecast horizon</option>
-            </select>
-          </div>
-
-          <div class="dsa-checks">
-            <label><input type="checkbox" name="showNoAdjustment" checked> Show the no-consolidation path</label>
-            <label><input type="checkbox" name="showScenarios"> Show the adverse scenarios</label>
-          </div>
-        </details>
-
-        <p><button type="button" id="dsa-reset" class="dsa-button">Reset to the baseline</button></p>
-      </form>
-    </section>
-
-    <section aria-labelledby="result">
-      <h2 id="result">Required adjustment</h2>
-
-      <div class="dsa-headline">
-        <p class="dsa-figure"><span id="result-adjustment">—</span></p>
-        <p class="dsa-figure-unit" id="result-adjustment-unit">pp of GDP per year</p>
-        <p class="dsa-figure-note">
-          Binding rule: <strong id="result-binding">—</strong><br>
-          Total effort: <span id="result-total">—</span> ·
-          structural primary balance at the end of the plan:
-          <span id="result-spb">—</span>
+      <noscript>
+        <p class="note">
+          This calculator needs JavaScript. The underlying model is available as
+          MATLAB code in the <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1
+          repository</a>.
         </p>
+      </noscript>
+    </div>
+
+    <section aria-labelledby="calculator">
+      <h2 id="calculator">Calculator</h2>
+
+      <div class="dsa-workbench">
+
+        <!-- The stage comes first in the document so that on phones it can stick
+             to the top of the screen while the controls scroll underneath it. -->
+        <div class="dsa-stage">
+          <div class="dsa-headline">
+            <div class="dsa-headline-main">
+              <p class="dsa-eyebrow">Required annual adjustment</p>
+              <p class="dsa-figure" id="result-figure">—</p>
+              <p class="dsa-figure-unit" id="result-unit">pp of GDP a year</p>
+            </div>
+            <div class="dsa-headline-side">
+              <p class="dsa-delta is-neutral" id="result-delta">= baseline</p>
+              <p class="dsa-binding">
+                Binding rule: <strong id="result-binding">—</strong>
+                <span class="dsa-was" id="result-was" hidden></span>
+              </p>
+              <p class="dsa-floors" id="result-floors" hidden></p>
+            </div>
+            <dl class="dsa-stats">
+              <div><dt>Total adjustment</dt><dd id="stat-total">—</dd></div>
+              <div><dt>SPB at end of plan</dt><dd id="stat-spb">—</dd></div>
+              <div><dt>Debt <span id="stat-debt-end-year">2031</span></dt><dd id="stat-debt-end">—</dd></div>
+              <div><dt>Debt <span id="stat-debt-final-year">2041</span></dt><dd id="stat-debt-final">—</dd></div>
+            </dl>
+          </div>
+
+          <div id="dsa-chart" class="dsa-chart"></div>
+          <p class="dsa-refline is-off" id="dsa-refline">
+            <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">A grey reference line appears when a setting changes.</span>
+          </p>
+          <ul id="dsa-legend" class="visually-hidden" aria-label="Values at the end of the projection"></ul>
+          <p class="visually-hidden" id="dsa-status" role="status"></p>
+        </div>
+
+        <form id="dsa-form" class="dsa-controls" aria-label="Assumptions">
+
+          <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario">
+            <span class="dsa-presets-label">Try</span>
+            <button type="button" data-set='{"rateShift":"1"}' aria-pressed="false">Rates +1 pp</button>
+            <button type="button" data-set='{"growthShift":"-0.5"}' aria-pressed="false">Growth −0.5 pp</button>
+            <button type="button" data-set='{"plan":"4"}' aria-pressed="false">4-year plan</button>
+            <button type="button" data-set='{"debtInitial":"100.0"}' aria-pressed="false">Debt 100%</button>
+            <button type="button" data-set='{"useDebtSafeguard":false,"useDeficitBenchmark":false,"useDeficitSafeguard":false}' aria-pressed="false">Safeguards off</button>
+          </div>
+
+          <div class="dsa-group" id="plan-control">
+            <p class="dsa-eyebrow" id="plan-label">Plan length</p>
+            <div class="dsa-seg" role="radiogroup" aria-labelledby="plan-label">
+              <label class="dsa-seg-option">
+                <input type="radio" name="plan" value="4" class="visually-hidden"><span>4 years</span>
+              </label>
+              <label class="dsa-seg-option">
+                <input type="radio" name="plan" value="7" class="visually-hidden" checked><span>7 years</span>
+              </label>
+            </div>
+            <p class="dsa-hint">Seven years is available against commitments to reforms and investment.</p>
+          </div>
+
+          <div class="dsa-group" role="group" aria-labelledby="economy-label">
+            <p class="dsa-eyebrow" id="economy-label">Economy</p>
+
+            <div class="dsa-control">
+              <div class="dsa-control-head">
+                <label for="debtInitial">Debt in 2023</label>
+                <output id="out-debtInitial" for="debtInitial">75.8% of GDP</output>
+              </div>
+              <div class="dsa-track">
+                <input type="range" id="debtInitial" name="debtInitial" min="40" max="160" step="0.1" value="75.8">
+              </div>
+              <p class="dsa-hint">Base-year level; the plan starts from the projected 2025 ratio. This value also sets the safeguard's 0.5 or 1 pp band.</p>
+            </div>
+
+            <div class="dsa-control">
+              <div class="dsa-control-head">
+                <label for="rateShift">Interest rates</label>
+                <output id="out-rateShift" for="rateShift">0.0 pp</output>
+              </div>
+              <div class="dsa-track">
+                <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
+              </div>
+              <p class="dsa-hint">Short and long market rates, shifted from the first plan year on.</p>
+            </div>
+
+            <div class="dsa-control">
+              <div class="dsa-control-head">
+                <label for="growthShift">Potential growth</label>
+                <output id="out-growthShift" for="growthShift">0.0 pp</output>
+              </div>
+              <div class="dsa-track">
+                <input type="range" id="growthShift" name="growthShift" min="-1.5" max="1.5" step="0.05" value="0">
+              </div>
+              <p class="dsa-hint" id="out-rg"></p>
+            </div>
+
+            <div class="dsa-control">
+              <div class="dsa-control-head">
+                <label for="phi">Fiscal multiplier</label>
+                <output id="out-phi" for="phi">0.75</output>
+              </div>
+              <div class="dsa-track">
+                <input type="range" id="phi" name="phi" min="0" max="1.5" step="0.05" value="0.75">
+              </div>
+              <p class="dsa-hint">Output lost per point of adjustment during the plan years. The Commission uses 0.75.</p>
+            </div>
+          </div>
+
+          <div class="dsa-group">
+            <p class="dsa-eyebrow" id="rules-label">Rules in force</p>
+            <div class="dsa-checks" role="group" aria-labelledby="rules-label">
+              <label><input type="checkbox" name="useStochastic" checked> Stochastic test</label>
+              <label><input type="checkbox" name="useDebtSafeguard" checked> Debt safeguard</label>
+              <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
+              <label><input type="checkbox" name="useDeficitSafeguard" checked> Resilience safeguard</label>
+            </div>
+            <p class="dsa-hint">The four deterministic DSA scenarios always apply.</p>
+          </div>
+
+          <details class="dsa-advanced">
+            <summary>Method and chart options</summary>
+
+            <div class="dsa-control">
+              <label for="plausibility">Probability of declining debt</label>
+              <select id="plausibility" name="plausibility">
+                <option value="7" selected>70% of simulated paths</option>
+                <option value="8">80% of simulated paths</option>
+                <option value="9">90% of simulated paths</option>
+              </select>
+            </div>
+
+            <div class="dsa-control">
+              <label for="method">Shock generation</label>
+              <select id="method" name="method">
+                <option value="normal" selected>Normal draws, historical covariance</option>
+                <option value="bootstrap">Block bootstrap of historical deviations</option>
+              </select>
+            </div>
+
+            <div class="dsa-control">
+              <label for="sfaMethod">Stock-flow adjustment</label>
+              <select id="sfaMethod" name="sfaMethod">
+                <option value="0" selected>Commission's revised assumption</option>
+                <option value="-1">Zero after the forecast horizon</option>
+              </select>
+            </div>
+
+            <div class="dsa-checks">
+              <label><input type="checkbox" name="showNoAdjustment" checked> Show no-consolidation path</label>
+              <label><input type="checkbox" name="showScenarios"> Show adverse scenarios</label>
+            </div>
+          </details>
+
+          <div class="dsa-buttons">
+            <button type="button" id="dsa-pin" class="dsa-button" aria-pressed="false">Pin as reference</button>
+            <button type="button" id="dsa-reset" class="dsa-button">Reset</button>
+          </div>
+        </form>
+
+        <div class="dsa-rules-panel" id="dsa-rules-panel">
+          <p class="dsa-eyebrow">What each rule would require</p>
+          <div id="dsa-rules" class="dsa-rules"></div>
+          <ul id="dsa-rules-text" class="visually-hidden"></ul>
+          <p class="dsa-hint" id="dsa-unmet" hidden></p>
+          <p class="dsa-hint">
+            Each bar is the smallest annual adjustment that rule alone would demand;
+            the headline is the longest of the DSA and debt-safeguard bars. The two
+            floors apply only in years when a deficit limit is breached, shown beside
+            the bar; a floor is hollow while it does not apply. A hatched bar is a rule
+            that no adjustment up to 2.00 pp meets. A short vertical mark shows the
+            reference value once something has changed.
+          </p>
+        </div>
+
       </div>
 
-      <div class="dsa-chart-wrap">
-        <div id="dsa-chart" class="dsa-chart"></div>
-        <ul id="dsa-legend" class="dsa-legend"></ul>
-        <p class="dsa-hint">
-          Debt reaches <span id="result-debt-end">—</span> at the end of the plan and
-          <span id="result-debt-final">—</span> at the end of the review period.
-        </p>
-        <p class="dsa-status" id="dsa-status" role="status"></p>
-      </div>
-
-      <table class="dsa-table">
-        <caption>Adjustment path and the matching ceiling on net expenditure growth</caption>
-        <thead>
-          <tr>
-            <th scope="col">Year</th>
-            <th scope="col">Adjustment, pp of GDP</th>
-            <th scope="col">Net expenditure growth, %</th>
-            <th scope="col">Binding rule</th>
-          </tr>
-        </thead>
-        <tbody id="dsa-table-body"></tbody>
-      </table>
-
-      <table class="dsa-table">
-        <caption>What each criterion on its own would require, pp of GDP per year</caption>
-        <tbody id="dsa-requirements"></tbody>
-      </table>
+      <details class="dsa-numbers">
+        <summary>Year-by-year numbers</summary>
+        <table class="dsa-table">
+          <caption>Adjustment path and the matching ceiling on net expenditure growth</caption>
+          <thead>
+            <tr>
+              <th scope="col">Year</th>
+              <th scope="col">Adjustment, pp of GDP</th>
+              <th scope="col">Net expenditure growth, %</th>
+              <th scope="col">Debt, % of GDP</th>
+              <th scope="col">Binding rule</th>
+            </tr>
+          </thead>
+          <tbody id="dsa-table-body"></tbody>
+        </table>
+      </details>
     </section>
 
-    <section aria-labelledby="how">
+    <section aria-labelledby="how" class="dsa-prose">
       <h2 id="how">How it works</h2>
 
       <p>
-        The calculator searches for the smallest constant annual improvement in the
-        structural primary balance that satisfies every criterion in force. Debt is
-        projected forward with the Commission's own accounting: the implicit interest
-        rate is rebuilt each year from the maturity structure of the debt, consolidation
-        costs output through a fiscal multiplier, the output gap closes gradually, and
-        ageing costs are carried through the review period.
+        The calculator searches, in steps of 0.01 up to 2.00 pp of GDP a year, for the
+        smallest constant annual improvement in the structural primary balance that
+        passes the DSA tests and the debt safeguard. The deficit benchmark and the
+        resilience safeguard then raise individual years on top of that, as the
+        year-by-year table shows; the chart is drawn at the constant adjustment. If a
+        rule cannot be met by any adjustment in that range, the page says so instead
+        of reporting a number. Debt is projected forward with the Commission's own
+        accounting: the implicit interest rate is rebuilt each year from the maturity
+        structure of the debt, adjustment costs output through a fiscal multiplier, the
+        output gap closes gradually, and ageing costs are carried through the review
+        period.
+      </p>
+
+      <p>
+        The grey line on the chart is the reference trajectory — the Commission's
+        baseline assumptions, or a scenario you have pinned — so that any change is
+        seen against something that stays still. The bars below the chart show what
+        each rule would require on its own; the longest of the DSA and debt-safeguard
+        bars is the rule that sets the headline, and the two floor bars only top up
+        the years shown beside them.
       </p>
 
       <p>The criteria are:</p>
@@ -235,14 +302,15 @@
         </li>
         <li>
           <strong>Stochastic DSA.</strong> Shocks to growth, the primary balance and
-          interest rates are simulated for the five years after the plan. Debt has to
-          be lower after those five years than at the end of the plan in the chosen
-          share of simulated paths.
+          interest rates are simulated for the five years after the plan — the shaded
+          fan. Debt has to be lower after those five years than at the end of the
+          plan in the chosen share of simulated paths.
         </li>
         <li>
           <strong>Debt sustainability safeguard.</strong> Debt has to fall on average
           by at least 1 pp of GDP a year while it is above 90% of GDP, or 0.5 pp
-          while it is between 60% and 90%.
+          while it is between 60% and 90%. On the chart this is the dashed slope
+          across the plan window that the path has to beat.
         </li>
         <li>
           <strong>Deficit benchmark.</strong> At least 0.5 pp of adjustment a year
@@ -258,31 +326,34 @@
       <p>
         The requirement is then expressed the way the rules are actually written: as a
         ceiling on the growth of net primary expenditure, which is what a country's plan
-        commits to.
+        commits to. The year-by-year numbers are in the table above.
       </p>
     </section>
 
-    <section aria-labelledby="caveats">
+    <section aria-labelledby="caveats" class="dsa-prose">
       <h2 id="caveats">Data and limitations</h2>
 
       <ul>
         <li>
           Data: <span id="dsa-vintage">European Commission prior guidance, 2024</span>,
-          for <span class="dsa-country-inline">Finland</span>, with the plan starting in
-          2025. Changing the sliders moves the assumptions away from that vintage; it
-          does not load a newer forecast.
+          for Finland, with the plan starting in 2025. Changing the controls moves the
+          assumptions away from that vintage; it does not load a newer forecast.
         </li>
         <li>
-          The simulated shocks are a fixed set of 1,000 draws, generated once from the
-          historical covariance of quarterly growth, balance and interest rate
-          innovations, so everyone loading the page sees the same result. They are not
-          drawn afresh in the browser, and they are not the MATLAB tool's own draws.
+          The simulated shocks are a fixed set of 1,000 draws, generated once. The
+          normal option draws them from the historical covariance of quarterly growth,
+          balance and interest rate innovations, with outliers beyond three standard
+          deviations clipped first as in the MATLAB tool; the bootstrap option resamples
+          two-year blocks of the annual historical deviations. Both sets are fixed, so
+          everyone loading the page sees the same result. They are not drawn afresh in
+          the browser, and they are not the MATLAB tool's own draws.
         </li>
         <li>
           The model reproduces the published MATLAB tool, including its simplifications.
           It applies the deficit benchmark in structural primary terms throughout,
           rather than switching to structural balance terms partway through, and it
-          takes the safeguard's debt band from the starting debt ratio.
+          takes the safeguard's 0.5 or 1 pp band from the 2023 debt ratio rather than
+          from debt at the start of the plan.
         </li>
         <li>
           Results are illustrative. The Commission's own calculation uses the full

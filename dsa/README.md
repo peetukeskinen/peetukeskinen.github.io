@@ -6,16 +6,48 @@ The browser version of the MATLAB DSA 5.1 tool
 and no third-party code.
 
 ```text
-dsa.html          the page: controls, results, chart, notes
+dsa.html          the page: workbench (stage + controls + rule bars), notes
 dsa/model.js      debt projection      <- project_debt5_1v.m
 dsa/criteria.js   rules and safeguards <- runDsaModel5_1.m
-dsa/chart.js      the SVG chart
-dsa/app.js        form handling and rendering
+dsa/chart.js      hand-written SVG: draw() line chart, drawBars() rule bars
+dsa/app.js        form handling, reference ghost, pin, presets, rendering
 dsa/data/*.js     data and shock draws, generated (see below)
 ```
 
 Styling lives in section 11 of `css/style.css`, so the calculator follows the
 site's palette in light and dark mode.
+
+## How the page is put together
+
+The calculator is a workbench. On screens 64rem and wider the controls form a
+sticky rail on the left and the stage (headline, debt chart, rule bars) sits on
+the right, so a slider and the line it moves are always in view together. Below
+that width the stage comes first in the document and sticks to the top of the
+screen while the controls scroll underneath it (switched off on viewports under
+761px tall).
+
+What makes a change visible:
+
+- **Reference trajectory.** The baseline settings are solved once at load. As
+  soon as any control leaves its default, the baseline path is drawn as a grey
+  ghost under the live line, the headline shows `+0.36 vs baseline`, and the
+  binding rule shows `(baseline: <rule>)` when it differs. *Pin as reference*
+  swaps the ghost for whatever is on screen.
+- **Rules as pictures.** 60 % and 90 % lines; the debt safeguard drawn as the
+  slope across the plan window that the path has to beat; when the stochastic
+  test binds, the two numbers it compares joined by a line; and under the chart
+  a bar per criterion with the binding one tagged and a tick at the reference
+  value.
+- **Preset chips** set a scenario in one tap; a second tap returns to baseline.
+
+The chart keeps a stable frame while a line moves: the y axis snaps to 20-pp
+steps and always contains 40–80, and the baseline path is included in the
+domain so the ghost never rescales the axis when it appears.
+
+`window.DSACalculator` (`apply(obj)`, `pin()`, `reset()`, `render()`) exists so
+tests can drive the page; the headless Firefox renders in the OneDrive test
+folder use it, since `requestAnimationFrame` does not fire before Firefox
+captures a screenshot.
 
 ## Regenerating the data
 

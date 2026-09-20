@@ -690,25 +690,28 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 
 /* 11. DSA calculator -------------------------------------------------------
-   Used only by dsa.html. The page is wider than the prose measure because it
-   carries a chart and two tables; everything else follows the site tokens, so
-   the calculator inherits light and dark mode without its own palette.
+   Used only by dsa.html. The calculator is a workbench: on a wide screen the
+   controls form a sticky rail beside the chart, on a phone the chart sticks to
+   the top while the controls scroll underneath. Everything follows the site
+   tokens, so light and dark mode come for free.
    -------------------------------------------------------------------------- */
 
 :root {
-  --dsa-line:        var(--accent);   /* the path under the plan   */
-  --dsa-muted-line:  #8c8474;         /* the no-consolidation path */
-  --dsa-alt1:        #3f6b7d;         /* lower SPB                 */
-  --dsa-alt2:        #8a6d1f;         /* adverse r-g               */
-  --dsa-alt3:        #5a5a8a;         /* financial stress          */
+  --dsa-line:        var(--accent);   /* the path under the plan       */
+  --dsa-ref:         #978d79;         /* the reference (ghost) path    */
+  --dsa-muted-line:  #8c8474;         /* the no-consolidation path     */
+  --dsa-alt1:        #3f6b7d;         /* lower SPB                     */
+  --dsa-alt2:        #8a6d1f;         /* adverse r-g                   */
+  --dsa-alt3:        #5a5a8a;         /* financial stress              */
   --dsa-grid:        var(--rule);
   --dsa-axis:        var(--rule-strong);
   --dsa-band:        var(--accent);
-  --dsa-shade:       #ece7da;         /* plan period backdrop      */
+  --dsa-shade:       #ece7da;         /* plan window backdrop          */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --dsa-ref:        #9a9284;
     --dsa-muted-line: #8f8677;
     --dsa-alt1:       #7fb3c4;
     --dsa-alt2:       #cba85a;
@@ -718,59 +721,191 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   }
 }
 
-/* Wider container for the calculator page only. */
-.container-wide { max-width: 56rem; }
+/* Wider container for the calculator page; prose sections keep the measure. */
+.container-wide { max-width: 62rem; }
+
+/* The scripts hide and show pieces with the hidden attribute; make sure no
+   display rule below can override it. */
+.dsa-workbench [hidden] { display: none !important; }
+.container-wide .dsa-intro,
+.container-wide .dsa-prose { max-width: var(--measure); }
+
+/* --- workbench layout ---------------------------------------------------- */
+
+.dsa-workbench { display: block; }
+
+@media (min-width: 64rem) {
+  .dsa-workbench {
+    display: grid;
+    grid-template-columns: 19rem minmax(0, 1fr);
+    column-gap: 2.5rem;
+    align-items: start;
+  }
+  .dsa-controls {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 1rem;
+  }
+  .dsa-stage { grid-column: 2; grid-row: 1; }
+  .dsa-rules-panel { grid-column: 2; grid-row: 2; }
+}
+
+/* Narrow screens: the chart stays in view while the controls scroll. */
+@media (max-width: 63.99rem) {
+  .dsa-stage {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.25rem 0 0.4rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 63.99rem) and (max-height: 760px) {
+  .dsa-stage { position: static; }
+}
 
 /* --- controls ------------------------------------------------------------ */
 
-.dsa-form {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-  gap: var(--space-md);
-  align-items: start;
-  margin-bottom: var(--space-md);
-}
-
-.dsa-fieldset {
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 0.9rem 1.1rem 1.1rem;
-  margin: 0;
-  min-width: 0;
-}
-
-.dsa-fieldset legend {
+.dsa-eyebrow {
   font-family: var(--sans);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--ink-muted);
-  padding-inline: 0.4rem;
+  margin: 0 0 0.5rem;
 }
 
-.dsa-control { margin-bottom: 1rem; }
-.dsa-control:last-child { margin-bottom: 0; }
+.dsa-eyebrow-note {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  margin-left: 0.4rem;
+}
 
-.dsa-control label,
-.dsa-radios label,
-.dsa-checks label {
+.dsa-group {
+  padding: 0.7rem 0 0.55rem;
+  border-top: 1px solid var(--rule);
+}
+
+.dsa-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.85rem;
+  font-family: var(--sans);
+}
+
+.dsa-presets-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-right: 0.15rem;
+}
+
+.dsa-presets button {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 999px;
+  padding: 0.28rem 0.65rem;
+  cursor: pointer;
+}
+
+.dsa-presets button:hover { border-color: var(--accent); color: var(--accent); }
+
+.dsa-presets button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.dsa-presets button:focus-visible,
+.dsa-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.dsa-control { margin: 0.4rem 0 0.75rem; }
+.dsa-control:last-child { margin-bottom: 0.2rem; }
+
+.dsa-control-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
   font-family: var(--sans);
   font-size: 0.875rem;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
-.dsa-control > label { display: block; margin-bottom: 0.15rem; }
+.dsa-control-head output {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
-.dsa-control input[type="range"] {
+/* A control that has left the baseline: accent value, dot before the label. */
+.dsa-control.is-changed .dsa-control-head output { color: var(--accent); }
+
+.dsa-control.is-changed .dsa-control-head label::before,
+.dsa-control.is-changed > label::before,
+.dsa-advanced.is-changed > summary::before,
+#plan-control.is-changed .dsa-eyebrow::before {
+  content: "";
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 0.4rem;
+  vertical-align: 0.1em;
+}
+
+.dsa-track { position: relative; padding-bottom: 0.5rem; }
+
+.dsa-track input[type="range"] {
+  display: block;
   width: 100%;
+  margin: 0.2rem 0 0;
   accent-color: var(--accent);
-  margin: 0.2rem 0 0.1rem;
+}
+
+/* Baseline tick under the track, at the default value's position. The
+   16px accounts for the thumb's travel inside the track. */
+.dsa-track::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: calc(8px + var(--base-pct, 0.5) * (100% - 16px));
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 5px solid var(--rule-strong);
+  transform: translateX(-4px);
+}
+
+.dsa-control > label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  margin-bottom: 0.15rem;
 }
 
 .dsa-control select {
   font-family: var(--sans);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   padding: 0.3rem 0.4rem;
   width: 100%;
   background: var(--bg);
@@ -779,74 +914,110 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   border-radius: 3px;
 }
 
-.dsa-control output {
-  display: block;
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-
-.dsa-radios,
-.dsa-checks { display: flex; flex-direction: column; gap: 0.35rem; }
-
-.dsa-radios input,
-.dsa-checks input { accent-color: var(--accent); margin-right: 0.4rem; }
-
 .dsa-hint {
   font-family: var(--sans);
-  font-size: 0.8125rem;
-  line-height: 1.5;
+  font-size: 0.75rem;
+  line-height: 1.45;
   color: var(--ink-muted);
-  margin: 0.4rem 0 0;
+  margin: 0.15rem 0 0;
 }
 
-.dsa-advanced {
-  grid-column: 1 / -1;
-  border: 1px solid var(--rule);
+/* Segmented plan toggle: native radios kept, visually hidden. */
+.dsa-seg {
+  display: flex;
+  border: 1px solid var(--rule-strong);
   border-radius: 3px;
-  padding: 0.6rem 1.1rem;
+  overflow: hidden;
 }
 
-.dsa-advanced summary {
+.dsa-seg-option { flex: 1 1 0; margin: 0; }
+
+.dsa-seg-option span {
+  display: block;
+  text-align: center;
+  padding: 0.4rem 0.5rem;
   font-family: var(--sans);
   font-size: 0.8125rem;
-  letter-spacing: 0.045em;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.dsa-seg-option + .dsa-seg-option span { border-left: 1px solid var(--rule-strong); }
+.dsa-seg-option span:hover { color: var(--ink); }
+.dsa-seg-option input:checked + span { background: var(--accent); color: var(--bg); }
+.dsa-seg-option input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+.dsa-checks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.3rem 0.6rem;
+}
+
+.dsa-checks label {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.dsa-checks input { accent-color: var(--accent); margin-right: 0.35rem; }
+
+.dsa-advanced {
+  border-top: 1px solid var(--rule);
+  padding: 0.7rem 0 0.4rem;
+}
+
+.dsa-advanced summary,
+.dsa-numbers summary {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--ink-muted);
   cursor: pointer;
 }
 
-.dsa-advanced[open] summary { margin-bottom: 0.9rem; }
+.dsa-advanced[open] summary { margin-bottom: 0.7rem; }
+.dsa-advanced .dsa-checks { margin-top: 0.5rem; }
 
-.dsa-advanced .dsa-control { max-width: 24rem; }
+.dsa-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.9rem 0 0.4rem;
+}
 
 .dsa-button {
   font-family: var(--sans);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   letter-spacing: 0.045em;
   text-transform: uppercase;
   color: var(--ink);
   background: var(--bg-inset);
   border: 1px solid var(--rule-strong);
   border-radius: 3px;
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.8rem;
   cursor: pointer;
 }
 
 .dsa-button:hover { border-color: var(--accent); color: var(--accent); }
+.dsa-button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 
-/* --- headline result ------------------------------------------------------ */
+/* --- headline ------------------------------------------------------------- */
 
 .dsa-headline {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 1.25rem;
+  row-gap: 0.15rem;
+  align-items: end;
   background: var(--bg-inset);
   border-left: 3px solid var(--accent);
-  padding: 1.1rem 1.3rem;
-  margin-bottom: var(--space-md);
+  padding: 0.8rem 1rem 0.7rem;
+  margin-bottom: 0.7rem;
 }
 
 .dsa-figure {
-  font-size: 3rem;
+  font-size: 2.6rem;
   line-height: 1;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -855,51 +1026,79 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 .dsa-figure-unit {
   font-family: var(--sans);
-  font-size: 0.8125rem;
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-muted);
-  margin: 0.3rem 0 0.7rem;
+  margin: 0.25rem 0 0;
+  white-space: nowrap;
 }
 
-.dsa-figure-note {
+.dsa-headline-side { padding-bottom: 0.1rem; min-width: 0; }
+
+.dsa-delta {
+  display: inline-block;
   font-family: var(--sans);
-  font-size: 0.875rem;
-  line-height: 1.6;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.1rem 0.55rem;
+  margin: 0 0 0.3rem;
+}
+
+.dsa-binding {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.45;
   margin: 0;
 }
+
+.dsa-was { color: var(--ink-muted); }
+
+/* At the baseline the chip reads "= baseline" in the muted colour, so the
+   headline keeps its shape when a change makes it turn accent. */
+.dsa-delta.is-neutral { color: var(--ink-muted); }
+
+.dsa-floors {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  margin: 0.3rem 0 0;
+}
+
+.dsa-headline-main > .dsa-eyebrow { margin-bottom: 0.2rem; }
+
+.dsa-stats {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1.3rem;
+  margin: 0.45rem 0 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+}
+
+.dsa-stats div { display: flex; gap: 0.4rem; align-items: baseline; }
+.dsa-stats dt { color: var(--ink-muted); }
+.dsa-stats dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* --- chart ---------------------------------------------------------------- */
 
 .dsa-chart svg { width: 100%; height: auto; display: block; }
 
-.dsa-chart-tick {
+.dsa-readout,
+.dsa-refline {
   font-family: var(--sans);
-  font-size: 11px;
-  fill: var(--ink-muted);
-}
-
-.dsa-chart-note {
-  font-family: var(--sans);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  fill: var(--ink-muted);
-}
-
-.dsa-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem 1.1rem;
-  list-style: none;
-  padding: 0;
-  margin: 0.4rem 0 0.6rem;
-  font-family: var(--sans);
-  font-size: 0.8125rem;
+  font-size: 0.78rem;
   color: var(--ink-muted);
+  min-height: 1.3em;
+  margin: 0.15rem 0 0;
 }
-
-.dsa-legend li { margin: 0; }
 
 .dsa-key {
   display: inline-block;
@@ -907,21 +1106,21 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   height: 0.7rem;
   border-radius: 2px;
   margin-right: 0.35rem;
-  vertical-align: baseline;
+  vertical-align: -0.05em;
 }
 
-.dsa-key-band { background: var(--dsa-band); opacity: 0.35; }
+.dsa-key-ref { background: var(--dsa-ref); height: 0.2rem; vertical-align: 0.2em; }
+.dsa-refline.is-off .dsa-key-ref { visibility: hidden; }
 
-.dsa-readout,
-.dsa-status {
-  font-family: var(--sans);
-  font-size: 0.8125rem;
-  color: var(--ink-muted);
-  min-height: 1.4em;
-  margin: 0.2rem 0 0;
-}
+.dsa-table-ref { color: var(--ink-muted); font-weight: 400; }
 
-/* --- tables --------------------------------------------------------------- */
+.dsa-rules-panel { margin-top: 1.1rem; }
+.dsa-rules svg { width: 100%; height: auto; display: block; }
+
+/* --- numbers -------------------------------------------------------------- */
+
+.dsa-numbers { margin-top: 1.5rem; }
+.dsa-numbers[open] summary { margin-bottom: 0.4rem; }
 
 .dsa-table {
   width: 100%;
@@ -929,7 +1128,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   font-family: var(--sans);
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
-  margin: var(--space-md) 0 0;
+  margin: 0.4rem 0 0;
 }
 
 .dsa-table caption {
@@ -954,8 +1153,21 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 .dsa-table tbody th { font-weight: 500; }
 
-@media (max-width: 34rem) {
-  .dsa-figure { font-size: 2.4rem; }
+/* --- phone ---------------------------------------------------------------- */
+
+@media (max-width: 40rem) {
+  /* One column: the figure and its unit on a line, the binding rule under it. */
+  .dsa-headline { display: block; padding: 0.5rem 0.75rem 0.45rem; }
+  .dsa-headline-main { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.15rem 0.6rem; }
+  .dsa-headline-main > .dsa-eyebrow { flex-basis: 100%; margin: 0; }
+  .dsa-figure { font-size: 1.9rem; }
+  .dsa-figure-unit { font-size: 0.64rem; margin: 0; white-space: normal; }
+  .dsa-headline-side { margin-top: 0.2rem; }
+  .dsa-delta { font-size: 0.72rem; margin: 0 0.4rem 0.1rem 0; padding: 0.05rem 0.45rem; }
+  .dsa-binding { font-size: 0.74rem; display: inline; }
+  .dsa-stats { font-size: 0.7rem; gap: 0.05rem 0.8rem; margin-top: 0.3rem; padding-top: 0.3rem; }
+  .dsa-readout { display: none; }
+  .dsa-refline { font-size: 0.7rem; }
   .dsa-table { font-size: 0.8125rem; }
 }
 
@@ -970,7 +1182,8 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .entry, .biblio-item { break-inside: avoid; }
 
   /* On paper the controls are dead weight; the result and chart are not. */
-  .dsa-form, .dsa-button, .dsa-status, .dsa-readout { display: none; }
+  .dsa-controls, .dsa-button, .dsa-readout, .dsa-presets { display: none; }
+  .dsa-stage { position: static; }
   .dsa-headline { border-left-color: #000; }
   .dsa-chart, .dsa-table { break-inside: avoid; }
 }

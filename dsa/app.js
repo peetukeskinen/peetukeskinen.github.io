@@ -3,7 +3,23 @@
 
    Reads the form, runs the model (dsa/model.js and dsa/criteria.js) and
    redraws. A full run, including 1,000 simulated paths, takes a few tens of
-   milliseconds, so everything is recomputed on every change.
+   milliseconds, so everything is recomputed on every input event.
+
+   Two ideas carry the page:
+     - a reference trajectory. The baseline settings are solved once at load;
+       as soon as a control leaves its default the baseline path is drawn as
+       a grey ghost under the live line, and the headline shows the change.
+       "Pin as reference" swaps the ghost for any scenario the visitor likes.
+     - the rules as pictures. The debt safeguard is a slope the path has to
+       beat, the stochastic test is two dots, and every rule's requirement is
+       a bar with the binding one tagged.
+
+   Two honesty rules the page keeps, both inherited from the search in
+   criteria.js: a rule that no adjustment up to 2.00 pp can satisfy drops out
+   of the maximum there, so this page reports "> 2.00" rather than the number
+   the remaining rules give; and the deficit floors lift single plan years
+   above the constant adjustment, so totals are summed from the year-by-year
+   path rather than multiplied out.
    ========================================================================== */
 
 (function () {
@@ -12,12 +28,16 @@
   var data = window.DSA_DATA;
   var shocks = window.DSA_SHOCKS;
   var C = window.DSACriteria;
+  var Chart = window.DSAChart;
 
   var form = document.getElementById('dsa-form');
   var chartHost = document.getElementById('dsa-chart');
+  var rulesHost = document.getElementById('dsa-rules');
   var status = document.getElementById('dsa-status');
   if (!form || !data || !shocks) return;
 
+  /* Form values at the Commission's baseline. Strings for inputs, booleans
+     for checkboxes: the same shapes the form gives back. */
   var DEFAULTS = {
     plan: '7',
     debtInitial: data.scalars.debt_initial.toFixed(1),
@@ -31,148 +51,530 @@
     useDebtSafeguard: true,
     useDeficitBenchmark: true,
     useDeficitSafeguard: true,
-    showScenarios: false,
-    showNoAdjustment: true
+    showNoAdjustment: true,
+    showScenarios: false
   };
 
+  /* The keys that change the numbers, as opposed to what is drawn. */
+  var MODEL_KEYS = ['plan', 'debtInitial', 'rateShift', 'growthShift', 'phi', 'plausibility',
+                    'method', 'sfaMethod', 'useStochastic', 'useDebtSafeguard',
+                    'useDeficitBenchmark', 'useDeficitSafeguard'];
+  var SELECTS = ['plausibility', 'method', 'sfaMethod'];
+
+  var SLIDERS = {
+    debtInitial: { unit: '% of GDP', decimals: 1, signed: false },
+    rateShift: { unit: ' pp', decimals: 1, signed: true },
+    growthShift: { unit: ' pp', decimals: 2, signed: true },
+    phi: { unit: '', decimals: 2, signed: false }
+  };
+
+  var COLORS = {
+    line: 'var(--dsa-line, #7b2d2d)',
+    ref: 'var(--dsa-ref, #978d79)',
+    noPlan: 'var(--dsa-muted-line, #8c8474)',
+    alt1: 'var(--dsa-alt1, #3f6b7d)',
+    alt2: 'var(--dsa-alt2, #8a6d1f)',
+    alt3: 'var(--dsa-alt3, #5a5a8a)',
+    text: 'var(--ink-muted, #5b5449)'
+  };
+
+  var SCENARIO_NAMES = {
+    1: 'DSA baseline scenario', 2: 'DSA lower-SPB scenario',
+    3: 'DSA adverse r–g scenario', 4: 'DSA financial-stress scenario'
+  };
+
+  /* ---- form access ------------------------------------------------------- */
+
+  function control(name) { return form.elements[name]; }
+
   function val(name) {
-    var node = form.elements[name];
+    var node = control(name);
     if (!node) return null;
     if (node.type === 'checkbox') return node.checked;
-    if (node.length && !node.value && node[0] && node[0].type === 'radio') {
+    if (node.length && node[0] && node[0].type === 'radio') {
       for (var i = 0; i < node.length; i++) if (node[i].checked) return node[i].value;
       return null;
     }
     return node.value;
   }
 
-  function readParams() {
+  function setVal(name, value) {
+    var node = control(name);
+    if (!node) return;
+    if (node.type === 'checkbox') { node.checked = !!value; return; }
+    if (node.length && node[0] && node[0].type === 'radio') {
+      for (var i = 0; i < node.length; i++) node[i].checked = (node[i].value === String(value));
+      return;
+    }
+    node.value = value;
+  }
+
+  function applyParams(obj) {
+    Object.keys(DEFAULTS).forEach(function (k) {
+      if (obj.hasOwnProperty(k)) setVal(k, obj[k]);
+    });
+  }
+
+  /* Presets touch only the model, never the chart-only options. */
+  function applyModel(obj) {
+    MODEL_KEYS.forEach(function (k) { if (obj.hasOwnProperty(k)) setVal(k, obj[k]); });
+  }
+
+  function formState() {
+    var s = {};
+    Object.keys(DEFAULTS).forEach(function (k) { s[k] = val(k); });
+    return s;
+  }
+
+  function toParams(state) {
     return {
-      plan: parseInt(val('plan'), 10),
-      debtInitial: parseFloat(val('debtInitial')),
-      rateShift: parseFloat(val('rateShift')),
-      growthShift: parseFloat(val('growthShift')),
-      phi: parseFloat(val('phi')),
-      plausibility: parseInt(val('plausibility'), 10),
-      method: val('method'),
-      sfaMethod: parseInt(val('sfaMethod'), 10),
-      useStochastic: val('useStochastic'),
-      useDebtSafeguard: val('useDebtSafeguard'),
-      useDeficitBenchmark: val('useDeficitBenchmark'),
-      useDeficitSafeguard: val('useDeficitSafeguard')
+      plan: parseInt(state.plan, 10),
+      debtInitial: parseFloat(state.debtInitial),
+      rateShift: parseFloat(state.rateShift),
+      growthShift: parseFloat(state.growthShift),
+      phi: parseFloat(state.phi),
+      plausibility: parseInt(state.plausibility, 10),
+      method: state.method,
+      sfaMethod: parseInt(state.sfaMethod, 10),
+      useStochastic: !!state.useStochastic,
+      useDebtSafeguard: !!state.useDebtSafeguard,
+      useDeficitBenchmark: !!state.useDeficitBenchmark,
+      useDeficitSafeguard: !!state.useDeficitSafeguard
     };
   }
 
-  /* Live value labels next to each slider. */
-  function syncOutputs(params) {
-    setText('out-debtInitial', params.debtInitial.toFixed(1) + '% of GDP');
-    setText('out-rateShift', signed(params.rateShift) + ' pp');
-    setText('out-growthShift', signed(params.growthShift) + ' pp');
-    setText('out-phi', params.phi.toFixed(2));
+  /* Compare as model parameters, so "100" and "100.0" are the same debt. */
+  function sameModel(a, b) {
+    var pa = toParams(a), pb = toParams(b);
+    return MODEL_KEYS.every(function (k) {
+      return typeof pa[k] === 'number' ? Math.abs(pa[k] - pb[k]) < 1e-9 : pa[k] === pb[k];
+    });
   }
 
-  function signed(v) { return (v > 0 ? '+' : '') + v.toFixed(2).replace(/\.00$/, '.0'); }
+  /* ---- formatting ---------------------------------------------------------- */
 
-  function setText(id, text) {
+  function signed(v, decimals) {
+    var d = decimals === undefined ? 2 : decimals;
+    var s = Math.abs(v).toFixed(d);
+    if (Math.abs(v) < Math.pow(10, -d) / 2) return '0' + (d ? '.' + s.split('.')[1] : '');
+    return (v > 0 ? '+' : '−') + s;
+  }
+
+  function sliderText(name, value) {
+    var f = SLIDERS[name];
+    var v = parseFloat(value);
+    var num = f.signed ? signed(v, f.decimals).replace(/(\.\d)0$/, '$1') : v.toFixed(f.decimals);
+    return num + f.unit;
+  }
+
+  function setText(id, content) {
     var node = document.getElementById(id);
-    if (node) node.textContent = text;
+    if (node) node.textContent = content;
   }
 
-  /* ---- rendering ------------------------------------------------------- */
+  function setHidden(id, hidden) {
+    var node = document.getElementById(id);
+    if (node) node.hidden = !!hidden;
+  }
 
-  function render() {
-    var params = readParams();
-    syncOutputs(params);
+  function sum(arr) { return arr.reduce(function (s, v) { return s + v; }, 0); }
 
-    var t0 = performance.now();
+  function joinNames(list) {
+    if (list.length <= 1) return list.join('');
+    return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
+  }
+
+  /* Name the controls that differ from the baseline: "rates +1.0 pp, 4-year plan". */
+  function describe(state) {
+    var parts = [];
+    if (state.plan !== DEFAULTS.plan) parts.push(state.plan + '-year plan');
+    if (parseFloat(state.debtInitial) !== parseFloat(DEFAULTS.debtInitial)) parts.push('debt ' + parseFloat(state.debtInitial).toFixed(0) + '%');
+    if (parseFloat(state.rateShift) !== 0) parts.push('rates ' + sliderText('rateShift', state.rateShift));
+    if (parseFloat(state.growthShift) !== 0) parts.push('growth ' + sliderText('growthShift', state.growthShift));
+    if (parseFloat(state.phi) !== parseFloat(DEFAULTS.phi)) parts.push('multiplier ' + parseFloat(state.phi).toFixed(2));
+    var off = [];
+    if (!state.useStochastic) off.push('stochastic test');
+    if (!state.useDebtSafeguard) off.push('debt safeguard');
+    if (!state.useDeficitBenchmark) off.push('deficit benchmark');
+    if (!state.useDeficitSafeguard) off.push('resilience safeguard');
+    if (off.length === 3 && state.useStochastic) parts.push('safeguards off');
+    else if (off.length) parts.push(off.join(', ') + ' off');
+    if (state.plausibility !== DEFAULTS.plausibility) parts.push(state.plausibility * 10 + '% of paths');
+    if (state.method !== DEFAULTS.method) parts.push('bootstrap shocks');
+    if (state.sfaMethod !== DEFAULTS.sfaMethod) parts.push('zero SFA');
+    return parts.length ? parts.join(', ') : 'baseline';
+  }
+
+  /* ---- reading a result ---------------------------------------------------- */
+
+  /* Rules that are switched on but that no adjustment in the search range
+     satisfies. criteria.js drops these from its maximum, so the page has to
+     say so instead of reporting the remaining rules' number as required. */
+  function unmetRules(r, params) {
+    if (!r || r.failed) return [];
+    var u = [];
+    [4, 3, 2, 1].forEach(function (s) { if (r.deterministic[s].a === null) u.push(SCENARIO_NAMES[s]); });
+    if (params.useStochastic && r.stochastic.a === null) u.push('DSA stochastic test');
+    if (params.useDebtSafeguard && r.debtSafeguard.applies && r.debtSafeguard.a === null) u.push('debt sustainability safeguard');
+    return u;
+  }
+
+  /* Which criterion set the number, in plain words; ties are named together. */
+  function bindingParts(r, params) {
+    if (r.bindingLabel === C.BINDING[0]) {
+      var best = 0;
+      [1, 2, 3, 4].forEach(function (s) { best = Math.max(best, r.deterministic[s].index); });
+      var tied = [1, 2, 3, 4].filter(function (s) { return r.deterministic[s].index === best; });
+      return {
+        key: 'det' + tied[0],
+        keys: tied.map(function (s) { return 'det' + s; }),
+        text: tied.length === 1 ? SCENARIO_NAMES[tied[0]]
+          : joinNames(tied.map(function (s) { return SCENARIO_NAMES[s]; })) + ' (tie)'
+      };
+    }
+    if (r.bindingLabel === C.BINDING[0.5]) return { key: 'stoch', keys: ['stoch'], text: 'DSA stochastic test (' + params.plausibility * 10 + '% of paths)' };
+    if (r.bindingLabel === C.BINDING[1]) return { key: 'safeguard', keys: ['safeguard'], text: 'debt sustainability safeguard' };
+    return { key: 'other', keys: [], text: r.bindingLabel };
+  }
+
+  /* Years in which a given rule label set the year-by-year path. */
+  function yearsWith(r, label) {
+    var ys = [];
+    r.bindingLabels.forEach(function (l, i) { if (l === label) ys.push(r.planYears[i]); });
+    if (!ys.length) return null;
+    return 'in ' + ys[0] + (ys.length > 1 ? '–' + String(ys[ys.length - 1]).slice(2) : '');
+  }
+
+  function isLifted(r) {
+    return r.finalPath.some(function (v) { return v > r.adjustment + 1e-9; });
+  }
+
+  function ruleRows(r, params, ref, unmet) {
+    var det = { 4: 'DSA: financial stress', 3: 'DSA: adverse r–g', 2: 'DSA: lower SPB', 1: 'DSA: baseline' };
+    var short = { 4: 'Fin. stress', 3: 'Adverse r–g', 2: 'Lower SPB', 1: 'Baseline' };
+    var rows = [];
+    var refR = ref && ref.r && !ref.r.failed ? ref.r : null;
+    var lifted = isLifted(r);
+    /* A bar binds when it reaches the headline value; with an unmet rule the
+       headline is "> 2.00" and nothing is tagged. */
+    var top = function (a) { return !unmet.length && a !== null && Math.abs(a - r.adjustment) < 1e-9; };
+    var bindNote = function (isBinding) {
+      return isBinding && lifted ? yearsWith(r, r.bindingLabel) : null;
+    };
+
+    [4, 3, 2, 1].forEach(function (s) {
+      var d = r.deterministic[s];
+      var binding = top(d.a) && r.bindingLabel === C.BINDING[0];
+      rows.push({
+        label: det[s], short: short[s], value: d.a,
+        state: d.a === null ? 'unmet' : (binding ? 'binding' : 'on'),
+        note: bindNote(binding),
+        base: refR ? refR.deterministic[s].a : null
+      });
+    });
+    var stochBinding = top(r.stochastic.a) && r.bindingLabel === C.BINDING[0.5];
+    rows.push({
+      label: 'DSA: stochastic (' + params.plausibility * 10 + '%)', short: 'Stochastic',
+      value: r.stochastic.a,
+      state: !params.useStochastic ? 'off' : (r.stochastic.a === null ? 'unmet' : (stochBinding ? 'binding' : 'on')),
+      note: bindNote(stochBinding),
+      base: refR ? refR.stochastic.a : null
+    });
+    var sg = r.debtSafeguard;
+    var sgBinding = top(sg.a) && r.bindingLabel === C.BINDING[1];
+    rows.push({
+      label: 'Debt safeguard', short: 'Debt safeguard', value: sg.a,
+      state: !params.useDebtSafeguard ? 'off' : !sg.applies ? 'na' : (sg.a === null ? 'unmet' : (sgBinding ? 'binding' : 'on')),
+      note: !params.useDebtSafeguard ? 'off' : !sg.applies ? 'not needed below 60%' : bindNote(sgBinding),
+      base: refR && refR.debtSafeguard ? refR.debtSafeguard.a : null
+    });
+    var benchYears = yearsWith(r, C.BINDING[2]);
+    rows.push({
+      label: 'Deficit benchmark (floor)', short: 'Deficit floor', value: 0.5,
+      state: !params.useDeficitBenchmark ? 'off' : (benchYears ? 'floor-binding' : 'floor'),
+      note: benchYears
+    });
+    var resil = params.plan === 7 ? 0.25 : 0.4;
+    var resilYears = yearsWith(r, C.BINDING[3]);
+    rows.push({
+      label: 'Resilience safeguard (floor)', short: 'Resilience floor', value: resil,
+      state: !params.useDeficitSafeguard ? 'off' : (resilYears ? 'floor-binding' : 'floor'),
+      note: resilYears
+    });
+    return rows;
+  }
+
+  /* Text alternatives for the two charts. */
+  function writeLegend(series, years) {
+    var legend = document.getElementById('dsa-legend');
+    if (!legend) return;
+    legend.innerHTML = series.map(function (s) {
+      var lastIdx = -1;
+      for (var j = Math.min(s.values.length, years.length) - 1; j >= 0; j--) {
+        if (isFinite(s.values[j]) && s.values[j] !== null) { lastIdx = j; break; }
+      }
+      return '<li>' + s.name + (lastIdx >= 0 ? ': ' + s.values[lastIdx].toFixed(1) + '% of GDP in ' + years[lastIdx] : '') + '</li>';
+    }).join('');
+  }
+
+  function writeRulesText(rows) {
+    var node = document.getElementById('dsa-rules-text');
+    if (!node) return;
+    node.innerHTML = rows.map(function (row) {
+      var s = row.label + ': ';
+      if (row.state === 'off' || row.state === 'na') s += row.note || 'off';
+      else if (row.state === 'unmet') s += 'more than 2.00 pp a year';
+      else {
+        s += row.value.toFixed(2) + ' pp a year';
+        if (row.state === 'binding' || row.state === 'floor-binding') s += ', binding' + (row.note ? ' ' + row.note : '');
+        if (row.state === 'floor' && !row.note) s += ' (floor, not reached)';
+      }
+      return '<li>' + s + '</li>';
+    }).join('');
+  }
+
+  /* ---- state ---------------------------------------------------------------- */
+
+  var BASE = { state: Object.assign({}, DEFAULTS) };
+  BASE.params = toParams(BASE.state);
+  BASE.r = C.solve(data, shocks, BASE.params);
+
+  var pinned = null;          // {state, params, r, label}
+  var lastStatus = '';
+
+  /* ---- rendering ------------------------------------------------------------ */
+
+  function markChanged(state) {
+    Object.keys(SLIDERS).forEach(function (name) {
+      setText('out-' + name, sliderText(name, state[name]));
+      var wrap = control(name).closest('.dsa-control');
+      if (wrap) wrap.classList.toggle('is-changed', parseFloat(state[name]) !== parseFloat(DEFAULTS[name]));
+    });
+    var planWrap = document.getElementById('plan-control');
+    if (planWrap) planWrap.classList.toggle('is-changed', state.plan !== DEFAULTS.plan);
+    var anySelect = false;
+    SELECTS.forEach(function (name) {
+      var changed = String(state[name]) !== String(DEFAULTS[name]);
+      anySelect = anySelect || changed;
+      var wrap = control(name).closest('.dsa-control');
+      if (wrap) wrap.classList.toggle('is-changed', changed);
+    });
+    var adv = form.querySelector ? form.querySelector('.dsa-advanced') : null;
+    if (adv) adv.classList.toggle('is-changed', anySelect ||
+      state.showNoAdjustment !== DEFAULTS.showNoAdjustment || state.showScenarios !== DEFAULTS.showScenarios);
+
+    var chips = document.querySelectorAll('#dsa-presets button[data-set]');
+    Array.prototype.forEach.call(chips, function (chip) {
+      var target = Object.assign({}, DEFAULTS, JSON.parse(chip.getAttribute('data-set')));
+      chip.setAttribute('aria-pressed', sameModel(target, state) ? 'true' : 'false');
+    });
+  }
+
+  function setDelta(text, neutral) {
+    var node = document.getElementById('result-delta');
+    if (!node) return;
+    node.hidden = false;
+    node.textContent = text;
+    node.classList.toggle('is-neutral', !!neutral);
+  }
+
+  function render(announce) {
+    var state = formState();
+    var params = toParams(state);
+    var narrow = chartHost.clientWidth > 0 && chartHost.clientWidth < 480;
+    markChanged(state);
+
     var r;
     try {
       r = C.solve(data, shocks, params);
     } catch (err) {
-      status.textContent = 'The projection failed: ' + err.message;
-      return;
-    }
-
-    if (r.failed) {
-      setText('result-adjustment', '—');
-      setText('result-binding', r.message);
-      status.textContent = r.message;
+      lastStatus = 'The projection failed: ' + err.message;
+      status.textContent = lastStatus;
+      setText('result-figure', '—');
+      setText('result-binding', 'projection unavailable; change a setting or reset to try again');
+      ['result-delta', 'result-was', 'result-floors', 'dsa-refline', 'dsa-rules-panel', 'dsa-unmet'].forEach(function (id) { setHidden(id, true); });
+      ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
+      chartHost.__dsaSpec = null;
       chartHost.innerHTML = '';
+      rulesHost.__dsaSpec = null;
+      rulesHost.innerHTML = '';
+      writeLegend([], []);
+      writeRulesText([]);
       document.getElementById('dsa-table-body').innerHTML = '';
+      setText('out-rg', '');
+      padForStage();
       return;
     }
 
-    var planFirst = r.planYears[0], planLast = r.planYears[r.planYears.length - 1];
+    /* The reference: a pinned scenario, or the baseline once anything moved. */
+    var ref = pinned || BASE;
+    var refName = pinned ? 'pinned' : 'baseline';
+    var showGhost = !!pinned || !sameModel(state, BASE.state);
+    var refR = ref.r;
+    var refOk = showGhost && !refR.failed;
 
-    /* Headline numbers. */
-    setText('result-adjustment', r.adjustment.toFixed(2));
-    setText('result-adjustment-unit',
-      'pp of GDP per year, ' + params.plan + ' years (' + planFirst + '–' + planLast + ')');
-    setText('result-binding', r.bindingLabel);
-    setText('result-spb', r.spbStar.toFixed(2) + '% of GDP');
-    setText('result-debt-end', r.debtEnd.toFixed(1) + '% of GDP in ' + planLast);
-    setText('result-debt-final', r.debtFinal.toFixed(1) + '% of GDP in ' + r.years[r.years.length - 1]);
-    setText('result-total', (r.adjustment * params.plan).toFixed(2) + ' pp in total');
+    var pinBtn = document.getElementById('dsa-pin');
+    if (pinBtn) {
+      pinBtn.textContent = pinned ? 'Unpin reference' : 'Pin as reference';
+      pinBtn.setAttribute('aria-pressed', pinned ? 'true' : 'false');
+    }
+    setHidden('dsa-refline', false);
+    var refline = document.getElementById('dsa-refline');
+    if (refline) refline.classList.toggle('is-off', !refOk);
+    setText('dsa-ref-name', refOk
+      ? (pinned ? 'Grey line: pinned scenario (' + pinned.label + ')' : 'Grey line: baseline, the Commission’s assumptions')
+      : 'A grey reference line appears when a setting changes.');
 
-    /* Which criteria were switched on, and what each one asked for. */
-    var reqBody = document.getElementById('dsa-requirements');
-    if (reqBody) {
-      var rows = [];
-      [4, 3, 2, 1].forEach(function (s) {
-        var names = { 1: 'DSA baseline (with the 3% deficit rule)', 2: 'DSA lower SPB',
-                      3: 'DSA adverse r–g', 4: 'DSA financial stress' };
-        var d = r.deterministic[s];
-        rows.push([names[s], d.a === null ? 'not met below 2.00' : d.a.toFixed(2)]);
+    /* ---- failed state: keep drawing ------------------------------------ */
+    if (r.failed) {
+      var inputs = r.inputs;
+      var fYears = [];
+      for (var t = 1; t <= inputs.totalPeriods; t++) fYears.push(inputs.baseYear + t - 1);
+      var pf = fYears.slice(inputs.adjustmentStart - 1, inputs.adjustmentEnd);
+      setText('result-figure', '> 2.00');
+      setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + pf[0] + '–' + pf[pf.length - 1]);
+      setHidden('result-delta', true);
+      setText('result-binding', 'no adjustment up to 2.00 pp a year satisfies the rules');
+      setHidden('result-was', true);
+      setHidden('result-floors', true);
+      ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
+      var two = C.project(inputs, 1, 2, null).debt.slice(1);
+      var none = C.project(inputs, 1, 0, null).debt.slice(1);
+      var fSeries = [];
+      if (refOk) fSeries.push({ name: refName, values: refR.paths[1].debt.slice(1, fYears.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
+      fSeries.push({ name: 'no consolidation', values: none, color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', label: true });
+      fSeries.push({ name: 'even 2.00 a year', values: two, color: COLORS.line, width: 2.4, label: true });
+      Chart.draw(chartHost, {
+        years: fYears, series: fSeries, bands: [],
+        shade: { from: pf[0], to: pf[pf.length - 1], label: params.plan + '-YEAR PLAN' },
+        thresholds: [{ value: 60, label: '60%' }, { value: 90, label: '90%' }],
+        yLabel: 'debt, % of GDP', message: 'Still rising: no adjustment in range works',
+        ariaLabel: 'Debt keeps rising even with 2 percentage points of adjustment a year.'
       });
-      rows.push(['DSA stochastic (' + params.plausibility * 10 + '% of paths, ' +
-                 (params.method === 'normal' ? 'normal' : 'bootstrap') + ')',
-                 params.useStochastic ? (r.stochastic.a === null ? 'not met below 2.00' : r.stochastic.a.toFixed(2)) : 'off']);
-      rows.push(['Debt sustainability safeguard' +
-                 (r.debtSafeguard.applies ? ' (' + Math.abs(r.debtSafeguard.required).toFixed(1) + ' pp a year)' : ''),
-                 !params.useDebtSafeguard ? 'off'
-                   : !r.debtSafeguard.applies ? 'does not apply below 60%'
-                   : r.debtSafeguard.a === null ? 'not met below 2.00' : r.debtSafeguard.a.toFixed(2)]);
-      reqBody.innerHTML = rows.map(function (row) {
-        return '<tr><th scope="row">' + row[0] + '</th><td>' + row[1] + '</td></tr>';
-      }).join('');
+      writeLegend(fSeries, fYears);
+      rulesHost.__dsaSpec = null;
+      rulesHost.innerHTML = '';
+      writeRulesText([]);
+      setHidden('dsa-rules-panel', true);
+      setHidden('dsa-unmet', true);
+      document.getElementById('dsa-table-body').innerHTML = '';
+      setText('out-rg', '');
+      if (announce) {
+        lastStatus = 'No adjustment up to 2 points a year satisfies the rules with these settings.';
+        status.textContent = lastStatus;
+      }
+      padForStage();
+      return;
     }
 
-    /* Year-by-year table. */
-    var body = document.getElementById('dsa-table-body');
-    body.innerHTML = r.planYears.map(function (year, i) {
+    /* ---- headline --------------------------------------------------------- */
+    var b = bindingParts(r, params);
+    var unmet = unmetRules(r, params);
+    var refUnmet = refR.failed ? [] : unmetRules(refR, ref.params);
+    var years = r.years;
+    var planFirst = r.planYears[0], planLast = r.planYears[r.planYears.length - 1];
+    var lifted = isLifted(r);
+    var total = sum(r.finalPath);
+    var p1 = r.paths[1];
+    var adjEnd = r.inputs.adjustmentEnd;
+
+    setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + planFirst + '–' + planLast);
+    if (unmet.length) {
+      setText('result-figure', '> 2.00');
+      setText('result-binding', joinNames(unmet) + ' cannot be met with up to 2.00 pp a year; ' +
+        r.adjustment.toFixed(2) + ' satisfies the other rules and is what the chart shows');
+    } else {
+      setText('result-figure', r.adjustment.toFixed(2));
+      setText('result-binding', b.text);
+    }
+
+    var comparable = refOk && !unmet.length && !refUnmet.length;
+    if (comparable) {
+      var delta = r.adjustment - refR.adjustment;
+      var flat = Math.abs(delta) < 0.005;
+      setDelta((flat ? '= same as ' : (delta > 0 ? '▲ ' : '▼ ') + signed(delta) + ' vs ') + refName, flat);
+      var refB = bindingParts(refR, ref.params);
+      var wasNode = document.getElementById('result-was');
+      if (refB.key !== b.key) {
+        wasNode.textContent = '(' + refName + ': ' + refB.text + ')';
+        wasNode.hidden = false;
+      } else {
+        wasNode.hidden = true;
+      }
+    } else if (!showGhost) {
+      setDelta('= baseline', true);
+      setHidden('result-was', true);
+    } else {
+      setHidden('result-delta', true);
+      setHidden('result-was', true);
+    }
+
+    /* The deficit floors lift single years above the constant adjustment. */
+    var floorsNode = document.getElementById('result-floors');
+    if (floorsNode) {
+      if (lifted && !unmet.length) {
+        var lifts = [];
+        [C.BINDING[2], C.BINDING[3]].forEach(function (label) {
+          var ys = yearsWith(r, label);
+          if (!ys) return;
+          var v = null;
+          r.bindingLabels.forEach(function (l, i) { if (l === label && v === null) v = r.finalPath[i]; });
+          lifts.push('the ' + label.toLowerCase() + ' lifts ' + ys.replace(/^in /, '') + ' to ' + v.toFixed(2));
+        });
+        var sentence = joinNames(lifts) + ' (year-by-year table below); the chart is drawn at ' + r.adjustment.toFixed(2) + '.';
+        floorsNode.textContent = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+        floorsNode.hidden = false;
+      } else {
+        floorsNode.hidden = true;
+      }
+    }
+
+    if (unmet.length) {
+      setText('stat-total', '—');
+      setText('stat-spb', '—');
+    } else {
+      setText('stat-total', total.toFixed(1) + ' pp');
+      /* The SPB path is linear in the adjustment, so the floored total adds exactly. */
+      setText('stat-spb', (r.inputs.spb[r.inputs.adjustmentStart - 1] + total).toFixed(1) + '%');
+    }
+    setText('stat-debt-end', r.debtEnd.toFixed(1) + '%');
+    setText('stat-debt-final', r.debtFinal.toFixed(1) + '%');
+    setText('stat-debt-end-year', String(planLast));
+    setText('stat-debt-final-year', String(years[years.length - 1]));
+
+    /* r - g at the end of the plan: the snowball in one number. */
+    var rg = p1.iir[adjEnd] - 100 * p1.g[adjEnd];
+    setText('out-rg', 'r − g at the end of the plan: ' + signed(rg, 1) + ' pp');
+
+    /* ---- year table (collapsed) ------------------------------------------ */
+    document.getElementById('dsa-table-body').innerHTML = r.planYears.map(function (year, i) {
+      var refDebt = refOk ? refR.paths[1].debt[refR.years.indexOf(year) + 1] : null;
       return '<tr><th scope="row">' + year + '</th>' +
              '<td>' + r.finalPath[i].toFixed(2) + '</td>' +
              '<td>' + r.netExpenditure[i].toFixed(2) + '</td>' +
+             '<td>' + p1.debt[r.inputs.adjustmentStart + i].toFixed(1) +
+               (isFinite(refDebt) && refDebt !== null && refDebt !== undefined ? ' <span class="dsa-table-ref">(' + refName + ' ' + refDebt.toFixed(1) + ')</span>' : '') + '</td>' +
              '<td>' + r.bindingLabels[i] + '</td></tr>';
     }).join('');
 
-    /* Chart. */
-    var years = r.years;
-    var series = [{
-      name: 'With the plan',
-      values: r.paths[1].debt.slice(1),
-      color: 'var(--dsa-line, #7b2d2d)',
-      width: 2.4
-    }];
-
-    if (val('showNoAdjustment')) {
-      series.push({
-        name: 'No consolidation',
-        values: r.noAdjustment.debt.slice(1),
-        color: 'var(--dsa-muted-line, #8c8474)',
-        dash: '5 4'
-      });
+    /* ---- debt chart --------------------------------------------------------- */
+    var series = [];
+    if (refOk) {
+      series.push({ name: refName, values: refR.paths[1].debt.slice(1, years.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
     }
-
-    if (val('showScenarios')) {
-      series.push({ name: 'Lower SPB', values: r.paths[2].debt.slice(1), color: 'var(--dsa-alt1, #3f6b7d)', width: 1.4 });
-      series.push({ name: 'Adverse r–g', values: r.paths[3].debt.slice(1), color: 'var(--dsa-alt2, #8a6d1f)', width: 1.4 });
-      series.push({ name: 'Financial stress', values: r.paths[4].debt.slice(1), color: 'var(--dsa-alt3, #5a5a8a)', width: 1.4 });
+    if (state.showNoAdjustment) {
+      series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
     }
+    if (state.showScenarios) {
+      series.push({ name: narrow ? 'low SPB' : 'lower SPB', values: r.paths[2].debt.slice(1), color: COLORS.alt1, width: 1.3, label: true });
+      series.push({ name: narrow ? 'adv. r–g' : 'adverse r–g', values: r.paths[3].debt.slice(1), color: COLORS.alt2, width: 1.3, label: true });
+      series.push({ name: narrow ? 'stress' : 'financial stress', values: r.paths[4].debt.slice(1), color: COLORS.alt3, width: 1.3, label: true });
+    }
+    series.push({ name: narrow ? 'with plan' : 'with the plan', values: p1.debt.slice(1), color: COLORS.line, width: 2.4, label: true });
 
     var bands = [];
+    var fanLastIdx = -1;
     if (r.fan) {
-      /* Pad the simulated years out to the full time axis. */
       var padTo = function (arr) {
         var out = new Array(years.length).fill(null);
         for (var i = 0; i < arr.length && i < out.length; i++) out[i] = arr[i];
@@ -184,65 +586,186 @@
         { lo: padTo(r.fan.p30), hi: padTo(r.fan.p70), opacity: 0.16 },
         { lo: padTo(r.fan.p40), hi: padTo(r.fan.p60), opacity: 0.16 }
       ];
+      fanLastIdx = r.fan.years.length - 1;
     }
 
-    window.DSAChart.draw(chartHost, {
-      years: years,
-      series: series,
-      bands: bands,
-      shade: { from: planFirst, to: planLast, label: 'adjustment plan' },
+    var thresholds = [
+      { value: 60, label: params.useDebtSafeguard && !narrow ? '60% · safeguard 0.5 pp a year' : '60%' },
+      { value: 90, label: params.useDebtSafeguard && !narrow ? '90% · safeguard 1 pp a year' : '90%' }
+    ];
+
+    var guides = [];
+    var sg = r.debtSafeguard;
+    if (params.useDebtSafeguard && sg.applies) {
+      var startVal = p1.debt[r.inputs.adjustmentStart - 1];
+      guides.push({
+        fromYear: planFirst - 1, fromValue: startVal,
+        toYear: planLast, toValue: startVal + sg.required * params.plan,
+        label: narrow ? null : 'safeguard: ' + Math.abs(sg.required).toFixed(1) + ' pp a year on average',
+        emphasis: b.key === 'safeguard'
+      });
+    }
+
+    var links = [];
+    if (r.fan && b.key === 'stoch' && !unmet.length) {
+      var pct = 'p' + params.plausibility * 10;
+      links.push({
+        fromYear: planLast, fromValue: r.debtEnd,
+        toYear: r.fan.years[fanLastIdx], toValue: r.fan[pct][fanLastIdx],
+        text: narrow ? params.plausibility * 10 + 'th pct.' : params.plausibility * 10 + 'th pct., 5 yrs on'
+      });
+    }
+
+    var brackets = [];
+    if (refOk) {
+      var refAtPlanLast = refR.paths[1].debt[refR.years.indexOf(planLast) + 1];
+      if (isFinite(refAtPlanLast) && Math.abs(r.debtEnd - refAtPlanLast) >= 0.5) {
+        brackets.push({
+          year: planLast, from: refAtPlanLast, to: r.debtEnd,
+          text: narrow ? signed(r.debtEnd - refAtPlanLast, 1) + ' pp'
+                       : r.debtEnd.toFixed(1) + '%, ' + signed(r.debtEnd - refAtPlanLast, 1) + ' pp vs ' + refName
+        });
+      }
+    }
+
+    var points = [{ year: planLast, value: r.debtEnd, text: narrow ? null : r.debtEnd.toFixed(1) + '% at end of plan' }];
+
+    var notes = [];
+    if (r.fan && !narrow) {
+      notes.push({ year: r.fan.years[fanLastIdx], value: r.fan.p10[fanLastIdx], text: 'test ends ' + r.fan.years[fanLastIdx], anchor: 'end', below: true });
+    }
+
+    Chart.draw(chartHost, {
+      years: years, series: series, bands: bands,
+      shade: { from: planFirst, to: planLast, label: params.plan + '-YEAR PLAN ' + planFirst + '–' + String(planLast).slice(2) },
+      thresholds: thresholds, guides: guides, links: links, points: points, brackets: brackets, notes: notes,
+      include: BASE.r.paths[1].debt.slice(1, years.length + 1),
       yLabel: 'debt, % of GDP',
-      ariaLabel: 'Projected general government debt as a percentage of GDP, ' +
-                 years[0] + ' to ' + years[years.length - 1] +
-                 ', under an adjustment of ' + r.adjustment.toFixed(2) +
-                 ' percentage points of GDP a year.',
-      valueFormat: function (v) { return v.toFixed(1); }
+      ariaLabel: 'Projected government debt as a percentage of GDP, ' + years[0] + ' to ' + years[years.length - 1] +
+                 ', with an adjustment of ' + r.adjustment.toFixed(2) + ' percentage points of GDP a year. ' +
+                 'Debt is ' + r.debtEnd.toFixed(1) + ' percent at the end of the plan and ' + r.debtFinal.toFixed(1) + ' percent in ' + years[years.length - 1] + '.'
     });
+    writeLegend(series, years);
 
-    /* Legend, built from the same series list. */
-    var legend = document.getElementById('dsa-legend');
-    legend.innerHTML = series.map(function (s) {
-      return '<li><span class="dsa-key" style="background:' + s.color + '"></span>' + s.name + '</li>';
-    }).join('') + (r.fan
-      ? '<li><span class="dsa-key dsa-key-band"></span>simulated range (10th–90th percentile)</li>'
-      : '');
+    /* ---- rule bars ---------------------------------------------------------- */
+    var rows = ruleRows(r, params, refOk ? ref : null, unmet);
+    setHidden('dsa-rules-panel', false);
+    Chart.drawBars(rulesHost, {
+      rows: rows, max: 2,
+      marker: unmet.length ? null : r.adjustment,
+      markerLabel: lifted ? r.adjustment.toFixed(2) + ' before floors' : 'required ' + r.adjustment.toFixed(2),
+      unit: 'pp of GDP a year',
+      ariaLabel: 'What each rule would require on its own. ' + (unmet.length
+        ? joinNames(unmet) + ' cannot be met with up to 2 points a year.'
+        : 'The binding rule is ' + b.text + ' at ' + r.adjustment.toFixed(2) + ' points a year.')
+    });
+    writeRulesText(rows);
+    var unmetNode = document.getElementById('dsa-unmet');
+    if (unmetNode) {
+      unmetNode.hidden = !unmet.length;
+      unmetNode.textContent = unmet.length
+        ? 'No adjustment up to 2.00 pp a year meets the ' + joinNames(unmet) + '. As in the source tool it drops out of the search, so the chart shows the smallest adjustment the remaining rules accept.'
+        : '';
+    }
 
-    status.textContent = 'Recomputed in ' + Math.round(performance.now() - t0) + ' ms' +
-      (r.fan ? ' using ' + shocks.meta.n_paths + ' simulated paths.' : '.');
+    /* ---- one sentence for assistive tech, only on committed changes ------ */
+    if (announce) {
+      var sentence = (unmet.length
+        ? 'Required adjustment above 2 points a year: ' + joinNames(unmet) + ' cannot be met. '
+        : 'Required adjustment ' + r.adjustment.toFixed(2) + ' points a year' +
+          (comparable ? ', ' + signed(r.adjustment - refR.adjustment) + ' versus ' + refName : '') +
+          '. Binding rule: ' + b.text + '. ') +
+        'Debt ' + r.debtFinal.toFixed(1) + ' percent in ' + years[years.length - 1] + '.';
+      if (sentence !== lastStatus) { status.textContent = sentence; lastStatus = sentence; }
+    }
+    padForStage();
   }
 
-  /* ---- wiring ---------------------------------------------------------- */
+  /* On narrow screens the stage is sticky, so a focused control could scroll
+     underneath it; scroll-padding keeps focus targets below it. */
+  var stage = document.querySelector ? document.querySelector('.dsa-stage') : null;
+  function padForStage() {
+    if (!stage || typeof getComputedStyle !== 'function' || !document.documentElement) return;
+    var stuck = getComputedStyle(stage).position === 'sticky';
+    document.documentElement.style.scrollPaddingTop = stuck ? (stage.offsetHeight + 8) + 'px' : '';
+  }
 
-  var queued = false;
-  function schedule() {
+  /* ---- wiring ------------------------------------------------------------------ */
+
+  /* One render per frame; the announce flag is kept if any call in the frame
+     asked for it, since browsers deliver input and change together. */
+  var queued = false, pendingAnnounce = false;
+  function schedule(announce) {
+    pendingAnnounce = pendingAnnounce || !!announce;
     if (queued) return;
     queued = true;
-    requestAnimationFrame(function () { queued = false; render(); });
+    requestAnimationFrame(function () {
+      queued = false;
+      var a = pendingAnnounce;
+      pendingAnnounce = false;
+      render(a);
+    });
   }
 
-  form.addEventListener('input', schedule);
-  form.addEventListener('change', schedule);
+  form.addEventListener('input', function () { schedule(false); });
+  form.addEventListener('change', function () { schedule(true); });
   form.addEventListener('submit', function (e) { e.preventDefault(); });
 
   document.getElementById('dsa-reset').addEventListener('click', function () {
-    Object.keys(DEFAULTS).forEach(function (name) {
-      var node = form.elements[name];
-      if (!node) return;
-      if (node.type === 'checkbox') { node.checked = DEFAULTS[name]; return; }
-      if (node.length && node[0] && node[0].type === 'radio') {
-        for (var i = 0; i < node.length; i++) node[i].checked = (node[i].value === DEFAULTS[name]);
-        return;
-      }
-      node.value = DEFAULTS[name];
-    });
-    render();
+    applyParams(DEFAULTS);
+    render(true);
   });
 
-  /* Defaults that depend on the data file rather than the markup. */
-  form.elements.debtInitial.value = DEFAULTS.debtInitial;
-  form.elements.phi.value = DEFAULTS.phi;
+  document.getElementById('dsa-pin').addEventListener('click', function () {
+    if (pinned) {
+      pinned = null;
+    } else {
+      var state = formState();
+      var params = toParams(state);
+      pinned = { state: state, params: params, r: C.solve(data, shocks, params), label: describe(state) };
+    }
+    render(true);
+  });
+
+  var presets = document.getElementById('dsa-presets');
+  if (presets) {
+    presets.addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-set]');
+      if (!btn) return;
+      var set = JSON.parse(btn.getAttribute('data-set'));
+      var target = Object.assign({}, DEFAULTS, set);
+      /* A second tap on the active chip returns to the baseline. */
+      if (sameModel(target, formState())) target = DEFAULTS;
+      applyModel(target);
+      render(true);
+    });
+  }
+
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    window.addEventListener('resize', padForStage);
+  }
+
+  /* Baseline tick under each slider, at the default's position on the track. */
+  Object.keys(SLIDERS).forEach(function (name) {
+    var input = control(name);
+    var wrap = input.closest('.dsa-control');
+    var min = parseFloat(input.min), max = parseFloat(input.max);
+    var pct = (parseFloat(DEFAULTS[name]) - min) / (max - min);
+    if (wrap) wrap.style.setProperty('--base-pct', pct.toFixed(4));
+  });
+
+  /* Defaults that come from the data file rather than the markup. */
+  applyParams(DEFAULTS);
   setText('dsa-vintage', data.meta.vintage);
   setText('dsa-country', data.meta.country);
 
-  render();
+  render(false);
+
+  /* A small handle for tests and for driving the page from elsewhere. */
+  window.DSACalculator = {
+    apply: function (obj) { applyParams(Object.assign({}, DEFAULTS, obj)); render(true); },
+    pin: function () { document.getElementById('dsa-pin').click(); },
+    reset: function () { applyParams(DEFAULTS); render(true); },
+    render: function () { render(true); }
+  };
 }());
