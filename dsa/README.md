@@ -9,7 +9,7 @@ and no third-party code.
 dsa.html          the page: workbench (stage + controls + rule bars), notes
 dsa/model.js      debt projection      <- project_debt5_1v.m
 dsa/criteria.js   rules and safeguards <- runDsaModel5_1.m
-dsa/chart.js      hand-written SVG: draw() line chart, drawBars() rule bars
+dsa/chart.js      hand-written SVG: debt, expenditure growth and rule bars
 dsa/app.js        form handling, reference ghost, pin, presets, rendering
 dsa/data/*.js     data and shock draws, generated (see below)
 ```
@@ -25,6 +25,13 @@ the right, so a slider and the line it moves are always in view together. Below
 that width the stage comes first in the document and sticks to the top of the
 screen while the controls scroll underneath it (switched off on viewports under
 761px tall).
+
+The main result is the annual nominal net expenditure growth ceiling for each
+plan year, using `netExpenditure` after the year-specific deficit floors. The
+SPB adjustment and balance summary are expandable supporting details. A failed
+or individually unmet rule clears the expenditure path rather than presenting
+an infeasible plan as a ceiling. The sticky stage also switches off whenever it
+would occupy more than 65% of the viewport height.
 
 What makes a change visible:
 

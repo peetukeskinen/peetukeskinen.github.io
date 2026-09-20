@@ -33,6 +33,7 @@
   var form = document.getElementById('dsa-form');
   var chartHost = document.getElementById('dsa-chart');
   var rulesHost = document.getElementById('dsa-rules');
+  var expenditureHost = document.getElementById('dsa-expenditure-chart');
   var status = document.getElementById('dsa-status');
   if (!form || !data || !shocks) return;
 
@@ -378,6 +379,32 @@
     node.classList.toggle('is-neutral', !!neutral);
   }
 
+  function renderExpenditure(r, ref, refName, reason) {
+    var values = document.getElementById('dsa-expenditure-values');
+    if (reason) {
+      expenditureHost.__dsaSpec = null;
+      expenditureHost.innerHTML = '';
+      values.innerHTML = '';
+      setText('dsa-expenditure-note', reason);
+      return;
+    }
+    var reference = ref ? r.planYears.map(function (year) {
+      var i = ref.planYears.indexOf(year);
+      return i < 0 ? null : ref.netExpenditure[i];
+    }) : null;
+    Chart.drawExpenditure(expenditureHost, {
+      years: r.planYears, values: r.netExpenditure, reference: reference,
+      ariaLabel: 'Annual nominal net expenditure growth ceilings: ' + r.planYears.map(function (year, i) {
+        return year + ': ' + r.netExpenditure[i].toFixed(2) + ' percent';
+      }).join('; ') + '.'
+    });
+    values.innerHTML = r.planYears.map(function (year, i) {
+      return '<div><dt>' + year + '</dt><dd>' + r.netExpenditure[i].toFixed(2) + '%</dd></div>';
+    }).join('');
+    setText('dsa-expenditure-note', 'Includes any year-specific deficit floors.' +
+      (reference ? ' Dashed grey: ' + refName + ', overlapping plan years.' : ''));
+  }
+
   function render(announce) {
     var state = formState();
     var params = toParams(state);
@@ -388,6 +415,7 @@
     try {
       r = C.solve(data, shocks, params);
     } catch (err) {
+      renderExpenditure(null, null, null, 'Net expenditure path unavailable: the projection failed.');
       lastStatus = 'The projection failed: ' + err.message;
       status.textContent = lastStatus;
       setText('result-figure', '—');
@@ -427,6 +455,7 @@
 
     /* ---- failed state: keep drawing ------------------------------------ */
     if (r.failed) {
+      renderExpenditure(null, null, null, 'No feasible net expenditure path found within the adjustment search range.');
       var inputs = r.inputs;
       var fYears = [];
       for (var t = 1; t <= inputs.totalPeriods; t++) fYears.push(inputs.baseYear + t - 1);
@@ -471,6 +500,8 @@
     var b = bindingParts(r, params);
     var unmet = unmetRules(r, params);
     var refUnmet = refR.failed ? [] : unmetRules(refR, ref.params);
+    renderExpenditure(r, refOk && !refUnmet.length ? refR : null, refName, unmet.length
+      ? 'No feasible net expenditure path: ' + joinNames(unmet) + ' cannot be met within the adjustment search range.' : null);
     var years = r.years;
     var planFirst = r.planYears[0], planLast = r.planYears[r.planYears.length - 1];
     var lifted = isLifted(r);
@@ -482,7 +513,7 @@
     if (unmet.length) {
       setText('result-figure', '> 2.00');
       setText('result-binding', joinNames(unmet) + ' cannot be met with up to 2.00 pp a year; ' +
-        r.adjustment.toFixed(2) + ' satisfies the other rules and is what the chart shows');
+        r.adjustment.toFixed(2) + ' satisfies the other rules and is what the debt chart shows');
     } else {
       setText('result-figure', r.adjustment.toFixed(2));
       setText('result-binding', b.text);
@@ -521,7 +552,7 @@
           r.bindingLabels.forEach(function (l, i) { if (l === label && v === null) v = r.finalPath[i]; });
           lifts.push('the ' + label.toLowerCase() + ' lifts ' + ys.replace(/^in /, '') + ' to ' + v.toFixed(2));
         });
-        var sentence = joinNames(lifts) + ' (year-by-year table below); the chart is drawn at ' + r.adjustment.toFixed(2) + '.';
+        var sentence = joinNames(lifts) + ' (year-by-year table below); the debt chart is drawn at ' + r.adjustment.toFixed(2) + '.';
         floorsNode.textContent = sentence.charAt(0).toUpperCase() + sentence.slice(1);
         floorsNode.hidden = false;
       } else {
@@ -675,6 +706,7 @@
         : 'Required adjustment ' + r.adjustment.toFixed(2) + ' points a year' +
           (comparable ? ', ' + signed(r.adjustment - refR.adjustment) + ' versus ' + refName : '') +
           '. Binding rule: ' + b.text + '. ') +
+        (!unmet.length ? 'Net expenditure growth ceilings: ' + r.planYears.map(function (year, i) { return year + ', ' + r.netExpenditure[i].toFixed(2) + ' percent'; }).join('; ') + '. ' : '') +
         'Debt ' + r.debtFinal.toFixed(1) + ' percent in ' + years[years.length - 1] + '.';
       if (sentence !== lastStatus) { status.textContent = sentence; lastStatus = sentence; }
     }
@@ -686,6 +718,7 @@
   var stage = document.querySelector ? document.querySelector('.dsa-stage') : null;
   function padForStage() {
     if (!stage || typeof getComputedStyle !== 'function' || !document.documentElement) return;
+    stage.classList.toggle('is-too-tall', stage.offsetHeight > window.innerHeight * 0.65);
     var stuck = getComputedStyle(stage).position === 'sticky';
     document.documentElement.style.scrollPaddingTop = stuck ? (stage.offsetHeight + 8) + 'px' : '';
   }
@@ -743,6 +776,8 @@
 
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('resize', padForStage);
+    if (stage) stage.addEventListener('toggle', padForStage, true);
+    if (stage && typeof ResizeObserver !== 'undefined') new ResizeObserver(padForStage).observe(stage);
   }
 
   /* Baseline tick under each slider, at the default's position on the track. */

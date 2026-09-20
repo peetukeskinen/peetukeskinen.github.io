@@ -516,6 +516,48 @@
     host.appendChild(svg);
   }
 
-  global.DSAChart = { draw: draw, drawBars: drawBars };
+  /* Annual expenditure ceilings use their own percentage scale, not the
+     debt chart's thresholds or its ten-year review horizon. */
+  function drawExpenditure(host, spec) {
+    host.__dsaSpec = spec;
+    watch(host, drawExpenditure);
+    var W = hostWidth(host, 600), H = 150;
+    var left = 32, right = W - 26, top = 27, bottom = H - 25;
+    var all = spec.values.concat(spec.reference || []).filter(isNum);
+    var lo = Math.floor((Math.min.apply(null, all) - 0.25) * 2) / 2;
+    var hi = Math.ceil((Math.max.apply(null, all) + 0.25) * 2) / 2;
+    if (hi - lo < 1) hi = lo + 1;
+    function x(i) { return left + (right - left) * i / (spec.years.length - 1); }
+    function y(v) { return bottom - (bottom - top) * (v - lo) / (hi - lo); }
+    var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H,
+      role: 'img', 'aria-label': spec.ariaLabel });
+    [lo, (lo + hi) / 2, hi].forEach(function (v) {
+      svg.appendChild(el('line', { x1: left, x2: right, y1: y(v), y2: y(v), stroke: GRID }));
+      svg.appendChild(text({ x: left - 6, y: y(v) + 3, 'text-anchor': 'end' }, v.toFixed(1), 10));
+    });
+    if (lo < 0 && hi > 0) svg.appendChild(el('line', { x1: left, x2: right,
+      y1: y(0), y2: y(0), stroke: AXIS, 'stroke-dasharray': '2 3' }));
+    function path(values, color, dash) {
+      var d = '', connected = false;
+      values.forEach(function (v, i) {
+        if (!isNum(v)) { connected = false; return; }
+        d += (connected ? 'L' : 'M') + x(i) + ' ' + y(v); connected = true;
+      });
+      svg.appendChild(el('path', { d: d, fill: 'none', stroke: color,
+        'stroke-width': dash ? 1.5 : 2.2, 'stroke-dasharray': dash || null }));
+    }
+    if (spec.reference) path(spec.reference, 'var(--dsa-ref, #978d79)', '4 3');
+    path(spec.values, LINE);
+    spec.years.forEach(function (year, i) {
+      var v = spec.values[i];
+      svg.appendChild(el('circle', { cx: x(i), cy: y(v), r: 3, fill: LINE }));
+      svg.appendChild(text({ x: x(i) + (i === 0 ? 4 : 0), y: y(v) - 9, 'text-anchor': i === 0 ? 'start' : 'middle', fill: INK }, v.toFixed(2), 11, 600, true));
+      svg.appendChild(text({ x: x(i), y: H - 6, 'text-anchor': 'middle' }, String(year), 10));
+    });
+    host.innerHTML = '';
+    host.appendChild(svg);
+  }
+
+  global.DSAChart = { draw: draw, drawBars: drawBars, drawExpenditure: drawExpenditure };
 
 }(typeof self !== 'undefined' ? self : this));
