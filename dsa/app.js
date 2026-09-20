@@ -379,6 +379,9 @@
     node.classList.toggle('is-neutral', !!neutral);
   }
 
+  /* The expenditure ceilings are the operational form of the same requirement,
+     kept as a secondary block because the adjustment is the clearer number for
+     a general reader. */
   function renderExpenditure(r, ref, refName, reason) {
     var values = document.getElementById('dsa-expenditure-values');
     if (reason) {
@@ -401,8 +404,8 @@
     values.innerHTML = r.planYears.map(function (year, i) {
       return '<div><dt>' + year + '</dt><dd>' + r.netExpenditure[i].toFixed(2) + '%</dd></div>';
     }).join('');
-    setText('dsa-expenditure-note', 'Includes any year-specific deficit floors.' +
-      (reference ? ' Dashed grey: ' + refName + ', overlapping plan years.' : ''));
+    setText('dsa-expenditure-note', 'Ceilings include any year lifted by a deficit floor.' +
+      (reference ? ' The dashed grey line is the ' + refName + ', over the plan years the two share.' : ''));
   }
 
   function render(announce) {
@@ -415,7 +418,7 @@
     try {
       r = C.solve(data, shocks, params);
     } catch (err) {
-      renderExpenditure(null, null, null, 'Net expenditure path unavailable: the projection failed.');
+      renderExpenditure(null, null, null, 'No expenditure ceilings: the projection failed.');
       lastStatus = 'The projection failed: ' + err.message;
       status.textContent = lastStatus;
       setText('result-figure', '—');
@@ -455,7 +458,7 @@
 
     /* ---- failed state: keep drawing ------------------------------------ */
     if (r.failed) {
-      renderExpenditure(null, null, null, 'No feasible net expenditure path found within the adjustment search range.');
+      renderExpenditure(null, null, null, 'No expenditure ceilings: no adjustment up to 2.00 pp a year satisfies the rules.');
       var inputs = r.inputs;
       var fYears = [];
       for (var t = 1; t <= inputs.totalPeriods; t++) fYears.push(inputs.baseYear + t - 1);
@@ -501,7 +504,7 @@
     var unmet = unmetRules(r, params);
     var refUnmet = refR.failed ? [] : unmetRules(refR, ref.params);
     renderExpenditure(r, refOk && !refUnmet.length ? refR : null, refName, unmet.length
-      ? 'No feasible net expenditure path: ' + joinNames(unmet) + ' cannot be met within the adjustment search range.' : null);
+      ? 'No expenditure ceilings: ' + joinNames(unmet) + ' cannot be met with up to 2.00 pp a year.' : null);
     var years = r.years;
     var planFirst = r.planYears[0], planLast = r.planYears[r.planYears.length - 1];
     var lifted = isLifted(r);
@@ -706,7 +709,6 @@
         : 'Required adjustment ' + r.adjustment.toFixed(2) + ' points a year' +
           (comparable ? ', ' + signed(r.adjustment - refR.adjustment) + ' versus ' + refName : '') +
           '. Binding rule: ' + b.text + '. ') +
-        (!unmet.length ? 'Net expenditure growth ceilings: ' + r.planYears.map(function (year, i) { return year + ', ' + r.netExpenditure[i].toFixed(2) + ' percent'; }).join('; ') + '. ' : '') +
         'Debt ' + r.debtFinal.toFixed(1) + ' percent in ' + years[years.length - 1] + '.';
       if (sentence !== lastStatus) { status.textContent = sentence; lastStatus = sentence; }
     }

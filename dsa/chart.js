@@ -531,10 +531,13 @@
     function y(v) { return bottom - (bottom - top) * (v - lo) / (hi - lo); }
     var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, width: W, height: H,
       role: 'img', 'aria-label': spec.ariaLabel });
-    [lo, (lo + hi) / 2, hi].forEach(function (v) {
-      svg.appendChild(el('line', { x1: left, x2: right, y1: y(v), y2: y(v), stroke: GRID }));
-      svg.appendChild(text({ x: left - 6, y: y(v) + 3, 'text-anchor': 'end' }, v.toFixed(1), 10));
-    });
+    var span = hi - lo;
+    var step = span > 6 ? 2 : span > 3 ? 1 : span > 1.2 ? 0.5 : 0.25;
+    for (var tick = Math.ceil(lo / step) * step; tick <= hi + 1e-9; tick += step) {
+      svg.appendChild(el('line', { x1: left, x2: right, y1: y(tick), y2: y(tick), stroke: GRID }));
+      svg.appendChild(text({ x: left - 6, y: y(tick) + 3, 'text-anchor': 'end' },
+        (Math.abs(tick) < 1e-9 ? 0 : tick).toFixed(step < 0.5 ? 2 : 1), 10));
+    }
     if (lo < 0 && hi > 0) svg.appendChild(el('line', { x1: left, x2: right,
       y1: y(0), y2: y(0), stroke: AXIS, 'stroke-dasharray': '2 3' }));
     function path(values, color, dash) {

@@ -26,12 +26,14 @@ that width the stage comes first in the document and sticks to the top of the
 screen while the controls scroll underneath it (switched off on viewports under
 761px tall).
 
-The main result is the annual nominal net expenditure growth ceiling for each
-plan year, using `netExpenditure` after the year-specific deficit floors. The
-SPB adjustment and balance summary are expandable supporting details. A failed
-or individually unmet rule clears the expenditure path rather than presenting
-an infeasible plan as a ceiling. The sticky stage also switches off whenever it
-would occupy more than 65% of the viewport height.
+The headline is the required annual adjustment in structural primary balance
+terms, with the binding rule beside it. The net expenditure growth ceilings —
+the operational form the rules are written in, `netExpenditure` after the
+year-specific deficit floors — sit in a secondary `<details>` below the
+workbench with a short explainer, because their role is not obvious to a
+general reader. A failed or individually unmet rule clears that path rather
+than presenting an infeasible plan as a ceiling. The sticky stage switches off
+whenever it would occupy more than 65% of the viewport height.
 
 What makes a change visible:
 

@@ -1002,15 +1002,17 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 .dsa-button:hover { border-color: var(--accent); color: var(--accent); }
 .dsa-button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 
-/* The expenditure path is the operational result; SPB details are secondary. */
-.dsa-expenditure { border-left: 3px solid var(--accent); padding: 0.6rem 0.8rem; margin-bottom: 0.65rem; background: var(--bg-inset); }
-.dsa-expenditure h3 { margin: 0 0 0.25rem; font-size: 1.15rem; }
-.dsa-expenditure .dsa-binding { margin-top: 0.45rem; }
-.dsa-adjustment { margin-bottom: 0.8rem; }
-.dsa-adjustment summary { font-family: var(--sans); font-size: 0.75rem; color: var(--ink-muted); cursor: pointer; }
-.dsa-adjustment[open] summary { margin-bottom: 0.5rem; }
-.dsa-debt-title { margin-top: 0.8rem; }
+/* The stage releases its sticky position when it would crowd the controls. */
 .dsa-stage.is-too-tall { position: static; }
+
+/* Explainer inside a secondary <details>: prose measure, not a caption. */
+.dsa-explainer {
+  max-width: var(--measure);
+  font-size: 0.8125rem;
+  margin-bottom: 0.7rem;
+}
+
+#dsa-expenditure-details .dsa-chart { max-width: 34rem; }
 
 /* --- headline ------------------------------------------------------------- */
 

@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-20c">
+<link rel="stylesheet" href="css/style.css?v=2026-09-20d">
 </head>
 <body>
 
@@ -50,7 +50,7 @@
         comes out of a debt sustainability analysis rather than a single deficit
         number. This page runs that analysis for <span id="dsa-country">Finland</span>
         in your browser. Move a control and watch the debt trajectory bend, the
-        net expenditure growth ceilings change, and the binding rule switch.
+        required adjustment change, and the binding rule switch.
       </p>
 
       <p class="note">
@@ -77,28 +77,18 @@
         <!-- The stage comes first in the document so that on phones it can stick
              to the top of the screen while the controls scroll underneath it. -->
         <div class="dsa-stage">
-          <div class="dsa-expenditure" aria-labelledby="expenditure-title">
-            <h3 id="expenditure-title">Net expenditure growth path</h3>
-            <p class="dsa-hint">Annual nominal growth ceilings, %. The expenditure indicator a country follows under its fiscal plan.</p>
-            <div id="dsa-expenditure-chart" class="dsa-chart"></div>
-            <dl id="dsa-expenditure-values" class="visually-hidden" aria-label="Annual net expenditure growth ceilings"></dl>
-            <p id="dsa-expenditure-note" class="dsa-hint"></p>
-              <p class="dsa-binding">
-                Binding rule: <strong id="result-binding">—</strong>
-                <span class="dsa-was" id="result-was" hidden></span>
-              </p>
-          </div>
-          <details class="dsa-adjustment">
-            <summary>Underlying DSA adjustment and balances</summary>
           <div class="dsa-headline">
             <div class="dsa-headline-main">
-              <p class="dsa-eyebrow">Underlying annual SPB adjustment</p>
+              <p class="dsa-eyebrow">Required annual adjustment</p>
               <p class="dsa-figure" id="result-figure">—</p>
               <p class="dsa-figure-unit" id="result-unit">pp of GDP a year</p>
             </div>
             <div class="dsa-headline-side">
               <p class="dsa-delta is-neutral" id="result-delta">= baseline</p>
-
+              <p class="dsa-binding">
+                Binding rule: <strong id="result-binding">—</strong>
+                <span class="dsa-was" id="result-was" hidden></span>
+              </p>
               <p class="dsa-floors" id="result-floors" hidden></p>
             </div>
             <dl class="dsa-stats">
@@ -108,9 +98,6 @@
               <div><dt>Debt <span id="stat-debt-final-year">2041</span></dt><dd id="stat-debt-final">—</dd></div>
             </dl>
           </div>
-
-          </details>
-          <p class="dsa-eyebrow dsa-debt-title">Debt trajectory</p>
 
           <div id="dsa-chart" class="dsa-chart"></div>
           <p class="dsa-refline is-off" id="dsa-refline">
@@ -250,7 +237,7 @@
           <p class="dsa-hint" id="dsa-unmet" hidden></p>
           <p class="dsa-hint">
             Each bar is the smallest annual adjustment that rule alone would demand;
-            the underlying constant adjustment is the longest of the DSA and debt-safeguard bars. The two
+            the headline is the longest of the DSA and debt-safeguard bars. The two
             floors apply only in years when a deficit limit is breached, shown beside
             the bar; a floor is hollow while it does not apply. A hatched bar is a rule
             that no adjustment up to 2.00 pp meets. A short vertical mark shows the
@@ -259,6 +246,23 @@
         </div>
 
       </div>
+
+      <details class="dsa-numbers" id="dsa-expenditure-details">
+        <summary>Net expenditure growth — what the plan commits to</summary>
+        <p class="dsa-hint dsa-explainer">
+          A country's plan does not commit to the adjustment above directly. It
+          commits to a ceiling on how fast <strong>net primary expenditure</strong> may
+          grow — spending excluding interest, cyclical unemployment costs and
+          EU-funded items, counted after any new tax measures. The ceiling is the
+          same requirement in another currency: nominal potential growth, less the
+          adjustment scaled by how large primary expenditure is. It is what the
+          Commission monitors a plan against, which is why it is here; for reading
+          the economics, the adjustment above is the clearer number.
+        </p>
+        <div id="dsa-expenditure-chart" class="dsa-chart"></div>
+        <dl id="dsa-expenditure-values" class="visually-hidden" aria-label="Annual net expenditure growth ceilings"></dl>
+        <p id="dsa-expenditure-note" class="dsa-hint"></p>
+      </details>
 
       <details class="dsa-numbers">
         <summary>Year-by-year numbers</summary>
@@ -282,15 +286,6 @@
       <h2 id="how">How it works</h2>
 
       <p>
-        The <a href="https://www.consilium.europa.eu/en/policies/economic-governance-framework/">net
-        expenditure path is the operational indicator</a> used to monitor a country's
-        fiscal plan. The chart above shows this calculator's annual nominal growth
-        ceilings, including any deficit benchmark or resilience safeguard top-ups.
-        The structural primary balance (SPB) adjustment is an intermediate step in
-        deriving those ceilings. These illustrative results are not a Council-endorsed plan.
-      </p>
-
-      <p>
         The calculator searches, in steps of 0.01 up to 2.00 pp of GDP a year, for the
         smallest constant annual improvement in the structural primary balance that
         passes the DSA tests and the debt safeguard. The deficit benchmark and the
@@ -309,7 +304,7 @@
         baseline assumptions, or a scenario you have pinned — so that any change is
         seen against something that stays still. The bars below the chart show what
         each rule would require on its own; the longest of the DSA and debt-safeguard
-        bars is the rule that sets the underlying constant adjustment, and the two floor bars only top up
+        bars is the rule that sets the headline, and the two floor bars only top up
         the years shown beside them.
       </p>
 
@@ -347,8 +342,12 @@
 
       <p>
         The requirement is then expressed the way the rules are actually written: as a
-        ceiling on the growth of net primary expenditure, which is what a country's plan
-        commits to. The year-by-year numbers are in the table above.
+        <a href="https://www.consilium.europa.eu/en/policies/economic-governance-framework/">ceiling
+        on the growth of net primary expenditure</a>, which is what a country's plan
+        commits to and what the Commission monitors. That path, including any year
+        lifted by a deficit floor, is under “Net expenditure growth” above, with the
+        year-by-year numbers in the table below it. These are illustrative results,
+        not a Council-endorsed plan.
       </p>
     </section>
 
@@ -413,7 +412,7 @@
 <script src="dsa/data/shocks.js"></script>
 <script src="dsa/model.js"></script>
 <script src="dsa/criteria.js"></script>
-<script src="dsa/chart.js?v=2026-09-20c"></script>
-<script src="dsa/app.js?v=2026-09-20c"></script>
+<script src="dsa/chart.js?v=2026-09-20d"></script>
+<script src="dsa/app.js?v=2026-09-20d"></script>
 </body>
 </html>
