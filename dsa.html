@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-20h">
+<link rel="stylesheet" href="css/style.css?v=2026-09-20i">
 </head>
 <body>
 
@@ -278,71 +278,102 @@
 
         <h3>What the rules ask for</h3>
         <p>
-          EU countries agree a fiscal plan with the Commission. The plan caps how fast
-          public spending may grow, and the cap has to be tight enough to put debt on a
-          falling path.
+          EU countries agree a fiscal plan with the Commission that sets a limit on how
+          quickly public spending can grow. The limit has to be tight enough to put
+          public debt on a declining path.
         </p>
         <p>
-          How tight is worked out by projecting the debt ratio forward under several
-          scenarios. The budget has to improve by enough each year that debt falls and
-          keeps falling. That yearly improvement is the number at the top of the page.
+          The required adjustment is worked out by projecting the debt ratio under
+          several different scenarios. The budget position has to improve enough each
+          year for debt to start falling and to keep falling afterwards. That annual
+          adjustment is the number shown at the top of the page.
         </p>
         <p>
-          Several rules apply at once and the strictest one sets the requirement. The
-          bars under the chart show what each rule asks for on its own. Two of the rules
-          are checked every year and can push a single year higher than the rest.
+          Several requirements apply at the same time, and the strictest one determines
+          the overall adjustment. The bars below the chart show what each requirement
+          would imply on its own. Two of them are annual safeguards, so they can make
+          the required adjustment in an individual year larger than in the others.
         </p>
 
         <h3>The rules</h3>
         <ul>
-          <li>Debt has to fall in every one of the ten years after the plan, in four
-            scenarios: the plan as written, weaker discipline afterwards, higher rates
-            with lower growth, and a bout of market stress.</li>
-          <li>It has to be falling five years after the plan in most of 1,000 simulations
-            of bad and good luck.</li>
-          <li>It has to fall during the plan as well: 0.5 points of GDP a year between
-            60% and 90% debt, 1 point above 90%. For Finland this is usually the rule
-            that bites.</li>
-          <li>If last year's deficit was above 3% of GDP, this year needs at least 0.5
-            points of tightening.</li>
-          <li>Until the structural deficit is below 1.5%, each year needs at least 0.4
-            points, or 0.25 in a seven-year plan.</li>
+          <li>
+            Debt must fall in each of the ten years after the plan under four scenarios:
+            the plan as written, weaker fiscal discipline afterwards, higher interest
+            rates combined with lower growth, and a period of market stress.
+          </li>
+          <li>
+            Five years after the plan, debt must also be falling in most of 1,000
+            simulations covering a range of favourable and adverse shocks.
+          </li>
+          <li>
+            Debt must decline during the plan itself. The required reduction is 0.5
+            percentage points of GDP per year when debt is between 60% and 90% of GDP,
+            and 1 percentage point when debt is above 90%. For Finland, this is usually
+            the binding requirement.
+          </li>
+          <li>
+            If the previous year's deficit was above 3% of GDP, the adjustment in the
+            current year must be at least 0.5 percentage points.
+          </li>
+          <li>
+            Until the structural deficit is below 1.5% of GDP, the annual adjustment
+            must be at least 0.4 percentage points, or 0.25 percentage points under a
+            seven-year plan.
+          </li>
         </ul>
 
         <h3>Where the numbers come from</h3>
         <p>
-          The data is the Commission's 2024 guidance for
+          The calculations use the Commission's 2024 guidance for
           <span id="dsa-country">Finland</span>
           (<span id="dsa-vintage">European Commission prior guidance, 2024</span>), with
-          the plan starting in 2025. The method follows the Commission's Debt
-          Sustainability Monitor. Euro amounts start from Finland's 2023 GDP of €273 bn
-          (Eurostat) and grow with the projection.
+          the plan beginning in 2025. The methodology follows the Commission's Debt
+          Sustainability Monitor.
         </p>
         <p>
-          This is a browser version of my
-          <a href="https://github.com/peetukeskinen/DSA5.1v">MATLAB tool</a>. At the
-          settings it opens with, it gives the same answers as the ones published in the
-          National Audit Office's
-          <a href="https://vtv.fi/wp-content/uploads/2025/08/naof-separate-report-to-parliament-fiscal-policy-monitoring-report-2024-r222024vp-.pdf">fiscal
-          policy monitoring report 2024</a>: 0.76 points a year over seven years, about
-          0.3 without the debt safeguard, and a spending cap of about 1.5%.
+          Euro amounts are based on Finland's 2023 GDP of €273 billion (Eurostat) and
+          then grow with the projection.
+        </p>
+        <p>
+          This is a browser-based version of my
+          <a href="https://github.com/peetukeskinen/DSA5.1v">MATLAB tool</a>. With the
+          default settings, it reproduces the results published in the National Audit
+          Office's
+          <a href="https://vtv.fi/wp-content/uploads/2025/08/naof-separate-report-to-parliament-fiscal-policy-monitoring-report-2024-r222024vp-.pdf">Fiscal
+          Policy Monitoring Report 2024</a>: an adjustment of 0.76 percentage points per
+          year over seven years, about 0.3 percentage points without the debt safeguard,
+          and a spending-growth ceiling of roughly 1.5%.
         </p>
 
         <h3>Worth knowing</h3>
         <ul>
-          <li>This is a personal project. It is not an official calculation and no
-            institution stands behind it. Finland's independent fiscal institution is
-            the Economic Policy Council.</li>
-          <li>Moving a control does not load a new forecast. It asks what the rules
-            would require if that assumption held.</li>
-          <li>The multiplier and the inflation path are assumptions rather than
-            measurements. The 2024 monitoring report argued that both deserve more work,
-            which is why they are on the controls.</li>
-          <li>The simulations are a fixed set of 1,000 draws, so everyone sees the same
-            fan and a reload does not change the answer.</li>
-          <li>The model copies the published MATLAB code, including its simplifications.
-            It applies the deficit benchmark in structural primary terms throughout, and
-            takes the safeguard's band from the 2023 debt ratio.</li>
+          <li>
+            This is a personal project, not an official calculation, and it does not
+            represent any institution. Finland's independent fiscal institution is the
+            Economic Policy Council.
+          </li>
+          <li>
+            Changing a control does not load a different forecast. It shows what the
+            rules would require if that assumption were changed while the rest of the
+            setup remained the same.
+          </li>
+          <li>
+            The fiscal multiplier and inflation path are assumptions, not measured
+            quantities. The 2024 monitoring report argued that both deserve further
+            analysis, which is why they can be varied here.
+          </li>
+          <li>
+            The simulations use the same fixed set of 1,000 draws each time. This means
+            everyone sees the same fan chart, and reloading the page does not change the
+            result.
+          </li>
+          <li>
+            The browser model follows the published MATLAB code, including its
+            simplifications. In particular, it applies the deficit benchmark in
+            structural primary terms throughout and determines the safeguard band from
+            the 2023 debt ratio.
+          </li>
         </ul>
 
       </div>
