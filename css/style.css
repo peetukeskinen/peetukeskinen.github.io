@@ -13,7 +13,8 @@
      8. Publication lists     -> .biblio (reusable bibliography pattern)
      9. Utilities
     10. Responsive adjustments
-    11. Print
+    11. DSA calculator       -> dsa.html
+    12. Print
    ========================================================================== */
 
 
@@ -688,7 +689,277 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 }
 
 
-/* 11. Print ---------------------------------------------------------------- */
+/* 11. DSA calculator -------------------------------------------------------
+   Used only by dsa.html. The page is wider than the prose measure because it
+   carries a chart and two tables; everything else follows the site tokens, so
+   the calculator inherits light and dark mode without its own palette.
+   -------------------------------------------------------------------------- */
+
+:root {
+  --dsa-line:        var(--accent);   /* the path under the plan   */
+  --dsa-muted-line:  #8c8474;         /* the no-consolidation path */
+  --dsa-alt1:        #3f6b7d;         /* lower SPB                 */
+  --dsa-alt2:        #8a6d1f;         /* adverse r-g               */
+  --dsa-alt3:        #5a5a8a;         /* financial stress          */
+  --dsa-grid:        var(--rule);
+  --dsa-axis:        var(--rule-strong);
+  --dsa-band:        var(--accent);
+  --dsa-shade:       color-mix(in srgb, var(--rule) 45%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dsa-muted-line: #8f8677;
+    --dsa-alt1:       #7fb3c4;
+    --dsa-alt2:       #cba85a;
+    --dsa-alt3:       #9a9ad0;
+    --dsa-band:       #c98a84;
+  }
+}
+
+/* Wider container for the calculator page only. */
+.container-wide { max-width: 56rem; }
+
+/* --- controls ------------------------------------------------------------ */
+
+.dsa-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--space-md);
+  align-items: start;
+  margin-bottom: var(--space-md);
+}
+
+.dsa-fieldset {
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.9rem 1.1rem 1.1rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.dsa-fieldset legend {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-inline: 0.4rem;
+}
+
+.dsa-control { margin-bottom: 1rem; }
+.dsa-control:last-child { margin-bottom: 0; }
+
+.dsa-control label,
+.dsa-radios label,
+.dsa-checks label {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.dsa-control > label { display: block; margin-bottom: 0.15rem; }
+
+.dsa-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  margin: 0.2rem 0 0.1rem;
+}
+
+.dsa-control select {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  padding: 0.3rem 0.4rem;
+  width: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+}
+
+.dsa-control output {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.dsa-radios,
+.dsa-checks { display: flex; flex-direction: column; gap: 0.35rem; }
+
+.dsa-radios input,
+.dsa-checks input { accent-color: var(--accent); margin-right: 0.4rem; }
+
+.dsa-hint {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  margin: 0.4rem 0 0;
+}
+
+.dsa-advanced {
+  grid-column: 1 / -1;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0.6rem 1.1rem;
+}
+
+.dsa-advanced summary {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.dsa-advanced[open] summary { margin-bottom: 0.9rem; }
+
+.dsa-advanced .dsa-control { max-width: 24rem; }
+
+.dsa-button {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--bg-inset);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+
+.dsa-button:hover { border-color: var(--accent); color: var(--accent); }
+
+/* --- headline result ------------------------------------------------------ */
+
+.dsa-headline {
+  background: var(--bg-inset);
+  border-left: 3px solid var(--accent);
+  padding: 1.1rem 1.3rem;
+  margin-bottom: var(--space-md);
+}
+
+.dsa-figure {
+  font-size: 3rem;
+  line-height: 1;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.dsa-figure-unit {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 0.3rem 0 0.7rem;
+}
+
+.dsa-figure-note {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* --- chart ---------------------------------------------------------------- */
+
+.dsa-chart svg { width: 100%; height: auto; display: block; }
+
+.dsa-chart-tick {
+  font-family: var(--sans);
+  font-size: 11px;
+  fill: var(--ink-muted);
+}
+
+.dsa-chart-note {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ink-muted);
+}
+
+.dsa-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+}
+
+.dsa-legend li { margin: 0; }
+
+.dsa-key {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  margin-right: 0.35rem;
+  vertical-align: baseline;
+}
+
+.dsa-key-band { background: var(--dsa-band); opacity: 0.35; }
+
+.dsa-readout,
+.dsa-status {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+  min-height: 1.4em;
+  margin: 0.2rem 0 0;
+}
+
+/* --- tables --------------------------------------------------------------- */
+
+.dsa-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  margin: var(--space-md) 0 0;
+}
+
+.dsa-table caption {
+  text-align: left;
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+  padding-bottom: 0.45rem;
+}
+
+.dsa-table th,
+.dsa-table td {
+  text-align: left;
+  padding: 0.4rem 0.6rem 0.4rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.dsa-table thead th {
+  font-weight: 600;
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.dsa-table tbody th { font-weight: 500; }
+
+@media (max-width: 34rem) {
+  .dsa-figure { font-size: 2.4rem; }
+  .dsa-table { font-size: 0.8125rem; }
+}
+
+
+/* 12. Print ---------------------------------------------------------------- */
 
 @media print {
   :root { --bg: #fff; --ink: #000; --ink-muted: #333; --link: #000; }
@@ -696,4 +967,9 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .site-nav, .skip-link, .portrait { display: none; }
   a { text-decoration: underline; }
   .entry, .biblio-item { break-inside: avoid; }
+
+  /* On paper the controls are dead weight; the result and chart are not. */
+  .dsa-form, .dsa-button, .dsa-status, .dsa-readout { display: none; }
+  .dsa-headline { border-left-color: #000; }
+  .dsa-chart, .dsa-table { break-inside: avoid; }
 }

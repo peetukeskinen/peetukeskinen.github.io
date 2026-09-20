@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EU debt rule calculator — Peetu Keskinen</title>
+<meta name="description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules: how plan length, interest rates, growth and the safeguards change the fiscal adjustment a country has to make.">
+<meta name="author" content="Peetu Keskinen">
+<link rel="canonical" href="https://peetukeskinen.github.io/dsa.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Peetu Keskinen">
+<meta property="og:title" content="EU debt rule calculator">
+<meta property="og:description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules.">
+<meta property="og:url" content="https://peetukeskinen.github.io/dsa.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EU debt rule calculator">
+<meta name="twitter:description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules.">
+
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container">
+    <p class="site-title"><a href="index.html">Peetu Keskinen</a></p>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="research.html">Research</a></li>
+        <li><a href="publications.html">Publications</a></li>
+        <li><a href="dsa.html" aria-current="page">DSA tool</a></li>
+        <li><a href="cv.html">CV</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container container-wide">
+
+    <h1>EU debt rule calculator</h1>
+
+    <p class="lead">
+      Under the reformed EU fiscal rules, a member state's required fiscal effort
+      comes out of a debt sustainability analysis rather than a single deficit
+      number. This page runs that analysis for <span id="dsa-country">Finland</span>
+      in your browser: change the assumptions and see how much annual consolidation
+      the rules demand, and which rule it is that binds.
+    </p>
+
+    <p class="note">
+      An independent replication for teaching and illustration, built from my
+      <a href="https://github.com/peetukeskinen/DSA5.1v">open MATLAB tool</a>. It is
+      not an official calculation of the European Commission or of the National
+      Audit Office of Finland, and it carries no institutional endorsement.
+    </p>
+
+    <noscript>
+      <p class="note">
+        This calculator needs JavaScript. The underlying model is available as
+        MATLAB code in the <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1
+        repository</a>.
+      </p>
+    </noscript>
+
+    <section aria-labelledby="controls">
+      <h2 id="controls">Assumptions</h2>
+
+      <form id="dsa-form" class="dsa-form">
+
+        <fieldset class="dsa-fieldset">
+          <legend>Adjustment plan</legend>
+          <div class="dsa-radios">
+            <label><input type="radio" name="plan" value="4"> 4 years</label>
+            <label><input type="radio" name="plan" value="7" checked> 7 years (with reforms and investment)</label>
+          </div>
+          <p class="dsa-hint">
+            A country can extend the plan from four to seven years by committing to
+            reforms and investment. The same total effort is then spread more thinly.
+          </p>
+        </fieldset>
+
+        <fieldset class="dsa-fieldset">
+          <legend>Economy</legend>
+
+          <div class="dsa-control">
+            <label for="debtInitial">Starting debt ratio</label>
+            <input type="range" id="debtInitial" name="debtInitial" min="40" max="160" step="0.1" value="75.8">
+            <output id="out-debtInitial" for="debtInitial">75.8% of GDP</output>
+          </div>
+
+          <div class="dsa-control">
+            <label for="rateShift">Interest rates</label>
+            <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
+            <output id="out-rateShift" for="rateShift">+0.0 pp</output>
+            <p class="dsa-hint">Shifts short and long market rates from the first plan year on.</p>
+          </div>
+
+          <div class="dsa-control">
+            <label for="growthShift">Potential growth</label>
+            <input type="range" id="growthShift" name="growthShift" min="-1.5" max="1.5" step="0.05" value="0">
+            <output id="out-growthShift" for="growthShift">+0.0 pp</output>
+            <p class="dsa-hint">Shifts potential output growth from the first plan year on.</p>
+          </div>
+
+          <div class="dsa-control">
+            <label for="phi">Fiscal multiplier</label>
+            <input type="range" id="phi" name="phi" min="0" max="1.5" step="0.05" value="0.75">
+            <output id="out-phi" for="phi">0.75</output>
+            <p class="dsa-hint">
+              How much output is lost per point of consolidation. The Commission uses 0.75.
+            </p>
+          </div>
+        </fieldset>
+
+        <fieldset class="dsa-fieldset">
+          <legend>Which rules apply</legend>
+          <div class="dsa-checks">
+            <label><input type="checkbox" name="useStochastic" checked> DSA stochastic criterion</label>
+            <label><input type="checkbox" name="useDebtSafeguard" checked> Debt sustainability safeguard</label>
+            <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
+            <label><input type="checkbox" name="useDeficitSafeguard" checked> Deficit resilience safeguard</label>
+          </div>
+          <p class="dsa-hint">
+            The four deterministic DSA scenarios always apply. Switching a safeguard
+            off shows what the analysis alone would have required.
+          </p>
+        </fieldset>
+
+        <details class="dsa-advanced">
+          <summary>Method options</summary>
+
+          <div class="dsa-control">
+            <label for="plausibility">Probability of declining debt</label>
+            <select id="plausibility" name="plausibility">
+              <option value="7" selected>70% of simulated paths</option>
+              <option value="8">80% of simulated paths</option>
+              <option value="9">90% of simulated paths</option>
+            </select>
+          </div>
+
+          <div class="dsa-control">
+            <label for="method">Shock generation</label>
+            <select id="method" name="method">
+              <option value="normal" selected>Normal draws from the historical covariance</option>
+              <option value="bootstrap">Block bootstrap of historical deviations</option>
+            </select>
+          </div>
+
+          <div class="dsa-control">
+            <label for="sfaMethod">Stock-flow adjustment</label>
+            <select id="sfaMethod" name="sfaMethod">
+              <option value="0" selected>Commission's revised assumption</option>
+              <option value="-1">Zero after the forecast horizon</option>
+            </select>
+          </div>
+
+          <div class="dsa-checks">
+            <label><input type="checkbox" name="showNoAdjustment" checked> Show the no-consolidation path</label>
+            <label><input type="checkbox" name="showScenarios"> Show the adverse scenarios</label>
+          </div>
+        </details>
+
+        <p><button type="button" id="dsa-reset" class="dsa-button">Reset to the baseline</button></p>
+      </form>
+    </section>
+
+    <section aria-labelledby="result">
+      <h2 id="result">Required adjustment</h2>
+
+      <div class="dsa-headline">
+        <p class="dsa-figure"><span id="result-adjustment">—</span></p>
+        <p class="dsa-figure-unit" id="result-adjustment-unit">pp of GDP per year</p>
+        <p class="dsa-figure-note">
+          Binding rule: <strong id="result-binding">—</strong><br>
+          Total effort: <span id="result-total">—</span> ·
+          structural primary balance at the end of the plan:
+          <span id="result-spb">—</span>
+        </p>
+      </div>
+
+      <div class="dsa-chart-wrap">
+        <div id="dsa-chart" class="dsa-chart"></div>
+        <ul id="dsa-legend" class="dsa-legend"></ul>
+        <p class="dsa-hint">
+          Debt reaches <span id="result-debt-end">—</span> at the end of the plan and
+          <span id="result-debt-final">—</span> at the end of the review period.
+        </p>
+        <p class="dsa-status" id="dsa-status" role="status"></p>
+      </div>
+
+      <table class="dsa-table">
+        <caption>Adjustment path and the matching ceiling on net expenditure growth</caption>
+        <thead>
+          <tr>
+            <th scope="col">Year</th>
+            <th scope="col">Adjustment, pp of GDP</th>
+            <th scope="col">Net expenditure growth, %</th>
+            <th scope="col">Binding rule</th>
+          </tr>
+        </thead>
+        <tbody id="dsa-table-body"></tbody>
+      </table>
+
+      <table class="dsa-table">
+        <caption>What each criterion on its own would require, pp of GDP per year</caption>
+        <tbody id="dsa-requirements"></tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="how">
+      <h2 id="how">How it works</h2>
+
+      <p>
+        The calculator searches for the smallest constant annual improvement in the
+        structural primary balance that satisfies every criterion in force. Debt is
+        projected forward with the Commission's own accounting: the implicit interest
+        rate is rebuilt each year from the maturity structure of the debt, consolidation
+        costs output through a fiscal multiplier, the output gap closes gradually, and
+        ageing costs are carried through the review period.
+      </p>
+
+      <p>The criteria are:</p>
+      <ul>
+        <li>
+          <strong>Deterministic DSA.</strong> Debt has to fall in every year of the
+          ten-year review period in four scenarios: the baseline, a permanent slippage
+          of the structural primary balance, permanently worse interest rates and
+          growth, and a temporary episode of market stress. The baseline also has to
+          keep the headline deficit below 3% of GDP.
+        </li>
+        <li>
+          <strong>Stochastic DSA.</strong> Shocks to growth, the primary balance and
+          interest rates are simulated for the five years after the plan. Debt has to
+          be lower after those five years than at the end of the plan in the chosen
+          share of simulated paths.
+        </li>
+        <li>
+          <strong>Debt sustainability safeguard.</strong> Debt has to fall on average
+          by at least 1 pp of GDP a year while it is above 90% of GDP, or 0.5 pp
+          while it is between 60% and 90%.
+        </li>
+        <li>
+          <strong>Deficit benchmark.</strong> At least 0.5 pp of adjustment a year
+          while the deficit is above 3% of GDP.
+        </li>
+        <li>
+          <strong>Deficit resilience safeguard.</strong> At least 0.4 pp a year
+          (0.25 pp under a seven-year plan) until the structural balance reaches
+          −1.5% of GDP.
+        </li>
+      </ul>
+
+      <p>
+        The requirement is then expressed the way the rules are actually written: as a
+        ceiling on the growth of net primary expenditure, which is what a country's plan
+        commits to.
+      </p>
+    </section>
+
+    <section aria-labelledby="caveats">
+      <h2 id="caveats">Data and limitations</h2>
+
+      <ul>
+        <li>
+          Data: <span id="dsa-vintage">European Commission prior guidance, 2024</span>,
+          for <span class="dsa-country-inline">Finland</span>, with the plan starting in
+          2025. Changing the sliders moves the assumptions away from that vintage; it
+          does not load a newer forecast.
+        </li>
+        <li>
+          The simulated shocks are a fixed set of 1,000 draws, generated once from the
+          historical covariance of quarterly growth, balance and interest rate
+          innovations, so everyone loading the page sees the same result. They are not
+          drawn afresh in the browser, and they are not the MATLAB tool's own draws.
+        </li>
+        <li>
+          The model reproduces the published MATLAB tool, including its simplifications.
+          It applies the deficit benchmark in structural primary terms throughout,
+          rather than switching to structural balance terms partway through, and it
+          takes the safeguard's debt band from the starting debt ratio.
+        </li>
+        <li>
+          Results are illustrative. The Commission's own calculation uses the full
+          country data, its own forecast vintage and judgement that no replication
+          reproduces exactly.
+        </li>
+      </ul>
+
+      <p>
+        The method follows the Commission's
+        <a href="https://economy-finance.ec.europa.eu/publications/debt-sustainability-monitor-2023_en">Debt
+        Sustainability Monitor 2023</a>, and the code benefited from the Python
+        implementation by
+        <a href="https://www.bruegel.org/working-paper/quantitative-evaluation-european-commissions-fiscal-governance-proposal">Darvas
+        et al. (2023)</a>. The MATLAB version this page replicates is
+        <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1</a>.
+      </p>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>Peetu Keskinen</p>
+    <p>
+      <a href="https://github.com/peetukeskinen">GitHub</a> ·
+      <a href="https://scholar.google.com/citations?user=zKnmVV0AAAAJ">Google Scholar</a> ·
+      <a href="contact.html">Contact</a>
+    </p>
+  </div>
+</footer>
+
+<script src="dsa/data/finland.js"></script>
+<script src="dsa/data/shocks.js"></script>
+<script src="dsa/model.js"></script>
+<script src="dsa/criteria.js"></script>
+<script src="dsa/chart.js"></script>
+<script src="dsa/app.js"></script>
+</body>
+</html>
