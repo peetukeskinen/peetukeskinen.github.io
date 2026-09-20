@@ -103,6 +103,13 @@ primary balance, net expenditure and percentile paths. The harness is under
 A 720-point sweep over the slider ranges produces no failures and no non-finite
 values, with a worst case of 46 ms per full run including the simulation.
 
+The baseline also reproduces the figures published in chapter 3 of the National
+Audit Office's fiscal policy monitoring report 2024: 0.76 pp a year with the debt
+sustainability safeguard binding, about 0.3 pp under the DSA criteria alone, net
+expenditure growth of about 1.5% under a seven-year plan and about zero under a
+four-year one, and the 2025 exception where the corrective arm lifts the first
+year to 0.5 pp.
+
 ## Known quirks, reproduced on purpose
 
 The point of the page is to reproduce the published tool, so the following are
