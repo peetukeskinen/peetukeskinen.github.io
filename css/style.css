@@ -1083,6 +1083,19 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 .dsa-headline-main > .dsa-eyebrow { margin-bottom: 0.2rem; }
 
+/* The euro restatement: what the adjustment is worth in the unit public
+   debate uses. */
+.dsa-euro {
+  grid-column: 1 / -1;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0.5rem 0 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--rule);
+}
+
 .dsa-stats {
   grid-column: 1 / -1;
   display: flex;
@@ -1132,6 +1145,10 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 /* --- numbers -------------------------------------------------------------- */
 
 .dsa-numbers { margin-top: 1.5rem; }
+
+/* The year table gained a column; let it scroll rather than squeeze on a phone. */
+.dsa-numbers .dsa-table { display: block; overflow-x: auto; }
+@media (min-width: 46rem) { .dsa-numbers .dsa-table { display: table; } }
 .dsa-numbers[open] summary { margin-bottom: 0.4rem; }
 
 .dsa-table {
@@ -1178,6 +1195,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .dsa-delta { font-size: 0.72rem; margin: 0 0.4rem 0.1rem 0; padding: 0.05rem 0.45rem; }
   .dsa-binding { font-size: 0.74rem; display: inline; }
   .dsa-stats { font-size: 0.7rem; gap: 0.05rem 0.8rem; margin-top: 0.3rem; padding-top: 0.3rem; }
+  .dsa-euro { font-size: 0.78rem; margin-top: 0.4rem; padding-top: 0.35rem; }
   .dsa-readout { display: none; }
   .dsa-refline { font-size: 0.7rem; }
   .dsa-table { font-size: 0.8125rem; }

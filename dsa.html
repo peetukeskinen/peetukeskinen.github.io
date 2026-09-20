@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="An interactive replication of the European Commission's debt sustainability analysis under the reformed EU fiscal rules.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-20d">
+<link rel="stylesheet" href="css/style.css?v=2026-09-20e">
 </head>
 <body>
 
@@ -91,6 +91,7 @@
               </p>
               <p class="dsa-floors" id="result-floors" hidden></p>
             </div>
+            <p class="dsa-euro" id="result-euro" hidden></p>
             <dl class="dsa-stats">
               <div><dt>Total adjustment</dt><dd id="stat-total">—</dd></div>
               <div><dt>SPB at end of plan</dt><dd id="stat-spb">—</dd></div>
@@ -267,11 +268,15 @@
       <details class="dsa-numbers">
         <summary>Year-by-year numbers</summary>
         <table class="dsa-table">
-          <caption>Adjustment path and the matching ceiling on net expenditure growth</caption>
+          <caption>
+            Adjustment path, the permanent adjustment reached in euros, and the
+            matching ceiling on net expenditure growth
+          </caption>
           <thead>
             <tr>
               <th scope="col">Year</th>
               <th scope="col">Adjustment, pp of GDP</th>
+              <th scope="col">Cumulative, € bn a year</th>
               <th scope="col">Net expenditure growth ceiling, %</th>
               <th scope="col">Debt, % of GDP</th>
               <th scope="col">Binding rule</th>
@@ -341,6 +346,16 @@
       </ul>
 
       <p>
+        The euro figures are the same requirement in the unit public debate uses.
+        Each year's step is that year's adjustment applied to that year's nominal
+        GDP, and the cumulative figure is the permanent improvement reached by then:
+        an adjustment held for seven years ends as a package worth several billion
+        euros a year, not a one-off payment. Finnish commentary usually quotes the
+        effort over a four-year government term rather than over a full seven-year
+        plan, which is the middle figure in the headline.
+      </p>
+
+      <p>
         The requirement is then expressed the way the rules are actually written: as a
         <a href="https://www.consilium.europa.eu/en/policies/economic-governance-framework/">ceiling
         on the growth of net primary expenditure</a>, which is what a country's plan
@@ -368,6 +383,15 @@
           two-year blocks of the annual historical deviations. Both sets are fixed, so
           everyone loading the page sees the same result. They are not drawn afresh in
           the browser, and they are not the MATLAB tool's own draws.
+        </li>
+        <li>
+          Euro amounts need one input the Commission workbook does not carry: the
+          level of nominal GDP. The base year is anchored to Eurostat's current-price
+          GDP for Finland in 2023 (€273 bn, series nama_10_gdp), and every later
+          year is that level carried forward by the model's own nominal growth, so the
+          euro figures move with the growth and inflation assumptions. That anchor is a
+          later data vintage than the 2024 workbook, which shifts the euro amounts by a
+          few tenths of a percent.
         </li>
         <li>
           The model reproduces the published MATLAB tool, including its simplifications.
@@ -412,7 +436,7 @@
 <script src="dsa/data/shocks.js"></script>
 <script src="dsa/model.js"></script>
 <script src="dsa/criteria.js"></script>
-<script src="dsa/chart.js?v=2026-09-20d"></script>
-<script src="dsa/app.js?v=2026-09-20d"></script>
+<script src="dsa/chart.js?v=2026-09-20e"></script>
+<script src="dsa/app.js?v=2026-09-20e"></script>
 </body>
 </html>

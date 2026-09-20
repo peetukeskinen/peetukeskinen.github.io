@@ -48,6 +48,12 @@ What makes a change visible:
   a bar per criterion with the binding one tagged and a tick at the reference
   value.
 - **Preset chips** set a scenario in one tap; a second tap returns to baseline.
+- **Euros.** Public debate is conducted in billions, not points of GDP, so the
+  headline carries a euro restatement: the first year's step, the permanent
+  adjustment reached after four years (the horizon Finnish commentary usually
+  quotes) and the adjustment once the plan is complete. The year table adds a
+  cumulative euro column. These follow the controls, because they are valued at
+  the model's own nominal GDP path.
 
 The chart keeps a stable frame while a line moves: the y axis snaps to 20-pp
 steps and always contains 40–80, and the baseline path is included in the
@@ -68,6 +74,12 @@ scripts kept with the MATLAB tool (outside this repository, under
 python3 export_data.py          # xlsx -> data/finland.json, data/shocks.json
 python3 build_site_data.py      # json -> this repo's dsa/data/*.js
 ```
+
+Euro amounts need one input the Commission workbook does not carry: a nominal
+GDP level. `export_data.py` writes `scalars.ngdp_initial` from Eurostat
+(nama_10_gdp, B1GQ, current prices, Finland 2023 = €273.0 bn, retrieved
+2026-09-20) and the page carries it forward with the model's nominal growth.
+Refresh that constant when the data vintage moves.
 
 `finland.js` is about 3 kB and `shocks.js` about 300 kB. The data is loaded with
 `<script>` tags rather than `fetch`, so opening `dsa.html` straight from disk

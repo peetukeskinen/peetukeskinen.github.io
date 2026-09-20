@@ -180,6 +180,33 @@
 
   function sum(arr) { return arr.reduce(function (s, v) { return s + v; }, 0); }
 
+  /* Public debate is conducted in euros, not points of GDP. The workbook holds
+     only real GDP levels and nominal growth rates, so the euro figures carry one
+     external anchor — nominal GDP in the base year — forward by the model's own
+     nominal growth, which responds to the controls. */
+  function nominalGdp(r) {
+    var n = [null, data.scalars.ngdp_initial];
+    var g = r.paths[1].g;
+    for (var t = 2; t <= r.inputs.totalPeriods; t++) n[t] = n[t - 1] * (1 + g[t]);
+    return n;
+  }
+
+  /* Per plan year: that year's step, and the permanent adjustment reached so
+     far, both valued at that year's GDP. */
+  function euroPath(r) {
+    var ngdp = nominalGdp(r);
+    var step = [], cumulative = [], running = 0;
+    for (var i = 0; i < r.planYears.length; i++) {
+      var t = r.inputs.adjustmentStart + i;
+      running += r.finalPath[i];
+      step.push(r.finalPath[i] / 100 * ngdp[t]);
+      cumulative.push(running / 100 * ngdp[t]);
+    }
+    return { step: step, cumulative: cumulative, ngdp: ngdp };
+  }
+
+  function bn(v) { return '€' + (v < 10 ? v.toFixed(1) : String(Math.round(v))) + ' bn'; }
+
   function joinNames(list) {
     if (list.length <= 1) return list.join('');
     return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
@@ -469,6 +496,7 @@
       setText('result-binding', 'no adjustment up to 2.00 pp a year satisfies the rules');
       setHidden('result-was', true);
       setHidden('result-floors', true);
+      setHidden('result-euro', true);
       ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
       var two = C.project(inputs, 1, 2, null).debt.slice(1);
       var none = C.project(inputs, 1, 0, null).debt.slice(1);
@@ -563,13 +591,24 @@
       }
     }
 
+    var euroNode = document.getElementById('result-euro');
     if (unmet.length) {
       setText('stat-total', '—');
       setText('stat-spb', '—');
+      if (euroNode) euroNode.hidden = true;
     } else {
       setText('stat-total', total.toFixed(1) + ' pp');
       /* The SPB path is linear in the adjustment, so the floored total adds exactly. */
       setText('stat-spb', (r.inputs.spb[r.inputs.adjustmentStart - 1] + total).toFixed(1) + '%');
+      if (euroNode) {
+        var eur = euroPath(r);
+        var lastYear = eur.cumulative.length - 1;
+        var parts = ['about ' + bn(eur.step[0]) + ' in the first year'];
+        if (params.plan > 4) parts.push(bn(eur.cumulative[3]) + ' after four years');
+        parts.push(bn(eur.cumulative[lastYear]) + ' a year once the plan is complete in ' + planLast);
+        euroNode.textContent = 'In euros: ' + joinNames(parts) + '.';
+        euroNode.hidden = false;
+      }
     }
     setText('stat-debt-end', r.debtEnd.toFixed(1) + '%');
     setText('stat-debt-final', r.debtFinal.toFixed(1) + '%');
@@ -581,10 +620,12 @@
     setText('out-rg', 'r − g at the end of the plan: ' + signed(rg, 1) + ' pp');
 
     /* ---- year table (collapsed) ------------------------------------------ */
+    var eurTable = euroPath(r);
     document.getElementById('dsa-table-body').innerHTML = r.planYears.map(function (year, i) {
       var refDebt = refOk ? refR.paths[1].debt[refR.years.indexOf(year) + 1] : null;
       return '<tr><th scope="row">' + year + '</th>' +
              '<td>' + r.finalPath[i].toFixed(2) + '</td>' +
+             '<td>' + eurTable.cumulative[i].toFixed(1) + '</td>' +
              '<td>' + r.netExpenditure[i].toFixed(2) + '</td>' +
              '<td>' + p1.debt[r.inputs.adjustmentStart + i].toFixed(1) +
                (isFinite(refDebt) && refDebt !== null && refDebt !== undefined ? ' <span class="dsa-table-ref">(' + refName + ' ' + refDebt.toFixed(1) + ')</span>' : '') + '</td>' +
