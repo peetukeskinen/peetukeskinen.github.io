@@ -704,7 +704,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   --dsa-grid:        var(--rule);
   --dsa-axis:        var(--rule-strong);
   --dsa-band:        var(--accent);
-  --dsa-shade:       color-mix(in srgb, var(--rule) 45%, transparent);
+  --dsa-shade:       #ece7da;         /* plan period backdrop      */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -714,6 +714,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
     --dsa-alt2:       #cba85a;
     --dsa-alt3:       #9a9ad0;
     --dsa-band:       #c98a84;
+    --dsa-shade:      #2a2620;
   }
 }
 

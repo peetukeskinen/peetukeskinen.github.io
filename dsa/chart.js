@@ -12,7 +12,28 @@
 
   var NS = 'http://www.w3.org/2000/svg';
   var W = 760, H = 380;
-  var PAD = { top: 16, right: 16, bottom: 34, left: 46 };
+  var PAD = { top: 24, right: 22, bottom: 34, left: 46 };
+
+  /* Paint and type are set as presentation attributes with literal fallbacks,
+     not left to the stylesheet alone. A custom property that fails to resolve
+     makes fill invalid, and an invalid fill paints black, so every var() here
+     carries a fallback colour. The stylesheet still wins where it applies:
+     CSS rules override presentation attributes. */
+  var INK_MUTED = 'var(--ink-muted, #5b5449)';
+  var GRID = 'var(--dsa-grid, #e3ddd0)';
+  var AXIS = 'var(--dsa-axis, #978d79)';
+  var BAND = 'var(--dsa-band, #7b2d2d)';
+  var SHADE = 'var(--dsa-shade, #ece7da)';
+  var SANS = '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
+
+  function text(attrs, content, size) {
+    var node = el('text', attrs);
+    node.setAttribute('font-family', SANS);
+    node.setAttribute('font-size', size || 11);
+    if (!attrs.fill) node.setAttribute('fill', INK_MUTED);
+    node.textContent = content;
+    return node;
+  }
 
   function el(name, attrs) {
     var node = document.createElementNS(NS, name);
@@ -83,14 +104,12 @@
       if (from >= 0 && to >= 0) {
         svg.appendChild(el('rect', {
           x: sx(from), y: y1, width: sx(to) - sx(from), height: y0 - y1,
-          fill: 'var(--dsa-shade)', stroke: 'none'
+          fill: SHADE, stroke: 'none'
         }));
-        var label = el('text', {
-          x: (sx(from) + sx(to)) / 2, y: y1 + 13, 'text-anchor': 'middle',
-          class: 'dsa-chart-note'
-        });
-        label.textContent = spec.shade.label;
-        svg.appendChild(label);
+        svg.appendChild(text({
+          x: (sx(from) + sx(to)) / 2, y: y1 - 8, 'text-anchor': 'middle',
+          class: 'dsa-chart-note', 'letter-spacing': '0.08em'
+        }, spec.shade.label, 10));
       }
     }
 
@@ -100,20 +119,24 @@
     for (var v = start; v <= hi; v += step) {
       var yy = sy(v);
       svg.appendChild(el('line', {
-        x1: x0, x2: x1, y1: yy, y2: yy, stroke: 'var(--dsa-grid)', 'stroke-width': 1
+        x1: x0, x2: x1, y1: yy, y2: yy, stroke: GRID, 'stroke-width': 1
       }));
-      var tick = el('text', { x: x0 - 8, y: yy + 4, 'text-anchor': 'end', class: 'dsa-chart-tick' });
-      tick.textContent = Math.abs(v) < 1e-9 ? '0' : fmt(v);
-      svg.appendChild(tick);
+      svg.appendChild(text(
+        { x: x0 - 8, y: yy + 4, 'text-anchor': 'end', class: 'dsa-chart-tick' },
+        Math.abs(v) < 1e-9 ? '0' : fmt(v)
+      ));
     }
 
-    /* ---- x ticks ------------------------------------------------------- */
+    /* ---- x ticks. The last label is right-aligned so it cannot spill over
+       the edge of the drawing area. ------------------------------------- */
     var every = years.length > 14 ? 3 : 2;
     for (var i = 0; i < years.length; i++) {
-      if (i % every !== 0 && i !== years.length - 1) continue;
-      var t = el('text', { x: sx(i), y: y0 + 20, 'text-anchor': 'middle', class: 'dsa-chart-tick' });
-      t.textContent = years[i];
-      svg.appendChild(t);
+      var last = i === years.length - 1;
+      if (i % every !== 0 && !last) continue;
+      svg.appendChild(text({
+        x: last ? x1 : sx(i), y: y0 + 20,
+        'text-anchor': last ? 'end' : 'middle', class: 'dsa-chart-tick'
+      }, years[i]));
     }
 
     /* ---- percentile ribbons -------------------------------------------- */
@@ -129,7 +152,7 @@
         d += 'L' + sx(j).toFixed(2) + ' ' + sy(b.lo[j]).toFixed(2);
       }
       if (!d) return;
-      svg.appendChild(el('path', { d: d + 'Z', fill: 'var(--dsa-band)', opacity: b.opacity, stroke: 'none' }));
+      svg.appendChild(el('path', { d: d + 'Z', fill: BAND, opacity: b.opacity, stroke: 'none' }));
     });
 
     /* ---- series -------------------------------------------------------- */
@@ -148,17 +171,17 @@
     });
 
     /* ---- axis lines ---------------------------------------------------- */
-    svg.appendChild(el('line', { x1: x0, x2: x1, y1: y0, y2: y0, stroke: 'var(--dsa-axis)', 'stroke-width': 1 }));
+    svg.appendChild(el('line', { x1: x0, x2: x1, y1: y0, y2: y0, stroke: AXIS, 'stroke-width': 1 }));
 
+    /* The unit sits horizontally above the axis: a rotated label is easy to
+       clip and hard to read at this size. */
     if (spec.yLabel) {
-      var yl = el('text', { x: x0 - 34, y: y1 + 6, class: 'dsa-chart-tick', transform: 'rotate(-90 ' + (x0 - 34) + ' ' + (y1 + 6) + ')' });
-      yl.textContent = spec.yLabel;
-      svg.appendChild(yl);
+      svg.appendChild(text({ x: 2, y: 11, class: 'dsa-chart-tick' }, spec.yLabel));
     }
 
     /* ---- hover readout -------------------------------------------------- */
     var hover = el('line', {
-      x1: 0, x2: 0, y1: y1, y2: y0, stroke: 'var(--dsa-axis)',
+      x1: 0, x2: 0, y1: y1, y2: y0, stroke: AXIS,
       'stroke-width': 1, 'stroke-dasharray': '3 3', opacity: 0
     });
     svg.appendChild(hover);

@@ -151,7 +151,7 @@
     var series = [{
       name: 'With the plan',
       values: r.paths[1].debt.slice(1),
-      color: 'var(--dsa-line)',
+      color: 'var(--dsa-line, #7b2d2d)',
       width: 2.4
     }];
 
@@ -159,15 +159,15 @@
       series.push({
         name: 'No consolidation',
         values: r.noAdjustment.debt.slice(1),
-        color: 'var(--dsa-muted-line)',
+        color: 'var(--dsa-muted-line, #8c8474)',
         dash: '5 4'
       });
     }
 
     if (val('showScenarios')) {
-      series.push({ name: 'Lower SPB', values: r.paths[2].debt.slice(1), color: 'var(--dsa-alt1)', width: 1.4 });
-      series.push({ name: 'Adverse r–g', values: r.paths[3].debt.slice(1), color: 'var(--dsa-alt2)', width: 1.4 });
-      series.push({ name: 'Financial stress', values: r.paths[4].debt.slice(1), color: 'var(--dsa-alt3)', width: 1.4 });
+      series.push({ name: 'Lower SPB', values: r.paths[2].debt.slice(1), color: 'var(--dsa-alt1, #3f6b7d)', width: 1.4 });
+      series.push({ name: 'Adverse r–g', values: r.paths[3].debt.slice(1), color: 'var(--dsa-alt2, #8a6d1f)', width: 1.4 });
+      series.push({ name: 'Financial stress', values: r.paths[4].debt.slice(1), color: 'var(--dsa-alt3, #5a5a8a)', width: 1.4 });
     }
 
     var bands = [];
