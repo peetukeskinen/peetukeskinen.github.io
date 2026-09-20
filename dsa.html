@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-20g">
+<link rel="stylesheet" href="css/style.css?v=2026-09-20h">
 </head>
 <body>
 
@@ -46,45 +46,25 @@
       <h1>EU fiscal rules calculator</h1>
 
       <p class="lead">
-        The reformed EU fiscal rules turn on a single operational commitment: each
-        member state agrees a medium-term fiscal-structural plan that fixes how fast
-        net expenditure may grow, and that path has to leave debt on a plausibly
-        declining trajectory. How much consolidation this takes is the output of a
-        debt sustainability analysis rather than a fixed deficit target, so it moves
-        with interest rates, growth and the starting debt ratio — and a set of
-        safeguards can bind before the analysis itself does.
+        How much does Finland have to tighten its budget to meet the EU fiscal rules?
+        Move a control and watch the answer change.
       </p>
 
-      <p class="lead">
-        This page runs that analysis for <span id="dsa-country">Finland</span> in your
-        browser, following the European Commission's Debt Sustainability Monitor
-        methodology. Move a control and watch the debt trajectory bend, the required
-        adjustment change, and the binding rule switch. Finland's own plan, endorsed
-        by the Council in January 2025, spreads the adjustment over
-        <a href="https://economy-finance.ec.europa.eu/economic-surveillance-eu-member-states/country-pages/finland/fiscal-surveillance-finland_en">seven
-        years</a> — the setting the page opens with.
-      </p>
-
-      <p class="note">
-        An independent replication for teaching and illustration, built from my
-        <a href="https://github.com/peetukeskinen/DSA5.1v">open MATLAB tool</a>. It is
-        personal work: not an official calculation, and endorsed by no institution.
-        The figures that bind Finland are the Commission's, and under the reformed
-        framework Finland's independent fiscal institution — the body that assesses
-        whether the plan is being kept to — is the Economic Policy Council.
+      <p class="dsa-hint dsa-disclaimer">
+        A personal project, not an official calculation. What the rules are and where
+        the numbers come from is under Info, below the calculator.
       </p>
 
       <noscript>
         <p class="note">
-          This calculator needs JavaScript. The underlying model is available as
-          MATLAB code in the <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1
-          repository</a>.
+          This calculator needs JavaScript. The model is also available as MATLAB code
+          in the <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1 repository</a>.
         </p>
       </noscript>
     </div>
 
     <section aria-labelledby="calculator">
-      <h2 id="calculator">Calculator</h2>
+      <h2 id="calculator" class="visually-hidden">Calculator</h2>
 
       <div class="dsa-workbench">
 
@@ -116,7 +96,7 @@
 
           <div id="dsa-chart" class="dsa-chart"></div>
           <p class="dsa-refline is-off" id="dsa-refline">
-            <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">A grey reference line appears when a setting changes.</span>
+            <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">Change a setting and a grey line shows where you started.</span>
           </p>
           <ul id="dsa-legend" class="visually-hidden" aria-label="Values at the end of the projection"></ul>
           <p class="visually-hidden" id="dsa-status" role="status"></p>
@@ -143,7 +123,7 @@
                 <input type="radio" name="plan" value="7" class="visually-hidden" checked><span>7 years</span>
               </label>
             </div>
-            <p class="dsa-hint">Seven years is available against commitments to reforms and investment.</p>
+            <p class="dsa-hint">Seven years is allowed in return for reforms and investment.</p>
           </div>
 
           <div class="dsa-group" role="group" aria-labelledby="economy-label">
@@ -157,7 +137,7 @@
               <div class="dsa-track">
                 <input type="range" id="debtInitial" name="debtInitial" min="40" max="160" step="0.1" value="75.8">
               </div>
-              <p class="dsa-hint">Base-year level; the plan starts from the projected 2025 ratio. This value also sets the safeguard's 0.5 or 1 pp band.</p>
+              <p class="dsa-hint">Debt at the end of 2023. Also decides which safeguard applies: 0.5 or 1 point a year.</p>
             </div>
 
             <div class="dsa-control">
@@ -168,7 +148,7 @@
               <div class="dsa-track">
                 <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
               </div>
-              <p class="dsa-hint">Short and long market rates, shifted from the first plan year on.</p>
+              <p class="dsa-hint">Market rates, from the first plan year on.</p>
             </div>
 
             <div class="dsa-control">
@@ -190,7 +170,7 @@
               <div class="dsa-track">
                 <input type="range" id="phi" name="phi" min="0" max="1.5" step="0.05" value="0.75">
               </div>
-              <p class="dsa-hint">Output lost per point of adjustment during the plan years. The Commission uses 0.75.</p>
+              <p class="dsa-hint">How much output a point of tightening costs. The Commission uses 0.75.</p>
             </div>
           </div>
 
@@ -202,7 +182,7 @@
               <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
               <label><input type="checkbox" name="useDeficitSafeguard" checked> Resilience safeguard</label>
             </div>
-            <p class="dsa-hint">The four deterministic DSA scenarios always apply.</p>
+            <p class="dsa-hint">The four debt scenarios always apply.</p>
           </div>
 
           <details class="dsa-advanced">
@@ -246,33 +226,26 @@
         </form>
 
         <div class="dsa-rules-panel" id="dsa-rules-panel">
-          <p class="dsa-eyebrow">What each rule would require</p>
+          <p class="dsa-eyebrow">What each rule needs</p>
           <div id="dsa-rules" class="dsa-rules"></div>
           <ul id="dsa-rules-text" class="visually-hidden"></ul>
           <p class="dsa-hint" id="dsa-unmet" hidden></p>
           <p class="dsa-hint">
-            Each bar is the smallest annual adjustment that rule alone would demand;
-            the headline is the longest of the DSA and debt-safeguard bars. The two
-            floors apply only in years when a deficit limit is breached, shown beside
-            the bar; a floor is hollow while it does not apply. A hatched bar is a rule
-            that no adjustment up to 2.00 pp meets. A short vertical mark shows the
-            reference value once something has changed.
+            What each rule would require on its own. The longest bar sets the headline.
+            Hollow bars are minimums that only bite in some years; a striped bar is a
+            rule that even 2.00 a year cannot meet.
           </p>
         </div>
 
       </div>
 
       <details class="dsa-numbers" id="dsa-expenditure-details">
-        <summary>Net expenditure growth — what the plan commits to</summary>
+        <summary>Spending cap — what the plan actually promises</summary>
         <p class="dsa-hint dsa-explainer">
-          A country's plan does not commit to the adjustment above directly. It
-          commits to a ceiling on how fast <strong>net primary expenditure</strong> may
-          grow — spending excluding interest, cyclical unemployment costs and
-          EU-funded items, counted after any new tax measures. The ceiling is the
-          same requirement in another currency: nominal potential growth, less the
-          adjustment scaled by how large primary expenditure is. It is what the
-          Commission monitors a plan against, which is why it is here; for reading
-          the economics, the adjustment above is the clearer number.
+          A plan does not promise the adjustment above. It promises a cap on how fast
+          spending may grow — spending before interest, and after any new taxes. Same
+          requirement, different unit. This is what the Commission checks a country
+          against.
         </p>
         <div id="dsa-expenditure-chart" class="dsa-chart"></div>
         <dl id="dsa-expenditure-values" class="visually-hidden" aria-label="Annual net expenditure growth ceilings"></dl>
@@ -280,20 +253,17 @@
       </details>
 
       <details class="dsa-numbers">
-        <summary>Year-by-year numbers</summary>
+        <summary>Year by year</summary>
         <table class="dsa-table">
-          <caption>
-            Adjustment path, the permanent adjustment reached in euros, and the
-            matching ceiling on net expenditure growth
-          </caption>
+          <caption>What each plan year needs, in points of GDP and in euros</caption>
           <thead>
             <tr>
               <th scope="col">Year</th>
-              <th scope="col">Adjustment, pp of GDP</th>
-              <th scope="col">Cumulative, € bn a year</th>
-              <th scope="col">Net expenditure growth ceiling, %</th>
+              <th scope="col">Tightening, points of GDP</th>
+              <th scope="col">Running total, € bn a year</th>
+              <th scope="col">Spending cap, %</th>
               <th scope="col">Debt, % of GDP</th>
-              <th scope="col">Binding rule</th>
+              <th scope="col">Rule that sets it</th>
             </tr>
           </thead>
           <tbody id="dsa-table-body"></tbody>
@@ -301,159 +271,82 @@
       </details>
     </section>
 
-    <section aria-labelledby="how" class="dsa-prose">
-      <h2 id="how">How it works</h2>
+    <details class="dsa-info">
+      <summary>Info</summary>
 
-      <p>
-        The framework works in two steps. The Commission's debt sustainability
-        analysis produces a <strong>consolidation need</strong> for the adjustment
-        period: the improvement in the structural primary balance, in points of GDP a
-        year, that puts debt on a plausibly declining path. That need is then
-        converted into a <strong>reference trajectory for net expenditure</strong> —
-        potential growth plus inflation, less the consolidation need scaled by the size
-        of primary expenditure — and the net expenditure path a country commits to may
-        not exceed it. The headline on this page is the first quantity; the second is
-        under “Net expenditure growth” above.
-      </p>
+      <div class="dsa-info-body">
 
-      <p>
-        The consolidation need is raised until every criterion in force is met at once.
-        Meeting the strictest one automatically satisfies the rest, so exactly one
-        criterion binds — which is what the bars under the chart show. Two of them are
-        reviewed each year rather than once for the whole plan: the deficit resilience
-        safeguard and the corrective arm's deficit benchmark. An annual review can only
-        tighten a year, never loosen it, which is why single years in the table can sit
-        above the constant adjustment.
-      </p>
+        <h3>What the rules ask for</h3>
+        <p>
+          EU countries agree a fiscal plan with the Commission. The plan caps how fast
+          public spending may grow, and the cap has to be tight enough to put debt on a
+          falling path.
+        </p>
+        <p>
+          How tight is worked out by projecting the debt ratio forward under several
+          scenarios. The budget has to improve by enough each year that debt falls and
+          keeps falling. That yearly improvement is the number at the top of the page.
+        </p>
+        <p>
+          Several rules apply at once and the strictest one sets the requirement. The
+          bars under the chart show what each rule asks for on its own. Two of the rules
+          are checked every year and can push a single year higher than the rest.
+        </p>
 
-      <p>The criteria are:</p>
-      <ul>
-        <li>
-          <strong>Deterministic DSA.</strong> Debt has to fall in every year of the
-          ten-year review period in four scenarios: the baseline, a permanent slippage
-          of the structural primary balance, permanently worse interest rates and
-          growth, and a temporary episode of market stress. The baseline also has to
-          bring the headline deficit below 3% of GDP during the plan and keep it there.
-        </li>
-        <li>
-          <strong>Stochastic DSA.</strong> Shocks to growth, the primary balance and
-          interest rates are simulated for the five years after the plan — the shaded
-          fan. Debt has to be lower after those five years than at the end of the plan
-          in the chosen share of simulated paths.
-        </li>
-        <li>
-          <strong>Debt sustainability safeguard.</strong> Debt has to fall on average
-          by at least 0.5 pp of GDP a year while it is between 60% and 90% of GDP, and
-          1 pp while it is above 90%. This is stricter than the DSA criteria, which ask
-          debt to fall only <em>after</em> the plan: for Finland it means a fall of 3.5
-          pp over an extended seven-year plan, or 2 pp over four years. On the chart it
-          is the dashed slope across the plan window that the path has to beat.
-        </li>
-        <li>
-          <strong>Deficit benchmark (corrective arm).</strong> At least 0.5 pp of
-          adjustment in a year if the deficit exceeded 3% of GDP the year before.
-        </li>
-        <li>
-          <strong>Deficit resilience safeguard.</strong> At least 0.4 pp a year (0.25 pp
-          under an extended plan) until the structural balance reaches −1.5% of GDP.
-        </li>
-      </ul>
+        <h3>The rules</h3>
+        <ul>
+          <li>Debt has to fall in every one of the ten years after the plan, in four
+            scenarios: the plan as written, weaker discipline afterwards, higher rates
+            with lower growth, and a bout of market stress.</li>
+          <li>It has to be falling five years after the plan in most of 1,000 simulations
+            of bad and good luck.</li>
+          <li>It has to fall during the plan as well: 0.5 points of GDP a year between
+            60% and 90% debt, 1 point above 90%. For Finland this is usually the rule
+            that bites.</li>
+          <li>If last year's deficit was above 3% of GDP, this year needs at least 0.5
+            points of tightening.</li>
+          <li>Until the structural deficit is below 1.5%, each year needs at least 0.4
+            points, or 0.25 in a seven-year plan.</li>
+        </ul>
 
-      <p>
-        The calculator searches, in steps of 0.01 up to 2.00 pp of GDP a year, for the
-        smallest constant adjustment that passes the DSA criteria and the debt
-        safeguard, then lets the two annually reviewed rules lift individual years on
-        top. Debt is projected with the Commission's own accounting: the implicit
-        interest rate is rebuilt each year from the maturity structure of the debt,
-        adjustment costs output through a fiscal multiplier, the output gap closes
-        gradually, and ageing costs are carried through the review period. Everything
-        here is a projection rather than a forecast — a path under stated assumptions,
-        not the most likely outcome — and the assumptions that move it most are the ones
-        on the controls, together with projections for potential growth and the
-        stock-flow adjustment, the debt changes that do not pass through the deficit and
-        which weigh unusually heavily in Finland's case.
-      </p>
+        <h3>Where the numbers come from</h3>
+        <p>
+          The data is the Commission's 2024 guidance for
+          <span id="dsa-country">Finland</span>
+          (<span id="dsa-vintage">European Commission prior guidance, 2024</span>), with
+          the plan starting in 2025. The method follows the Commission's Debt
+          Sustainability Monitor. Euro amounts start from Finland's 2023 GDP of €273 bn
+          (Eurostat) and grow with the projection.
+        </p>
+        <p>
+          This is a browser version of my
+          <a href="https://github.com/peetukeskinen/DSA5.1v">MATLAB tool</a>. At the
+          settings it opens with, it gives the same answers as the ones published in the
+          National Audit Office's
+          <a href="https://vtv.fi/wp-content/uploads/2025/08/naof-separate-report-to-parliament-fiscal-policy-monitoring-report-2024-r222024vp-.pdf">fiscal
+          policy monitoring report 2024</a>: 0.76 points a year over seven years, about
+          0.3 without the debt safeguard, and a spending cap of about 1.5%.
+        </p>
 
-      <p>
-        The grey line on the chart is the reference trajectory — the Commission's
-        baseline assumptions, or a scenario you have pinned — so that any change is
-        seen against something that stays still.
-      </p>
+        <h3>Worth knowing</h3>
+        <ul>
+          <li>This is a personal project. It is not an official calculation and no
+            institution stands behind it. Finland's independent fiscal institution is
+            the Economic Policy Council.</li>
+          <li>Moving a control does not load a new forecast. It asks what the rules
+            would require if that assumption held.</li>
+          <li>The multiplier and the inflation path are assumptions rather than
+            measurements. The 2024 monitoring report argued that both deserve more work,
+            which is why they are on the controls.</li>
+          <li>The simulations are a fixed set of 1,000 draws, so everyone sees the same
+            fan and a reload does not change the answer.</li>
+          <li>The model copies the published MATLAB code, including its simplifications.
+            It applies the deficit benchmark in structural primary terms throughout, and
+            takes the safeguard's band from the 2023 debt ratio.</li>
+        </ul>
 
-      <p>
-        <strong>Against the published calculation.</strong> At the assumptions shipped
-        here, this page reproduces the figures in the National Audit Office of Finland's
-        <a href="https://vtv.fi/wp-content/uploads/2025/08/naof-separate-report-to-parliament-fiscal-policy-monitoring-report-2024-r222024vp-.pdf">fiscal policy monitoring report 2024</a>, chapter 3: a consolidation need of
-        0.76 pp of GDP a year with the debt sustainability safeguard binding, about
-        0.3 pp under the DSA criteria alone, net expenditure growth of about 1.5% a year
-        under a seven-year plan and about zero under a four-year one, and the 2025
-        exception in which the corrective arm lifts the first year to 0.5 pp because the
-        deficit exceeded 3% in 2024. Switching the debt safeguard off, or the stock-flow
-        adjustment back to the old zero assumption, reproduces the alternatives that
-        report puts beside them.
-      </p>
-    </section>
-
-    <section aria-labelledby="caveats" class="dsa-prose">
-      <h2 id="caveats">Data and limitations</h2>
-
-      <ul>
-        <li>
-          Data: <span id="dsa-vintage">European Commission prior guidance, 2024</span>,
-          for Finland, with the plan starting in 2025. Changing the controls moves the
-          assumptions away from that vintage; it does not load a newer forecast.
-        </li>
-        <li>
-          The simulated shocks are a fixed set of 1,000 draws, generated once. The
-          normal option draws them from the historical covariance of quarterly growth,
-          balance and interest rate innovations, with outliers beyond three standard
-          deviations clipped first as in the MATLAB tool; the bootstrap option resamples
-          two-year blocks of the annual historical deviations. Both sets are fixed, so
-          everyone loading the page sees the same result. They are not drawn afresh in
-          the browser, and they are not the MATLAB tool's own draws.
-        </li>
-        <li>
-          Euro amounts need one input the Commission workbook does not carry: the
-          level of nominal GDP. The base year is anchored to Eurostat's current-price
-          GDP for Finland in 2023 (€273 bn, series nama_10_gdp), and every later
-          year is that level carried forward by the model's own nominal growth, so the
-          euro figures move with the growth and inflation assumptions. That anchor is a
-          later data vintage than the 2024 workbook, which shifts the euro amounts by a
-          few tenths of a percent.
-        </li>
-        <li>
-          The model reproduces the published MATLAB tool, including its simplifications.
-          It applies the deficit benchmark in structural primary terms throughout,
-          rather than switching to structural balance terms partway through, and it
-          takes the safeguard's 0.5 or 1 pp band from the 2023 debt ratio rather than
-          from debt at the start of the plan.
-        </li>
-        <li>
-          Results are illustrative. The Commission's own calculation uses the full
-          country data, its own forecast vintage and judgement that no replication
-          reproduces exactly — but at the shipped assumptions the headline figures here
-          match those published in the National Audit Office's monitoring report, as
-          set out above.
-        </li>
-        <li>
-          The fiscal multiplier and the inflation path are assumptions, not estimates.
-          The National Audit Office's 2024 monitoring report argued that the modelling
-          of the multiplier should be reviewed and that the inflation path should rest
-          more on country-specific factors; the controls let you see how much either
-          would change the requirement.
-        </li>
-      </ul>
-
-      <p>
-        The method follows the Commission's
-        <a href="https://economy-finance.ec.europa.eu/publications/debt-sustainability-monitor-2023_en">Debt
-        Sustainability Monitor 2023</a>, and the code benefited from the Python
-        implementation by
-        <a href="https://www.bruegel.org/working-paper/quantitative-evaluation-european-commissions-fiscal-governance-proposal">Darvas
-        et al. (2023)</a>. The MATLAB version this page replicates is
-        <a href="https://github.com/peetukeskinen/DSA5.1v">DSA 5.1</a>.
-      </p>
-    </section>
+      </div>
+    </details>
 
   </div>
 </main>
@@ -473,7 +366,7 @@
 <script src="dsa/data/shocks.js"></script>
 <script src="dsa/model.js"></script>
 <script src="dsa/criteria.js"></script>
-<script src="dsa/chart.js?v=2026-09-20f"></script>
-<script src="dsa/app.js?v=2026-09-20f"></script>
+<script src="dsa/chart.js?v=2026-09-20h"></script>
+<script src="dsa/app.js?v=2026-09-20h"></script>
 </body>
 </html>

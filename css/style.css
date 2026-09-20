@@ -1144,6 +1144,31 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 /* --- numbers -------------------------------------------------------------- */
 
+/* The explanation lives behind a toggle, so the calculator is what loads. */
+.dsa-info {
+  margin-top: var(--space-lg);
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 0.7rem;
+}
+
+.dsa-info > summary {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.dsa-info[open] > summary { margin-bottom: 0.8rem; }
+
+.dsa-info-body { max-width: var(--measure); }
+.dsa-info-body h3 { margin-top: var(--space-md); }
+.dsa-info-body h3:first-child { margin-top: 0.4rem; }
+
+.dsa-disclaimer { max-width: var(--measure); margin-bottom: var(--space-md); }
+
 .dsa-numbers { margin-top: 1.5rem; }
 
 /* The year table gained a column; let it scroll rather than squeeze on a phone. */

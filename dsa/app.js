@@ -480,8 +480,8 @@
     var refline = document.getElementById('dsa-refline');
     if (refline) refline.classList.toggle('is-off', !refOk);
     setText('dsa-ref-name', refOk
-      ? (pinned ? 'Grey line: pinned scenario (' + pinned.label + ')' : 'Grey line: baseline, the Commission’s assumptions')
-      : 'A grey reference line appears when a setting changes.');
+      ? (pinned ? 'Grey line: your pinned scenario (' + pinned.label + ')' : 'Grey line: the starting assumptions')
+      : 'Change a setting and a grey line shows where you started.');
 
     /* ---- failed state: keep drawing ------------------------------------ */
     if (r.failed) {
@@ -493,7 +493,7 @@
       setText('result-figure', '> 2.00');
       setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + pf[0] + '–' + pf[pf.length - 1]);
       setHidden('result-delta', true);
-      setText('result-binding', 'no adjustment up to 2.00 pp a year satisfies the rules');
+      setText('result-binding', 'no adjustment up to 2.00 a year meets the rules');
       setHidden('result-was', true);
       setHidden('result-floors', true);
       setHidden('result-euro', true);
@@ -543,8 +543,8 @@
     setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + planFirst + '–' + planLast);
     if (unmet.length) {
       setText('result-figure', '> 2.00');
-      setText('result-binding', joinNames(unmet) + ' cannot be met with up to 2.00 pp a year; ' +
-        r.adjustment.toFixed(2) + ' satisfies the other rules and is what the debt chart shows');
+      setText('result-binding', 'even 2.00 a year does not meet the ' + joinNames(unmet) +
+        '; the chart shows ' + r.adjustment.toFixed(2) + ', what the other rules need');
     } else {
       setText('result-figure', r.adjustment.toFixed(2));
       setText('result-binding', b.text);
@@ -581,10 +581,10 @@
           if (!ys) return;
           var v = null;
           r.bindingLabels.forEach(function (l, i) { if (l === label && v === null) v = r.finalPath[i]; });
-          lifts.push('the ' + label.toLowerCase() + ' lifts ' + ys.replace(/^in /, '') + ' to ' + v.toFixed(2));
+          lifts.push(ys.replace(/^in /, '') + ' rises to ' + v.toFixed(2) + ' (' + label.toLowerCase() + ')');
         });
-        var sentence = joinNames(lifts) + ' (year-by-year table below); the debt chart is drawn at ' + r.adjustment.toFixed(2) + '.';
-        floorsNode.textContent = sentence.charAt(0).toUpperCase() + sentence.slice(1);
+        floorsNode.textContent = 'Some years need more: ' + joinNames(lifts) +
+          '. The chart uses ' + r.adjustment.toFixed(2) + '.';
         floorsNode.hidden = false;
       } else {
         floorsNode.hidden = true;
@@ -605,9 +605,8 @@
            years of the plan add up to as a permanent annual adjustment. */
         var eur = euroPath(r);
         var i4 = Math.min(3, eur.cumulative.length - 1);
-        euroNode.textContent = 'In euros: about ' + bn(eur.cumulative[i4]) +
-          ' a year of permanent adjustment by ' + r.planYears[i4] +
-          (params.plan > 4 ? ', the first four years of the plan.' : ', the whole plan.');
+        euroNode.textContent = 'In euros: about ' + bn(eur.cumulative[i4]) + ' a year by ' +
+          r.planYears[i4] + (params.plan > 4 ? ', after four years of the plan.' : ', the whole plan.');
         euroNode.hidden = false;
       }
     }
@@ -740,7 +739,7 @@
     if (unmetNode) {
       unmetNode.hidden = !unmet.length;
       unmetNode.textContent = unmet.length
-        ? 'No adjustment up to 2.00 pp a year meets the ' + joinNames(unmet) + '. As in the source tool it drops out of the search, so the chart shows the smallest adjustment the remaining rules accept.'
+        ? 'Even 2.00 a year does not meet the ' + joinNames(unmet) + '. As in the original tool that rule drops out, and the chart shows what the other rules need.'
         : '';
     }
 
