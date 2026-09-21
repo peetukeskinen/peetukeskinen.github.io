@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-21h">
+<link rel="stylesheet" href="css/style.css?v=2026-09-21i">
 </head>
 <body>
 
@@ -85,6 +85,12 @@
               </p>
               <p class="dsa-floors" id="result-floors" hidden></p>
             </div>
+            <p class="dsa-define">
+              The budget has to improve by this much every year of the plan, counted
+              before interest costs and with the ups and downs of the economy taken
+              out. It can come from spending cuts, tax rises, or both — the rules do
+              not say which.
+            </p>
             <p class="dsa-euro" id="result-euro" hidden></p>
             <dl class="dsa-stats">
               <div><dt>Total adjustment</dt><dd id="stat-total">—</dd></div>
@@ -176,6 +182,18 @@
               </div>
               <p class="dsa-hint">A change from the Commission's potential growth.</p>
               <p class="dsa-hint" id="out-rg"></p>
+            </div>
+
+            <div class="dsa-control">
+              <div class="dsa-control-head">
+                <label for="outputGap">Starting position</label>
+                <output id="out-outputGap" for="outputGap">0.0 pp</output>
+              </div>
+              <div class="dsa-track">
+                <input type="range" id="outputGap" name="outputGap" min="-3" max="3" step="0.1" value="0">
+              </div>
+              <p class="dsa-hint">How much better or worse the economy is doing in 2025 than the Commission assumed. The gap then closes on the same schedule as before.</p>
+              <p class="dsa-hint" id="out-og"></p>
             </div>
 
             <div class="dsa-control">
@@ -418,9 +436,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-21h"></script>
-<script src="dsa/criteria.js?v=2026-09-21h"></script>
-<script src="dsa/chart.js?v=2026-09-21h"></script>
-<script src="dsa/app.js?v=2026-09-21h"></script>
+<script src="dsa/model.js?v=2026-09-21i"></script>
+<script src="dsa/criteria.js?v=2026-09-21i"></script>
+<script src="dsa/chart.js?v=2026-09-21i"></script>
+<script src="dsa/app.js?v=2026-09-21i"></script>
 </body>
 </html>

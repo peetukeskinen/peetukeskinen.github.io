@@ -1112,6 +1112,19 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 /* The euro restatement: what the adjustment is worth in the unit public
    debate uses. */
+/* What the big number means, in the box with the big number. */
+.dsa-define {
+  grid-column: 1 / -1;
+  max-width: var(--measure);
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+  margin: 0.45rem 0 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--rule);
+}
+
 .dsa-euro {
   grid-column: 1 / -1;
   font-family: var(--sans);
@@ -1284,6 +1297,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .dsa-euro { font-size: 0.78rem; margin-top: 0.4rem; padding-top: 0.35rem; }
   .dsa-readout { display: none; }
   .dsa-refline { font-size: 0.7rem; }
+  .dsa-define { font-size: 0.72rem; }
   .dsa-why { font-size: 0.76rem; padding-left: 0.5rem; }
   .dsa-stage-actions { gap: 0.25rem 0.5rem; }
   .dsa-table { font-size: 0.8125rem; }

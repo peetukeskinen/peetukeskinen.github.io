@@ -44,6 +44,7 @@
     debtInitial: data.scalars.debt_initial.toFixed(1),
     rateShift: '0',
     growthShift: '0',
+    outputGap: '0',
     phi: data.scalars.phi.toFixed(2),
     plausibility: '7',
     method: 'normal',
@@ -57,7 +58,7 @@
   };
 
   /* The keys that change the numbers, as opposed to what is drawn. */
-  var MODEL_KEYS = ['plan', 'debtInitial', 'rateShift', 'growthShift', 'phi', 'plausibility',
+  var MODEL_KEYS = ['plan', 'debtInitial', 'rateShift', 'growthShift', 'outputGap', 'phi', 'plausibility',
                     'method', 'sfaMethod', 'useStochastic', 'useDebtSafeguard',
                     'useDeficitBenchmark', 'useDeficitSafeguard'];
   var SELECTS = ['plausibility', 'method', 'sfaMethod'];
@@ -66,6 +67,7 @@
     debtInitial: { unit: '% of GDP', decimals: 1, signed: false },
     rateShift: { unit: ' pp', decimals: 1, signed: true },
     growthShift: { unit: ' pp', decimals: 2, signed: true },
+    outputGap: { unit: ' pp', decimals: 1, signed: true },
     phi: { unit: '', decimals: 2, signed: false }
   };
 
@@ -133,6 +135,7 @@
       debtInitial: parseFloat(state.debtInitial),
       rateShift: parseFloat(state.rateShift),
       growthShift: parseFloat(state.growthShift),
+      outputGap: parseFloat(state.outputGap),
       phi: parseFloat(state.phi),
       plausibility: parseInt(state.plausibility, 10),
       method: state.method,
@@ -226,6 +229,7 @@
     if (parseFloat(state.debtInitial) !== parseFloat(DEFAULTS.debtInitial)) parts.push('debt ' + parseFloat(state.debtInitial).toFixed(0) + '%');
     if (parseFloat(state.rateShift) !== 0) parts.push('rates ' + sliderText('rateShift', state.rateShift));
     if (parseFloat(state.growthShift) !== 0) parts.push('growth ' + sliderText('growthShift', state.growthShift));
+    if (parseFloat(state.outputGap) !== 0) parts.push('starting position ' + sliderText('outputGap', state.outputGap));
     if (parseFloat(state.phi) !== parseFloat(DEFAULTS.phi)) parts.push('multiplier ' + parseFloat(state.phi).toFixed(2));
     var off = [];
     if (!state.useStochastic) off.push('stochastic test');
@@ -582,6 +586,7 @@
       writeRulesText([]);
       document.getElementById('dsa-table-body').innerHTML = '';
       setText('out-rg', '');
+      setText('out-og', '');
       padForStage();
       return;
     }
@@ -646,6 +651,7 @@
       setHidden('dsa-unmet', true);
       document.getElementById('dsa-table-body').innerHTML = '';
       setText('out-rg', '');
+      setText('out-og', '');
       if (announce) {
         lastStatus = 'No adjustment up to 2 points a year satisfies the rules with these settings.';
         status.textContent = lastStatus;
@@ -752,6 +758,11 @@
     /* r - g at the end of the plan: the snowball in one number. */
     var rg = p1.iir[adjEnd] - 100 * p1.g[adjEnd];
     setText('out-rg', 'r − g at the end of the plan: ' + signed(rg, 1) + ' pp');
+
+    /* The gap the starting-position slider produces, as a level. */
+    setText('out-og', 'Output gap in ' + planFirst + ': ' +
+      signed(p1.og[r.inputs.adjustmentStart], 1) + '% of potential, closed by ' +
+      (planLast + 3) + '.');
 
     /* ---- year table (collapsed) ------------------------------------------ */
     var eurTable = euroPath(r);

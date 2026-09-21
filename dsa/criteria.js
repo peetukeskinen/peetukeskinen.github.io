@@ -125,6 +125,13 @@
       }
     }
 
+    /* Where the economy starts the plan: the output gap in the last year the
+       Commission supplies one. From the next year on the model closes the gap
+       on its own schedule, so this moves the starting point and nothing else. */
+    if (params.outputGap) {
+      og[adjustmentStart] += params.outputGap;
+    }
+
     /* Potential growth: re-grow the level path from the first plan year on. */
     if (params.growthShift) {
       var basePot = potgdp.slice();

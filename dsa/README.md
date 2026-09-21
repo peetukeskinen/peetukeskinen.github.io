@@ -27,7 +27,10 @@ screen while the controls scroll underneath it (switched off on viewports under
 761px tall).
 
 The headline is the required annual adjustment in structural primary balance
-terms, with the binding rule beside it. The net expenditure growth ceilings —
+terms, with the binding rule beside it and, under both, a plain sentence saying
+what the number is: how much the budget has to improve each year, counted
+before interest and with the cycle taken out, from spending cuts or tax rises
+or both. The net expenditure growth ceilings —
 the operational form the rules are written in, `netExpenditure` after the
 year-specific deficit floors — sit in a secondary `<details>` below the
 workbench with a short explainer, because their role is not obvious to a
@@ -52,6 +55,13 @@ What makes a change visible:
   test binds, the two numbers it compares joined by a line; and under the chart
   a bar per criterion with the binding one tagged and a tick at the reference
   value.
+- **Starting position.** The *Starting position* slider moves the 2025 output
+  gap, the last year the Commission supplies one, and the model closes the gap
+  from there on its own schedule -- always reaching zero three years after the
+  plan ends. It is the one control that separates a better economy from a good
+  year: potential growth moves real growth one for one and leaves the gap
+  alone, while this moves output relative to potential and then fades. The
+  readout under it gives the resulting gap as a level.
 - **Preset chips stack.** Each one sets only its own controls and leaves the
   rest alone, so rates +1 pp, growth −0.5 pp and the safeguards off can all be
   on at once. A second tap on a chip returns just that chip's settings to the
@@ -139,17 +149,18 @@ export `e_g`, `e_pb`, `e_i_st` and `e_i_lt` after the shock-generation block in
 ## Checking against the MATLAB tool
 
 The port was checked against an independently written Python translation of the
-same MATLAB source. Nineteen parameter combinations — both plan lengths, safeguards
+same MATLAB source. Twenty-one parameter combinations — both plan lengths, safeguards
 on and off, both plausibility levels, both shock methods, both SFA assumptions,
-each slider on its own, and several stacked at once — agree to 1.4e-14 across
+each slider on its own including the starting output gap, and five stacked at
+once — agree to 1.4e-14 across
 the full debt, balance, structural balance, structural primary balance, net
 expenditure and percentile paths. The harness is under
 `OneDrive/DSA/calculator/test` (`run_js.sh`, `compare.py`).
 
-A 784-point sweep produces no failures and no non-finite values, with a worst
-case of 148 ms per full run including the simulation: 720 points over the slider
-ranges, all 16 combinations of the rule switches on both plan lengths, and all
-32 combinations of the preset chips.
+A 2,224-point sweep produces no failures and no non-finite values, with a worst
+case of 144 ms per full run including the simulation: 2,160 points over the
+slider ranges, all 16 combinations of the rule switches on both plan lengths,
+and all 32 combinations of the preset chips.
 
 The baseline also reproduces the figures published in chapter 3 of the National
 Audit Office's fiscal policy monitoring report 2024: 0.76 pp a year with the debt
