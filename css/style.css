@@ -1112,64 +1112,104 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 /* The euro restatement: what the adjustment is worth in the unit public
    debate uses. */
-/* Explanations sit behind a small "i" so the page reads as a calculator.
-   Native <details>, so they work with no script and take the keyboard. */
-.dsa-note { margin: 0.2rem 0 0; }
-
-.dsa-note > summary {
-  display: inline-flex;
-  align-items: center;
-  list-style: none;
-  cursor: pointer;
+/* Explanations hang off the word they explain: a small "i" that shows its
+   text on hover, and on focus, so the keyboard and a tap reach it too. */
+.dsa-tip {
+  position: relative;
+  display: inline-block;
+  vertical-align: 0.05em;
 }
-
-.dsa-note > summary::-webkit-details-marker { display: none; }
-.dsa-note > summary::marker { content: ""; }
 
 .dsa-i {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.05rem;
-  height: 1.05rem;
+  width: 1rem;
+  height: 1rem;
+  padding: 0;
+  background: transparent;
   border: 1px solid var(--rule-strong);
   border-radius: 50%;
-  font-family: var(--serif, Georgia, serif);
+  font-family: Georgia, "Times New Roman", serif;
   font-style: italic;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   line-height: 1;
   color: var(--ink-muted);
+  cursor: help;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-.dsa-note > summary:hover .dsa-i,
-.dsa-note[open] > summary .dsa-i {
+.dsa-tip:hover .dsa-i,
+.dsa-tip:focus-within .dsa-i {
   border-color: var(--accent);
   color: var(--accent);
 }
 
-.dsa-note[open] > summary .dsa-i { background: var(--bg-inset); }
-
-.dsa-note > summary:focus-visible {
+.dsa-i:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-  border-radius: 999px;
 }
 
-.dsa-note > .dsa-hint { margin: 0.3rem 0 0.1rem; }
-
-/* In the headline box the note spans both columns and keeps its rule. */
-.dsa-note-headline {
-  grid-column: 1 / -1;
-  margin: 0.45rem 0 0;
-  padding-top: 0.45rem;
-  border-top: 1px solid var(--rule);
+.dsa-tip-body {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: -0.6rem;
+  z-index: 30;
+  width: max-content;
+  max-width: min(19rem, calc(100vw - 3rem));
+  padding: 0.5rem 0.65rem;
+  background: var(--bg);
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.12s ease;
 }
 
-/* An "i" that follows a sentence rather than sitting on its own line. */
-.dsa-note-inline { display: inline-block; vertical-align: -0.25em; margin-left: 0.15rem; }
-.dsa-note-inline .dsa-note { display: inline; margin: 0; }
-.dsa-note-inline .dsa-note > .dsa-hint { display: block; margin: 0.3rem 0 0; }
+.dsa-tip:hover .dsa-tip-body,
+.dsa-tip:focus-within .dsa-tip-body {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* In the controls rail the panel spans the rail rather than hanging off the
+   "i", so it never runs past either edge whatever the label's length. */
+.dsa-controls .dsa-tip { position: static; }
+.dsa-controls .dsa-control-head,
+.dsa-controls .dsa-eyebrow,
+.dsa-controls .dsa-presets,
+.dsa-controls .dsa-origin { position: relative; }
+
+.dsa-controls .dsa-tip-body {
+  left: 0;
+  right: auto;
+  width: 100%;
+  max-width: none;
+  top: calc(100% + 0.3rem);
+}
+
+/* Keeps the label and its "i" together while the value stays right. */
+.dsa-head-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dsa-tip-body { transition: none; }
+}
 
 .dsa-euro {
   grid-column: 1 / -1;

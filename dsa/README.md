@@ -27,16 +27,21 @@ screen while the controls scroll underneath it (switched off on viewports under
 761px tall).
 
 The headline is the required annual adjustment in structural primary balance
-terms, with the binding rule beside it and, behind an "i", a plain sentence
-saying what the number is: how much the budget has to improve each year,
+terms, with the binding rule beside it and, behind the "i" next to its label, a
+plain sentence saying what the number is: how much the budget has to improve each year,
 counted before interest and with the cycle taken out, from spending cuts or tax
 rises or both.
 
-Every explanation on the page sits behind one of those small "i" buttons --
-native `<details>`, so they need no script and take the keyboard. What stays
-visible is the control, its value, and any number the model computed for it.
-The one line that stays in the open is under the chart, naming what the binding
-rule is doing, because it answers a question the reader has at that moment. The net expenditure growth ceilings —
+Every explanation on the page hangs off the word it explains, as a small "i"
+that shows its text on hover. The trigger is a real button with `aria-label`
+and `aria-describedby`, and the panel is revealed by `:hover` and
+`:focus-within`, so the keyboard and a tap reach it as well as the cursor; no
+script is involved. Inside the controls rail the panel spans the rail rather
+than hanging off the "i", so it cannot run past either edge whatever the
+label's length. What stays visible is the control, its value, and any number
+the model computed for it. The one line that stays in the open is under the
+chart, naming what the binding rule is doing, because it answers a question the
+reader has at that moment. The net expenditure growth ceilings —
 the operational form the rules are written in, `netExpenditure` after the
 year-specific deficit floors — sit in a secondary `<details>` below the
 workbench with a short explainer, because their role is not obvious to a

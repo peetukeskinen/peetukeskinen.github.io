@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-21j">
+<link rel="stylesheet" href="css/style.css?v=2026-09-21k">
 </head>
 <body>
 
@@ -73,7 +73,7 @@
         <div class="dsa-stage">
           <div class="dsa-headline">
             <div class="dsa-headline-main">
-              <p class="dsa-eyebrow">Required annual adjustment</p>
+              <p class="dsa-eyebrow">Required annual adjustment <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="What this number means" aria-describedby="tip-headline">i</button><span class="dsa-tip-body" role="tooltip" id="tip-headline">The budget has to improve by this much every year of the plan, counted before interest costs and with the ups and downs of the economy taken out. It can come from spending cuts, tax rises, or both — the rules do not say which.</span></span></p>
               <p class="dsa-figure" id="result-figure">—</p>
               <p class="dsa-figure-unit" id="result-unit">pp of GDP a year</p>
             </div>
@@ -85,15 +85,6 @@
               </p>
               <p class="dsa-floors" id="result-floors" hidden></p>
             </div>
-            <details class="dsa-note dsa-note-headline">
-              <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">What this number means</span></summary>
-              <p class="dsa-hint">
-                The budget has to improve by this much every year of the plan, counted
-                before interest costs and with the ups and downs of the economy taken
-                out. It can come from spending cuts, tax rises, or both — the rules do
-                not say which.
-              </p>
-            </details>
             <p class="dsa-euro" id="result-euro" hidden></p>
             <dl class="dsa-stats">
               <div><dt>Total adjustment</dt><dd id="stat-total">—</dd></div>
@@ -121,17 +112,11 @@
         <form id="dsa-form" class="dsa-controls" aria-label="Assumptions">
 
           <p class="dsa-hint dsa-origin">
-            Everything starts at the European Commission's own settings for Finland.
-            <span class="dsa-note-inline">
-              <details class="dsa-note">
-                <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">How changes are marked</span></summary>
-                <p class="dsa-hint">A dot marks anything you change, and the mark under a slider is the Commission's value.</p>
-              </details>
-            </span>
+            Everything starts at the European Commission's own settings for Finland. <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="How changes are marked" aria-describedby="tip-origin">i</button><span class="dsa-tip-body" role="tooltip" id="tip-origin">A dot marks anything you change, and the mark under a slider is the Commission's value.</span></span>
           </p>
 
           <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario">
-            <span class="dsa-presets-label">Try</span>
+            <span class="dsa-presets-label">Try <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the scenario buttons" aria-describedby="tip-presets">i</button><span class="dsa-tip-body" role="tooltip" id="tip-presets">These combine — switch on as many as you like.</span></span></span>
             <button type="button" data-set='{"rateShift":"1"}' aria-pressed="false">Rates +1 pp</button>
             <button type="button" data-set='{"growthShift":"-0.5"}' aria-pressed="false">Growth −0.5 pp</button>
             <button type="button" data-set='{"plan":"4"}' aria-pressed="false">4-year plan</button>
@@ -139,13 +124,9 @@
             <button type="button" data-set='{"useDebtSafeguard":false,"useDeficitBenchmark":false,"useDeficitSafeguard":false}' aria-pressed="false">Safeguards off</button>
             <button type="button" id="dsa-presets-clear" class="dsa-presets-clear" hidden>Clear</button>
           </div>
-          <details class="dsa-note">
-            <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About the scenario buttons</span></summary>
-            <p class="dsa-hint">These combine — switch on as many as you like.</p>
-          </details>
 
           <div class="dsa-group" id="plan-control">
-            <p class="dsa-eyebrow" id="plan-label">Plan length</p>
+            <p class="dsa-eyebrow"><span id="plan-label">Plan length</span> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About plan length" aria-describedby="tip-plan">i</button><span class="dsa-tip-body" role="tooltip" id="tip-plan">Seven years is allowed in return for reforms and investment. Finland's plan is seven.</span></span></p>
             <div class="dsa-seg" role="radiogroup" aria-labelledby="plan-label">
               <label class="dsa-seg-option">
                 <input type="radio" name="plan" value="4" class="visually-hidden"><span>4 years</span>
@@ -154,10 +135,6 @@
                 <input type="radio" name="plan" value="7" class="visually-hidden" checked><span>7 years</span>
               </label>
             </div>
-            <details class="dsa-note">
-              <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About plan length</span></summary>
-              <p class="dsa-hint">Seven years is allowed in return for reforms and investment. Finland's plan is seven.</p>
-            </details>
           </div>
 
           <div class="dsa-group" role="group" aria-labelledby="economy-label">
@@ -165,89 +142,65 @@
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <label for="debtInitial">Debt in 2023</label>
+                <span class="dsa-head-label"><label for="debtInitial">Debt in 2023</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the 2023 debt ratio" aria-describedby="tip-debt">i</button><span class="dsa-tip-body" role="tooltip" id="tip-debt">Debt at the end of 2023; the Commission uses 75.8%. Also decides which safeguard applies: 0.5 or 1 point a year.</span></span></span>
                 <output id="out-debtInitial" for="debtInitial">75.8% of GDP</output>
               </div>
               <div class="dsa-track">
                 <input type="range" id="debtInitial" name="debtInitial" min="40" max="160" step="0.1" value="75.8">
               </div>
-              <details class="dsa-note">
-                <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About the 2023 debt ratio</span></summary>
-                <p class="dsa-hint">Debt at the end of 2023; the Commission uses 75.8%. Also decides which safeguard applies: 0.5 or 1 point a year.</p>
-              </details>
             </div>
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <label for="rateShift">Interest rates</label>
+                <span class="dsa-head-label"><label for="rateShift">Interest rates</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About interest rates" aria-describedby="tip-rates">i</button><span class="dsa-tip-body" role="tooltip" id="tip-rates">Market rates from 2026 on, as a change from the Commission's forecast. Only debt that matures reprices, so the interest bill moves slowly.</span></span></span>
                 <output id="out-rateShift" for="rateShift">0.0 pp</output>
               </div>
               <div class="dsa-track">
                 <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
               </div>
-              <details class="dsa-note">
-                <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About interest rates</span></summary>
-                <p class="dsa-hint">Market rates from 2026 on, as a change from the Commission's forecast. Only debt that matures reprices, so the interest bill moves slowly.</p>
-              </details>
             </div>
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <label for="growthShift">Potential growth</label>
+                <span class="dsa-head-label"><label for="growthShift">Potential growth</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About potential growth" aria-describedby="tip-growth">i</button><span class="dsa-tip-body" role="tooltip" id="tip-growth">A change from the Commission's potential growth.</span></span></span>
                 <output id="out-growthShift" for="growthShift">0.0 pp</output>
               </div>
               <div class="dsa-track">
                 <input type="range" id="growthShift" name="growthShift" min="-1.5" max="1.5" step="0.05" value="0">
               </div>
               <p class="dsa-hint" id="out-rg"></p>
-              <details class="dsa-note">
-                <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About potential growth</span></summary>
-                <p class="dsa-hint">A change from the Commission's potential growth.</p>
-              </details>
             </div>
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <label for="outputGap">Economic cycle</label>
+                <span class="dsa-head-label"><label for="outputGap">Economic cycle</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the economic cycle" aria-describedby="tip-cycle">i</button><span class="dsa-tip-body" role="tooltip" id="tip-cycle">How much better or worse the economy is doing in 2025 than the Commission assumed. The gap then closes on the same schedule as before.</span></span></span>
                 <output id="out-outputGap" for="outputGap">0.0 pp</output>
               </div>
               <div class="dsa-track">
                 <input type="range" id="outputGap" name="outputGap" min="-3" max="3" step="0.1" value="0">
               </div>
               <p class="dsa-hint" id="out-og"></p>
-              <details class="dsa-note">
-                <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About the economic cycle</span></summary>
-                <p class="dsa-hint">How much better or worse the economy is doing in 2025 than the Commission assumed. The gap then closes on the same schedule as before.</p>
-              </details>
             </div>
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <label for="phi">Fiscal multiplier</label>
+                <span class="dsa-head-label"><label for="phi">Fiscal multiplier</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the fiscal multiplier" aria-describedby="tip-phi">i</button><span class="dsa-tip-body" role="tooltip" id="tip-phi">How much output a point of tightening costs. The Commission uses 0.75.</span></span></span>
                 <output id="out-phi" for="phi">0.75</output>
               </div>
               <div class="dsa-track">
                 <input type="range" id="phi" name="phi" min="0" max="1.5" step="0.05" value="0.75">
               </div>
-              <details class="dsa-note">
-                <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About the fiscal multiplier</span></summary>
-                <p class="dsa-hint">How much output a point of tightening costs. The Commission uses 0.75.</p>
-              </details>
             </div>
           </div>
 
           <div class="dsa-group">
-            <p class="dsa-eyebrow" id="rules-label">Criteria used</p>
+            <p class="dsa-eyebrow"><span id="rules-label">Criteria used</span> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the criteria" aria-describedby="tip-criteria">i</button><span class="dsa-tip-body" role="tooltip" id="tip-criteria">In practice, every criterion has to be satisfied at the same time, and the strictest one sets the required consolidation.</span></span></p>
             <div class="dsa-checks" role="group" aria-labelledby="rules-label">
               <label><input type="checkbox" name="useStochastic" checked> Stochastic test</label>
               <label><input type="checkbox" name="useDebtSafeguard" checked> Debt safeguard</label>
               <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
               <label><input type="checkbox" name="useDeficitSafeguard" checked> Resilience safeguard</label>
             </div>
-            <details class="dsa-note">
-              <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About the criteria</span></summary>
-              <p class="dsa-hint">In practice, every criterion has to be satisfied at the same time, and the strictest one sets the required consolidation.</p>
-            </details>
           </div>
 
           <details class="dsa-advanced">
@@ -290,14 +243,10 @@
         </form>
 
         <div class="dsa-rules-panel" id="dsa-rules-panel">
-          <p class="dsa-eyebrow">What each scenario needs</p>
+          <p class="dsa-eyebrow">What each scenario needs <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the bars" aria-describedby="tip-bars">i</button><span class="dsa-tip-body" role="tooltip" id="tip-bars">What each scenario would require on its own. The longest bar sets the headline. Hollow bars are minimums that only bite in some years; a striped bar is a scenario that even 2.00 a year cannot meet.</span></span></p>
           <div id="dsa-rules" class="dsa-rules"></div>
           <ul id="dsa-rules-text" class="visually-hidden"></ul>
           <p class="dsa-hint" id="dsa-unmet" hidden></p>
-          <details class="dsa-note">
-            <summary><span class="dsa-i" aria-hidden="true">i</span><span class="visually-hidden">About the bars</span></summary>
-            <p class="dsa-hint">What each scenario would require on its own. The longest bar sets the headline. Hollow bars are minimums that only bite in some years; a striped bar is a scenario that even 2.00 a year cannot meet.</p>
-          </details>
         </div>
 
       </div>
@@ -463,9 +412,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-21j"></script>
-<script src="dsa/criteria.js?v=2026-09-21j"></script>
-<script src="dsa/chart.js?v=2026-09-21j"></script>
-<script src="dsa/app.js?v=2026-09-21j"></script>
+<script src="dsa/model.js?v=2026-09-21k"></script>
+<script src="dsa/criteria.js?v=2026-09-21k"></script>
+<script src="dsa/chart.js?v=2026-09-21k"></script>
+<script src="dsa/app.js?v=2026-09-21k"></script>
 </body>
 </html>
