@@ -144,6 +144,13 @@
     };
   }
 
+  /* A preset is on when its own settings are in force, whatever else is set.
+     Applying it changes nothing, so the two states compare equal. Presets
+     stack, so several can be on at once. */
+  function chipOn(set, state) {
+    return sameModel(Object.assign({}, state, set), state);
+  }
+
   /* Compare as model parameters, so "100" and "100.0" are the same debt. */
   function sameModel(a, b) {
     var pa = toParams(a), pb = toParams(b);
@@ -392,10 +399,14 @@
       state.showNoAdjustment !== DEFAULTS.showNoAdjustment || state.showScenarios !== DEFAULTS.showScenarios);
 
     var chips = document.querySelectorAll('#dsa-presets button[data-set]');
+    var anyChip = false;
     Array.prototype.forEach.call(chips, function (chip) {
-      var target = Object.assign({}, DEFAULTS, JSON.parse(chip.getAttribute('data-set')));
-      chip.setAttribute('aria-pressed', sameModel(target, state) ? 'true' : 'false');
+      var on = chipOn(JSON.parse(chip.getAttribute('data-set')), state);
+      anyChip = anyChip || on;
+      chip.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    var clear = document.getElementById('dsa-presets-clear');
+    if (clear) clear.hidden = !anyChip;
   }
 
   function setDelta(text, neutral) {
@@ -803,15 +814,29 @@
     render(true);
   });
 
+  var presetsClear = document.getElementById('dsa-presets-clear');
+  if (presetsClear) {
+    presetsClear.addEventListener('click', function () {
+      applyModel(DEFAULTS);
+      render(true);
+    });
+  }
+
   var presets = document.getElementById('dsa-presets');
   if (presets) {
     presets.addEventListener('click', function (e) {
       var btn = e.target.closest('button[data-set]');
       if (!btn) return;
       var set = JSON.parse(btn.getAttribute('data-set'));
-      var target = Object.assign({}, DEFAULTS, set);
-      /* A second tap on the active chip returns to the baseline. */
-      if (sameModel(target, formState())) target = DEFAULTS;
+      var state = formState();
+      var target = Object.assign({}, state);
+      if (chipOn(set, state)) {
+        /* A second tap drops this preset's settings and leaves the rest alone. */
+        Object.keys(set).forEach(function (k) { target[k] = DEFAULTS[k]; });
+      } else {
+        /* Otherwise layer it on top of whatever is already set. */
+        Object.assign(target, set);
+      }
       applyModel(target);
       render(true);
     });

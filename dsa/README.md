@@ -47,7 +47,12 @@ What makes a change visible:
   test binds, the two numbers it compares joined by a line; and under the chart
   a bar per criterion with the binding one tagged and a tick at the reference
   value.
-- **Preset chips** set a scenario in one tap; a second tap returns to baseline.
+- **Preset chips stack.** Each one sets only its own controls and leaves the
+  rest alone, so rates +1 pp, growth −0.5 pp and the safeguards off can all be
+  on at once. A second tap on a chip returns just that chip's settings to the
+  baseline; *Clear* appears beside the row once any chip is on and resets them
+  all. A chip also lights up when its setting is reached by dragging the
+  slider to the same value.
 - **Euros.** Public debate is conducted in billions, not points of GDP, so the
   headline restates the requirement as the permanent adjustment reached after
   four years — the horizon Finnish commentary uses. The year table carries the

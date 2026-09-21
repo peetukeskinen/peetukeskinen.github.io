@@ -830,6 +830,24 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   color: var(--bg);
 }
 
+/* Quiet trailing control: only shown once a preset is on. */
+.dsa-presets .dsa-presets-clear {
+  border-color: transparent;
+  color: var(--ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  padding-inline: 0.3rem;
+}
+
+.dsa-presets .dsa-presets-clear:hover {
+  border-color: transparent;
+  color: var(--accent);
+}
+
+.dsa-presets-hint {
+  margin: -0.55rem 0 0.85rem;
+}
+
 .dsa-presets button:focus-visible,
 .dsa-button:focus-visible {
   outline: 2px solid var(--focus);
@@ -1237,7 +1255,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .entry, .biblio-item { break-inside: avoid; }
 
   /* On paper the controls are dead weight; the result and chart are not. */
-  .dsa-controls, .dsa-button, .dsa-readout, .dsa-presets { display: none; }
+  .dsa-controls, .dsa-button, .dsa-readout, .dsa-presets, .dsa-presets-hint { display: none; }
   .dsa-stage { position: static; }
   .dsa-headline { border-left-color: #000; }
   .dsa-chart, .dsa-table { break-inside: avoid; }

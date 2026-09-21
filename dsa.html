@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-21b">
+<link rel="stylesheet" href="css/style.css?v=2026-09-21c">
 </head>
 <body>
 
@@ -104,14 +104,16 @@
 
         <form id="dsa-form" class="dsa-controls" aria-label="Assumptions">
 
-          <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario">
+          <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario. These combine: switch on as many as you like.">
             <span class="dsa-presets-label">Try</span>
             <button type="button" data-set='{"rateShift":"1"}' aria-pressed="false">Rates +1 pp</button>
             <button type="button" data-set='{"growthShift":"-0.5"}' aria-pressed="false">Growth −0.5 pp</button>
             <button type="button" data-set='{"plan":"4"}' aria-pressed="false">4-year plan</button>
             <button type="button" data-set='{"debtInitial":"100.0"}' aria-pressed="false">Debt 100%</button>
             <button type="button" data-set='{"useDebtSafeguard":false,"useDeficitBenchmark":false,"useDeficitSafeguard":false}' aria-pressed="false">Safeguards off</button>
+            <button type="button" id="dsa-presets-clear" class="dsa-presets-clear" hidden>Clear</button>
           </div>
+          <p class="dsa-hint dsa-presets-hint">These combine — switch on as many as you like.</p>
 
           <div class="dsa-group" id="plan-control">
             <p class="dsa-eyebrow" id="plan-label">Plan length</p>
@@ -394,9 +396,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-21b"></script>
-<script src="dsa/criteria.js?v=2026-09-21b"></script>
-<script src="dsa/chart.js?v=2026-09-21b"></script>
-<script src="dsa/app.js?v=2026-09-21b"></script>
+<script src="dsa/model.js?v=2026-09-21c"></script>
+<script src="dsa/criteria.js?v=2026-09-21c"></script>
+<script src="dsa/chart.js?v=2026-09-21c"></script>
+<script src="dsa/app.js?v=2026-09-21c"></script>
 </body>
 </html>
