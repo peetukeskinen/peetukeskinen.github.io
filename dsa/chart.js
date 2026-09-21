@@ -7,7 +7,7 @@
 
      draw(host, spec)      a line chart with percentile bands, thresholds,
                            guides, direct end labels and annotations
-     drawBars(host, spec)  a horizontal bar chart of what each rule requires
+     drawBars(host, spec)  a horizontal bar chart of what each scenario needs
 
    Both size themselves to the host element, so type stays 11px at every
    width, and redraw when the host's width changes.
@@ -410,7 +410,7 @@
   }
 
   /* ------------------------------------------------------------------------
-     Bar chart: what each rule would require
+     Bar chart: what each scenario would require
      ------------------------------------------------------------------------ */
 
   /**
@@ -445,7 +445,7 @@
 
     var svg = el('svg', {
       viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
-      'aria-label': spec.ariaLabel || 'What each rule would require',
+      'aria-label': spec.ariaLabel || 'What each scenario would require',
       style: 'max-width: 100%; height: auto; display: block;'
     });
 

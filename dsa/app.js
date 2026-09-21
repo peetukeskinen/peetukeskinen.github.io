@@ -730,7 +730,7 @@
       marker: unmet.length ? null : r.adjustment,
       markerLabel: lifted ? r.adjustment.toFixed(2) + ' before floors' : 'required ' + r.adjustment.toFixed(2),
       unit: 'pp of GDP a year',
-      ariaLabel: 'What each rule would require on its own. ' + (unmet.length
+      ariaLabel: 'What each scenario would require on its own. ' + (unmet.length
         ? joinNames(unmet) + ' cannot be met with up to 2 points a year.'
         : 'The binding rule is ' + b.text + ' at ' + r.adjustment.toFixed(2) + ' points a year.')
     });
