@@ -300,9 +300,10 @@
          units of g in the projection; balance and interest shocks are in pp. */
       g[t] = set.g[path][y];
       pb[t] = set.pb[path][y];
-      iir[t] = method === 'bootstrap'
-        ? set.iir[path][y]
-        : alpha * set.i_st[path][y] + (1 - alpha) * set.i_lt[path][y];
+      /* Both methods draw the same quarterly series, so the implicit rate is
+         assembled the same way: short and long market shocks weighted by the
+         short-term share of the debt. */
+      iir[t] = alpha * set.i_st[path][y] + (1 - alpha) * set.i_lt[path][y];
     }
     return { g: g, pb: pb, iir: iir };
   }

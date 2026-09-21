@@ -109,6 +109,21 @@ Refresh that constant when the data vintage moves.
 `<script>` tags rather than `fetch`, so opening `dsa.html` straight from disk
 works.
 
+Both shock methods draw from the same quarterly series (the Darvas block,
+`STOCH!I3:L97`: short rate, long rate, nominal growth, primary balance, clipped
+at three standard deviations). The normal method draws from its covariance; the
+bootstrap resamples it in two-year blocks. They then share the aggregation, so
+they differ only in the distribution assumed, not in what is being shocked.
+
+One departure from the published MATLAB, made deliberately: the tool's
+`stochMethod = 2` read `STOCH!C3:F49` instead, the AMECO block, which holds
+annual *levels* of growth, the primary balance, the implicit rate and the SFA
+minus their 1976-2022 means. Those are not shocks. Finland's implicit interest
+rate fell from 10.4% to about 1% over that sample, so demeaning it produces
+deviations of plus or minus six percentage points; added to a projected rate of
+about 2.5% they drove the simulated implicit rate negative in 1,996 of 5,000
+path-years. The fix is in the MATLAB source as well as here.
+
 The 1,000 shock paths are drawn once, with a fixed seed, and shipped with the
 page: every visitor sees the same simulation, and the result does not move when
 the page is reloaded. They are generated with numpy rather than MATLAB's
