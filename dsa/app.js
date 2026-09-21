@@ -229,7 +229,7 @@
     if (parseFloat(state.debtInitial) !== parseFloat(DEFAULTS.debtInitial)) parts.push('debt ' + parseFloat(state.debtInitial).toFixed(0) + '%');
     if (parseFloat(state.rateShift) !== 0) parts.push('rates ' + sliderText('rateShift', state.rateShift));
     if (parseFloat(state.growthShift) !== 0) parts.push('growth ' + sliderText('growthShift', state.growthShift));
-    if (parseFloat(state.outputGap) !== 0) parts.push('starting position ' + sliderText('outputGap', state.outputGap));
+    if (parseFloat(state.outputGap) !== 0) parts.push('cycle ' + sliderText('outputGap', state.outputGap));
     if (parseFloat(state.phi) !== parseFloat(DEFAULTS.phi)) parts.push('multiplier ' + parseFloat(state.phi).toFixed(2));
     var off = [];
     if (!state.useStochastic) off.push('stochastic test');
@@ -286,20 +286,16 @@
       var sg = r.debtSafeguard;
       var start = r.paths[1].debt[r.inputs.adjustmentStart - 1];
       var target = start + sg.required * params.plan;
-      return 'The debt safeguard sets where debt has to be in ' + planLast + ': ' +
-        target.toFixed(1) + '% or below, falling ' + Math.abs(sg.required).toFixed(1) +
-        ' pp a year on average from ' + start.toFixed(1) + '% in ' + (r.planYears[0] - 1) +
-        '. That end point is fixed, so an assumption changes how much tightening it takes ' +
-        'to reach it, not where the line ends.';
+      return 'The debt safeguard fixes where debt has to be in ' + planLast + ', at ' +
+        target.toFixed(1) + '% or below, so a change moves the effort needed, not the end point.';
     }
     if (b.key === 'stoch') {
-      return 'The stochastic test binds: in ' + params.plausibility * 10 + '% of 1,000 simulated ' +
-        'paths, debt five years after the plan has to be below where it is at the end of it. ' +
-        'The shaded fan is those paths.';
+      return 'The stochastic test binds: by ' + (planLast + 5) + ' debt has to be below its ' +
+        planLast + ' level in ' + params.plausibility * 10 + '% of the 1,000 paths in the fan.';
     }
     if (b.key.indexOf('det') === 0) {
-      return 'A deterministic scenario binds: debt has to keep falling for ten years after the ' +
-        'plan under ' + b.text.replace(/^DSA[^a-z]*/, '') + '. No other rule is asking for more.';
+      return 'A scenario binds: debt has to keep falling for ten years after the plan under ' +
+        b.text.replace(/^DSA[^a-z]*/, '') + '.';
     }
     return '';
   }

@@ -27,10 +27,16 @@ screen while the controls scroll underneath it (switched off on viewports under
 761px tall).
 
 The headline is the required annual adjustment in structural primary balance
-terms, with the binding rule beside it and, under both, a plain sentence saying
-what the number is: how much the budget has to improve each year, counted
-before interest and with the cycle taken out, from spending cuts or tax rises
-or both. The net expenditure growth ceilings —
+terms, with the binding rule beside it and, behind an "i", a plain sentence
+saying what the number is: how much the budget has to improve each year,
+counted before interest and with the cycle taken out, from spending cuts or tax
+rises or both.
+
+Every explanation on the page sits behind one of those small "i" buttons --
+native `<details>`, so they need no script and take the keyboard. What stays
+visible is the control, its value, and any number the model computed for it.
+The one line that stays in the open is under the chart, naming what the binding
+rule is doing, because it answers a question the reader has at that moment. The net expenditure growth ceilings —
 the operational form the rules are written in, `netExpenditure` after the
 year-specific deficit floors — sit in a secondary `<details>` below the
 workbench with a short explainer, because their role is not obvious to a
@@ -55,9 +61,9 @@ What makes a change visible:
   test binds, the two numbers it compares joined by a line; and under the chart
   a bar per criterion with the binding one tagged and a tick at the reference
   value.
-- **Starting position.** The *Starting position* slider moves the 2025 output
-  gap, the last year the Commission supplies one, and the model closes the gap
-  from there on its own schedule -- always reaching zero three years after the
+- **Economic cycle.** The *Economic cycle* slider moves the 2025 output gap,
+  the last year the Commission supplies one, and the model closes the gap from
+  there on its own schedule -- always reaching zero three years after the
   plan ends. It is the one control that separates a better economy from a good
   year: potential growth moves real growth one for one and leaves the gap
   alone, while this moves output relative to potential and then fades. The
