@@ -111,10 +111,15 @@
 
     /* ---- settings the visitor can change ------------------------------- */
 
-    /* Interest rates: shift market rates from the first plan year onwards.
-       The implicit rate follows through the roll-over recursion. */
+    /* Interest rates: shift market rates from the year after the forecast
+       horizon, and let the implicit rate follow through the roll-over
+       recursion. The shift starts one year after the plan does because up to
+       adjustmentStart the model takes the Commission's own implicit rate as
+       given and backs the long-term implicit rate out of it (model.js). A
+       higher market rate in a back-out year would lower the implied long-term
+       rate instead of raising it, which is the wrong sign. */
     if (params.rateShift) {
-      for (t = adjustmentStart; t <= totalPeriods; t++) {
+      for (t = adjustmentStart + 1; t <= totalPeriods; t++) {
         iSt[t] += params.rateShift;
         iLt[t] += params.rateShift;
       }

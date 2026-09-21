@@ -54,6 +54,15 @@ What makes a change visible:
   running euro total for every plan year. Both follow the controls, because they
   value each year's adjustment at the model's own nominal GDP path.
 
+The interest-rate slider moves market rates from **2026**, not from the first
+plan year. Up to 2025 the model takes the Commission's own implicit rate as
+given and backs the long-term implicit rate out of it
+(`model.js`, `iirLt[t] = (iir[t] - alpha*iSt[t]) / (1 - alpha)`), so a higher
+market rate in that year would *lower* the implied long-term rate. Starting the
+shift in 2026 keeps the back-out year intact; it raises the 2026 pass-through to
+the implicit rate from 0.08 to 0.17 pp per pp of shock, and the adjustment a
++1 pp shock requires from 0.81 to 0.83.
+
 The chart keeps a stable frame while a line moves: the y axis snaps to 20-pp
 steps and always contains 40–80, and the baseline path is included in the
 domain so the ghost never rescales the axis when it appears.
@@ -134,6 +143,16 @@ errors.
    already-lowered level while growth is taken from the baseline.
 7. **Shocks are added after real GDP and the output gap are fixed,** so a growth
    shock never feeds the cyclical part of the primary balance.
+8. **Debt reprices very slowly.** `Baseline NFPC` row 38, *Share of long-term
+   debt that matures every year*, converges to `Input data` C59 = 3.78%
+   (source: "ECB, country-specific historical average shares over the 6 last
+   available years"). That is an average residual maturity of 26 years; with
+   the workbook's own 10.8% short-term share it makes the whole stock turn over
+   in about 24 years, against roughly 6–7 years for Finnish government debt in
+   practice. A +1 pp market shock therefore reaches the implicit rate by only
+   0.40 pp after six years. The value is the Commission's input and is kept, but
+   it is the single assumption that most flattens the interest-rate slider: at
+   14% a year the same shock reaches 0.71 pp and costs 0.95 rather than 0.83.
 
 One deliberate difference: where the MATLAB source flags the deficit resilience
 safeguard as binding even in years when it did not raise the adjustment, this
