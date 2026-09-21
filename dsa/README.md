@@ -143,16 +143,38 @@ errors.
    already-lowered level while growth is taken from the baseline.
 7. **Shocks are added after real GDP and the output gap are fixed,** so a growth
    shock never feeds the cyclical part of the primary balance.
-8. **Debt reprices very slowly.** `Baseline NFPC` row 38, *Share of long-term
-   debt that matures every year*, converges to `Input data` C59 = 3.78%
-   (source: "ECB, country-specific historical average shares over the 6 last
-   available years"). That is an average residual maturity of 26 years; with
-   the workbook's own 10.8% short-term share it makes the whole stock turn over
-   in about 24 years, against roughly 6–7 years for Finnish government debt in
-   practice. A +1 pp market shock therefore reaches the implicit rate by only
-   0.40 pp after six years. The value is the Commission's input and is kept, but
-   it is the single assumption that most flattens the interest-rate slider: at
-   14% a year the same shock reaches 0.71 pp and costs 0.95 rather than 0.83.
+8. **Debt reprices about half as fast as the data say.** `Baseline NFPC` row 38,
+   *Share of long-term debt that matures every year*, converges to `Input data`
+   C59 = 3.78% (source: "ECB, country-specific historical average shares over
+   the 6 last available years"). It is built as
+
+   ```text
+   (debt with residual maturity < 1 year  -  short-term debt by original maturity)
+   ---------------------------------------------------------------------------
+                          long-term debt
+   ```
+
+   all three as shares of government debt. That construction is exactly right:
+   the numerator is long-term debt falling due within the year. Run it on
+   Eurostat's own figures for Finnish general government (`gov_10dd_rmd`,
+   `gov_10dd_ggd`) and it gives 7.3% (2022), 6.1% (2023), 6.8% (2024) and 5.8%
+   (2025) — roughly double the workbook's value. Eurostat also publishes the
+   average remaining maturity directly: 7.4-7.8 years over the same period,
+   against the 13 years the workbook's 3.78% implies for a uniform redemption
+   ladder, or the 26 years it implies under the geometric roll-over this model
+   actually uses.
+
+   The value is the Commission's input and is kept. It is worth knowing which
+   way it leans: at 6.5% a year the baseline adjustment is 0.78 rather than 0.76
+   and a +1 pp market shock costs 0.87 rather than 0.83; at 11.4%, the rate that
+   matches the measured 7.8-year maturity under this model's recursion, 0.81 and
+   0.92. So the page understates how much a rate shock costs, by around a third.
+
+   One likely reason the subtraction comes out small: `Input data` C57, the
+   short-term share, is a *three*-year Eurostat average while row 38 is a
+   *six*-year ECB average. Subtracting two shares that are each around 11-18%
+   and averaged over different windows, from different sources, leaves a
+   remainder of about 4% that is very sensitive to the mismatch.
 
 One deliberate difference: where the MATLAB source flags the deficit resilience
 safeguard as binding even in years when it did not raise the adjustment, this
