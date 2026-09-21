@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-21g">
+<link rel="stylesheet" href="css/style.css?v=2026-09-21h">
 </head>
 <body>
 
@@ -98,7 +98,7 @@
           <p class="dsa-why" id="dsa-why" hidden></p>
           <div class="dsa-stage-actions">
             <p class="dsa-refline is-off" id="dsa-refline">
-              <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">Change a setting and a grey line shows where you started.</span>
+              <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">Change a setting and a grey line shows the Commission's own settings.</span>
             </p>
             <div class="dsa-stage-buttons">
               <button type="button" id="dsa-pin" class="dsa-button dsa-button-quiet" aria-pressed="false">Pin as reference</button>
@@ -110,6 +110,12 @@
         </div>
 
         <form id="dsa-form" class="dsa-controls" aria-label="Assumptions">
+
+          <p class="dsa-hint dsa-origin">
+            Everything starts at the European Commission's own settings for Finland.
+            A dot marks anything you change, and the mark under a slider is the
+            Commission's value.
+          </p>
 
           <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario">
             <span class="dsa-presets-label">Try</span>
@@ -132,7 +138,7 @@
                 <input type="radio" name="plan" value="7" class="visually-hidden" checked><span>7 years</span>
               </label>
             </div>
-            <p class="dsa-hint">Seven years is allowed in return for reforms and investment.</p>
+            <p class="dsa-hint">Seven years is allowed in return for reforms and investment. Finland's plan is seven.</p>
           </div>
 
           <div class="dsa-group" role="group" aria-labelledby="economy-label">
@@ -146,7 +152,7 @@
               <div class="dsa-track">
                 <input type="range" id="debtInitial" name="debtInitial" min="40" max="160" step="0.1" value="75.8">
               </div>
-              <p class="dsa-hint">Debt at the end of 2023. Also decides which safeguard applies: 0.5 or 1 point a year.</p>
+              <p class="dsa-hint">Debt at the end of 2023; the Commission uses 75.8%. Also decides which safeguard applies: 0.5 or 1 point a year.</p>
             </div>
 
             <div class="dsa-control">
@@ -157,7 +163,7 @@
               <div class="dsa-track">
                 <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
               </div>
-              <p class="dsa-hint">Market rates from 2026 on. Only debt that matures reprices, so the interest bill moves slowly.</p>
+              <p class="dsa-hint">Market rates from 2026 on, as a change from the Commission's forecast. Only debt that matures reprices, so the interest bill moves slowly.</p>
             </div>
 
             <div class="dsa-control">
@@ -168,6 +174,7 @@
               <div class="dsa-track">
                 <input type="range" id="growthShift" name="growthShift" min="-1.5" max="1.5" step="0.05" value="0">
               </div>
+              <p class="dsa-hint">A change from the Commission's potential growth.</p>
               <p class="dsa-hint" id="out-rg"></p>
             </div>
 
@@ -203,7 +210,7 @@
             <div class="dsa-control">
               <label for="plausibility">Probability of declining debt</label>
               <select id="plausibility" name="plausibility">
-                <option value="7" selected>70% of simulated paths</option>
+                <option value="7" selected>70% of simulated paths (Commission)</option>
                 <option value="8">80% of simulated paths</option>
                 <option value="9">90% of simulated paths</option>
               </select>
@@ -212,7 +219,7 @@
             <div class="dsa-control">
               <label for="method">Shock generation</label>
               <select id="method" name="method">
-                <option value="normal" selected>Normal draws, historical covariance</option>
+                <option value="normal" selected>Normal draws, historical covariance (Commission)</option>
                 <option value="bootstrap">Block bootstrap, 2-year blocks of history</option>
               </select>
             </div>
@@ -411,9 +418,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-21g"></script>
-<script src="dsa/criteria.js?v=2026-09-21g"></script>
-<script src="dsa/chart.js?v=2026-09-21g"></script>
-<script src="dsa/app.js?v=2026-09-21g"></script>
+<script src="dsa/model.js?v=2026-09-21h"></script>
+<script src="dsa/criteria.js?v=2026-09-21h"></script>
+<script src="dsa/chart.js?v=2026-09-21h"></script>
+<script src="dsa/app.js?v=2026-09-21h"></script>
 </body>
 </html>

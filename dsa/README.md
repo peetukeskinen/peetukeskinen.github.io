@@ -37,11 +37,16 @@ whenever it would occupy more than 65% of the viewport height.
 
 What makes a change visible:
 
-- **Reference trajectory.** The baseline settings are solved once at load. As
-  soon as any control leaves its default, the baseline path is drawn as a grey
-  ghost under the live line, the headline shows `+0.36 vs baseline`, and the
-  binding rule shows `(baseline: <rule>)` when it differs. *Pin as reference*
-  swaps the ghost for whatever is on screen.
+- **Reference trajectory.** Every control's default is the Commission's own
+  setting, and the page says so rather than calling it "the baseline": a line
+  at the top of the controls explains the dot on a changed control and the tick
+  under a slider, the hints name the Commission's figure where there is one,
+  and the Commission's option is marked in each method dropdown. Those settings
+  are solved once at load. As soon as any control moves, that path is drawn as
+  a grey ghost under the live line, the headline shows `+0.07 vs Commission`,
+  and the binding rule shows `(Commission: <rule>)` when it differs. *Pin as
+  reference* swaps the ghost for whatever is on screen, and the same labels
+  then read "pinned".
 - **Rules as pictures.** 60 % and 90 % lines; the debt safeguard drawn as the
   slope across the plan window that the path has to beat; when the stochastic
   test binds, the two numbers it compares joined by a line; and under the chart

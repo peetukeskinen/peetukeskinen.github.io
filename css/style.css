@@ -848,6 +848,15 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   margin: -0.55rem 0 0.85rem;
 }
 
+/* Says once what the dot on a changed control and the tick under a slider
+   mean, so neither needs a label of its own. */
+.dsa-origin {
+  max-width: var(--measure);
+  margin: 0 0 0.8rem;
+  padding-left: 0.6rem;
+  border-left: 2px solid var(--rule-strong);
+}
+
 .dsa-presets button:focus-visible,
 .dsa-button:focus-visible {
   outline: 2px solid var(--focus);
@@ -1292,7 +1301,7 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
   /* On paper the controls are dead weight; the result and chart are not. */
   .dsa-controls, .dsa-button, .dsa-readout, .dsa-presets, .dsa-presets-hint,
-  .dsa-stage-buttons { display: none; }
+  .dsa-origin, .dsa-stage-buttons { display: none; }
   .dsa-stage { position: static; }
   .dsa-headline { border-left-color: #000; }
   .dsa-chart, .dsa-table { break-inside: avoid; }

@@ -237,7 +237,7 @@
     if (state.plausibility !== DEFAULTS.plausibility) parts.push(state.plausibility * 10 + '% of paths');
     if (state.method !== DEFAULTS.method) parts.push('bootstrap shocks');
     if (state.sfaMethod !== DEFAULTS.sfaMethod) parts.push('zero SFA');
-    return parts.length ? parts.join(', ') : 'baseline';
+    return parts.length ? parts.join(', ') : "the Commission's settings";
   }
 
   /* ---- reading a result ---------------------------------------------------- */
@@ -551,7 +551,7 @@
       return '<div><dt>' + year + '</dt><dd>' + r.netExpenditure[i].toFixed(2) + '%</dd></div>';
     }).join('');
     setText('dsa-expenditure-note', 'Ceilings include any year lifted by a deficit floor.' +
-      (reference ? ' The dashed grey line is the ' + refName + ', over the plan years the two share.' : ''));
+      (reference ? ' The dashed grey line is the ' + refName + ' path, over the plan years the two share.' : ''));
   }
 
   function render(announce) {
@@ -588,7 +588,10 @@
 
     /* The reference: a pinned scenario, or the baseline once anything moved. */
     var ref = pinned || BASE;
-    var refName = pinned ? 'pinned' : 'baseline';
+    /* The grey line is the Commission's own settings until something is
+       pinned, and it is named that way everywhere it is referred to. */
+    var refName = pinned ? 'pinned' : 'Commission';
+    var refShort = narrow && !pinned ? 'EC' : refName;
     var showGhost = !!pinned || !sameModel(state, BASE.state);
     var refR = ref.r;
     var refOk = showGhost && !refR.failed;
@@ -602,8 +605,9 @@
     var refline = document.getElementById('dsa-refline');
     if (refline) refline.classList.toggle('is-off', !refOk);
     setText('dsa-ref-name', refOk
-      ? (pinned ? 'Grey line: your pinned scenario (' + pinned.label + ')' : 'Grey line: the starting assumptions')
-      : 'Change a setting and a grey line shows where you started.');
+      ? (pinned ? 'Grey line: your pinned scenario (' + pinned.label + ')'
+                : "Grey line: the Commission's own settings")
+      : "Change a setting and a grey line shows the Commission's own settings.");
 
     /* ---- failed state: keep drawing ------------------------------------ */
     if (r.failed) {
@@ -624,7 +628,7 @@
       var two = C.project(inputs, 1, 2, null).debt.slice(1);
       var none = C.project(inputs, 1, 0, null).debt.slice(1);
       var fSeries = [];
-      if (refOk) fSeries.push({ name: refName, values: refR.paths[1].debt.slice(1, fYears.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
+      if (refOk) fSeries.push({ name: refShort, values: refR.paths[1].debt.slice(1, fYears.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
       fSeries.push({ name: 'no consolidation', values: none, color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', label: true });
       fSeries.push({ name: 'even 2.00 a year', values: two, color: COLORS.line, width: 2.4, label: true });
       Chart.draw(chartHost, {
@@ -687,7 +691,7 @@
         wasNode.hidden = true;
       }
     } else if (!showGhost) {
-      setDelta('= baseline', true);
+      setDelta('= Commission', true);
       setHidden('result-was', true);
     } else {
       setHidden('result-delta', true);
@@ -765,7 +769,7 @@
     /* ---- debt chart --------------------------------------------------------- */
     var series = [];
     if (refOk) {
-      series.push({ name: refName, values: refR.paths[1].debt.slice(1, years.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
+      series.push({ name: refShort, values: refR.paths[1].debt.slice(1, years.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
     }
     if (state.showNoAdjustment) {
       series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
