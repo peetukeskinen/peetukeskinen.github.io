@@ -272,6 +272,34 @@
     return { key: 'other', keys: [], text: r.bindingLabel };
   }
 
+  /* One line under the chart saying what the binding rule is doing to the
+     picture. The safeguard case is the one that matters: it fixes where debt
+     has to end, so an assumption changes the effort needed to get there rather
+     than where the line lands, which otherwise reads as a broken slider. */
+  function whyText(r, params, b) {
+    var planLast = r.planYears[r.planYears.length - 1];
+    if (b.key === 'safeguard') {
+      var sg = r.debtSafeguard;
+      var start = r.paths[1].debt[r.inputs.adjustmentStart - 1];
+      var target = start + sg.required * params.plan;
+      return 'The debt safeguard sets where debt has to be in ' + planLast + ': ' +
+        target.toFixed(1) + '% or below, falling ' + Math.abs(sg.required).toFixed(1) +
+        ' pp a year on average from ' + start.toFixed(1) + '% in ' + (r.planYears[0] - 1) +
+        '. That end point is fixed, so an assumption changes how much tightening it takes ' +
+        'to reach it, not where the line ends.';
+    }
+    if (b.key === 'stoch') {
+      return 'The stochastic test binds: in ' + params.plausibility * 10 + '% of 1,000 simulated ' +
+        'paths, debt five years after the plan has to be below where it is at the end of it. ' +
+        'The shaded fan is those paths.';
+    }
+    if (b.key.indexOf('det') === 0) {
+      return 'A deterministic scenario binds: debt has to keep falling for ten years after the ' +
+        'plan under ' + b.text.replace(/^DSA[^a-z]*/, '') + '. No other rule is asking for more.';
+    }
+    return '';
+  }
+
   /* Years in which a given rule label set the year-by-year path. */
   function yearsWith(r, label) {
     var ys = [];
@@ -368,6 +396,86 @@
     }).join('');
   }
 
+  /* ---- the settings as a link ------------------------------------------------
+     Only what differs from the baseline goes in the hash, so a shared link is
+     short and readable and the page keeps working with no hash at all. Values
+     are validated on the way in: a hand-edited link can only produce a state
+     the controls themselves could produce. */
+
+  var HASH_BOOLS = ['useStochastic', 'useDebtSafeguard', 'useDeficitBenchmark',
+                    'useDeficitSafeguard', 'showNoAdjustment', 'showScenarios'];
+  var HASH_CHOICES = {
+    plan: ['4', '7'],
+    plausibility: ['7', '8', '9'],
+    method: ['normal', 'bootstrap'],
+    sfaMethod: ['0', '-1']
+  };
+  var ownsHash = false;
+
+  function hasLocation() {
+    return typeof window !== 'undefined' && window.location && window.history &&
+           typeof window.history.replaceState === 'function';
+  }
+
+  /* A slider value is kept only if it is a number the track can actually reach. */
+  function sanitiseSlider(name, raw) {
+    var v = parseFloat(raw);
+    if (!isFinite(v)) return null;
+    var input = control(name);
+    var min = parseFloat(input.min), max = parseFloat(input.max);
+    if (v < min || v > max) return null;
+    return v.toFixed(SLIDERS[name].decimals);
+  }
+
+  function stateToHash(state) {
+    var parts = [];
+    Object.keys(DEFAULTS).forEach(function (k) {
+      /* Sliders compare as numbers, so a track that reports 0.0 where the
+         default is 0 does not put a setting in the link that nothing changed. */
+      var same = SLIDERS[k] ? parseFloat(state[k]) === parseFloat(DEFAULTS[k])
+                            : String(state[k]) === String(DEFAULTS[k]);
+      if (same) return;
+      if (HASH_BOOLS.indexOf(k) >= 0) parts.push(k + '=' + (state[k] ? '1' : '0'));
+      else parts.push(k + '=' + encodeURIComponent(state[k]));
+    });
+    return parts.join('&');
+  }
+
+  function hashToState(hash) {
+    var out = {};
+    (hash || '').replace(/^#/, '').split('&').forEach(function (pair) {
+      if (!pair) return;
+      var eq = pair.indexOf('=');
+      if (eq < 0) return;
+      var k = decodeURIComponent(pair.slice(0, eq));
+      var raw = decodeURIComponent(pair.slice(eq + 1));
+      if (!DEFAULTS.hasOwnProperty(k)) return;
+      if (HASH_BOOLS.indexOf(k) >= 0) { out[k] = raw === '1' || raw === 'true'; return; }
+      if (HASH_CHOICES[k]) { if (HASH_CHOICES[k].indexOf(raw) >= 0) out[k] = raw; return; }
+      if (SLIDERS[k]) { var v = sanitiseSlider(k, raw); if (v !== null) out[k] = v; }
+    });
+    return out;
+  }
+
+  function linkFor(state) {
+    var hash = stateToHash(state);
+    var base = window.location.origin + window.location.pathname + window.location.search;
+    return hash ? base + '#' + hash : base;
+  }
+
+  function writeHash(state) {
+    if (!hasLocation()) return;
+    var hash = stateToHash(state);
+    /* Leave an unrelated anchor such as #main alone until we have put
+       something of our own in the address bar. */
+    if (!hash && !ownsHash) return;
+    ownsHash = ownsHash || !!hash;
+    try {
+      window.history.replaceState(null, '',
+        window.location.pathname + window.location.search + (hash ? '#' + hash : ''));
+    } catch (e) { /* file:// and some embedded views refuse replaceState */ }
+  }
+
   /* ---- state ---------------------------------------------------------------- */
 
   var BASE = { state: Object.assign({}, DEFAULTS) };
@@ -449,6 +557,9 @@
   function render(announce) {
     var state = formState();
     var params = toParams(state);
+    /* Only on a committed change: Safari caps replaceState calls, and a slider
+       drag would otherwise spend that budget on frames nobody links to. */
+    if (announce) writeHash(state);
     var narrow = chartHost.clientWidth > 0 && chartHost.clientWidth < 480;
     markChanged(state);
 
@@ -461,7 +572,7 @@
       status.textContent = lastStatus;
       setText('result-figure', '—');
       setText('result-binding', 'projection unavailable; change a setting or reset to try again');
-      ['result-delta', 'result-was', 'result-floors', 'dsa-refline', 'dsa-rules-panel', 'dsa-unmet'].forEach(function (id) { setHidden(id, true); });
+      ['result-delta', 'result-was', 'result-floors', 'dsa-refline', 'dsa-rules-panel', 'dsa-unmet', 'dsa-why'].forEach(function (id) { setHidden(id, true); });
       ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
       chartHost.__dsaSpec = null;
       chartHost.innerHTML = '';
@@ -508,6 +619,7 @@
       setHidden('result-was', true);
       setHidden('result-floors', true);
       setHidden('result-euro', true);
+      setHidden('dsa-why', true);
       ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
       var two = C.project(inputs, 1, 2, null).debt.slice(1);
       var none = C.project(inputs, 1, 0, null).debt.slice(1);
@@ -625,6 +737,13 @@
     setText('stat-debt-final', r.debtFinal.toFixed(1) + '%');
     setText('stat-debt-end-year', String(planLast));
     setText('stat-debt-final-year', String(years[years.length - 1]));
+
+    var whyNode = document.getElementById('dsa-why');
+    if (whyNode) {
+      var why = unmet.length ? '' : whyText(r, params, b);
+      whyNode.textContent = why;
+      whyNode.hidden = !why;
+    }
 
     /* r - g at the end of the plan: the snowball in one number. */
     var rg = p1.iir[adjEnd] - 100 * p1.g[adjEnd];
@@ -817,7 +936,17 @@
   var presetsClear = document.getElementById('dsa-presets-clear');
   if (presetsClear) {
     presetsClear.addEventListener('click', function () {
-      applyModel(DEFAULTS);
+      /* Only the settings the lit chips own: a slider moved by hand stays put.
+         Reset, in the controls, is the one that returns everything. */
+      var state = formState();
+      var target = Object.assign({}, state);
+      Array.prototype.forEach.call(
+        document.querySelectorAll('#dsa-presets button[data-set]'), function (chip) {
+          var set = JSON.parse(chip.getAttribute('data-set'));
+          if (!chipOn(set, state)) return;
+          Object.keys(set).forEach(function (k) { target[k] = DEFAULTS[k]; });
+        });
+      applyModel(target);
       render(true);
     });
   }
@@ -857,10 +986,40 @@
     if (wrap) wrap.style.setProperty('--base-pct', pct.toFixed(4));
   });
 
+  var copyBtn = document.getElementById('dsa-copy');
+  if (copyBtn) {
+    var copyTimer = null;
+    copyBtn.addEventListener('click', function () {
+      if (!hasLocation()) return;
+      var link = linkFor(formState());
+      var done = function (text) {
+        copyBtn.textContent = text;
+        if (copyTimer) clearTimeout(copyTimer);
+        copyTimer = setTimeout(function () { copyBtn.textContent = 'Copy link'; }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(function () { done('Copied'); },
+                                                 function () { done('In address bar'); });
+      } else {
+        /* No clipboard permission: the address bar already holds the link. */
+        done('In address bar');
+      }
+    });
+  }
+
   /* Defaults that come from the data file rather than the markup. */
   applyParams(DEFAULTS);
   setText('dsa-vintage', data.meta.vintage);
   setText('dsa-country', data.meta.country);
+
+  /* A link's settings, if there are any, on top of the defaults. */
+  if (hasLocation() && window.location.hash) {
+    var fromLink = hashToState(window.location.hash);
+    if (Object.keys(fromLink).length) {
+      ownsHash = true;
+      applyParams(fromLink);
+    }
+  }
 
   render(false);
 
@@ -869,6 +1028,8 @@
     apply: function (obj) { applyParams(Object.assign({}, DEFAULTS, obj)); render(true); },
     pin: function () { document.getElementById('dsa-pin').click(); },
     reset: function () { applyParams(DEFAULTS); render(true); },
-    render: function () { render(true); }
+    render: function () { render(true); },
+    link: function () { return hasLocation() ? linkFor(formState()) : null; },
+    fromLink: function (hash) { applyParams(hashToState(hash)); render(true); }
   };
 }());

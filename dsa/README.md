@@ -50,9 +50,20 @@ What makes a change visible:
 - **Preset chips stack.** Each one sets only its own controls and leaves the
   rest alone, so rates +1 pp, growth −0.5 pp and the safeguards off can all be
   on at once. A second tap on a chip returns just that chip's settings to the
-  baseline; *Clear* appears beside the row once any chip is on and resets them
-  all. A chip also lights up when its setting is reached by dragging the
-  slider to the same value.
+  baseline; *Clear*, which appears beside the row once any chip is on, does
+  that for every lit chip and leaves a slider moved by hand alone. *Reset*, in
+  the controls, is the one that returns everything. A chip also lights up when
+  its setting is reached by dragging the slider to the same value.
+- **A link carries the settings.** Whatever differs from the baseline goes in
+  the URL hash on each committed change, and *Copy link* under the chart puts
+  that address on the clipboard, so a particular combination can be sent to
+  someone. Values are validated on the way back in, so a hand-edited link can
+  only produce a state the controls themselves could produce.
+- **Why the chart looks like that.** A line under it names what the binding
+  rule is doing. It matters most for the debt safeguard: the safeguard fixes
+  where debt has to be at the end of the plan, so changing an assumption
+  changes the effort needed to get there rather than where the line lands,
+  which otherwise reads as a slider that does nothing.
 - **Euros.** Public debate is conducted in billions, not points of GDP, so the
   headline restates the requirement as the permanent adjustment reached after
   four years — the horizon Finnish commentary uses. The year table carries the
@@ -108,14 +119,17 @@ export `e_g`, `e_pb`, `e_i_st` and `e_i_lt` after the shock-generation block in
 ## Checking against the MATLAB tool
 
 The port was checked against an independently written Python translation of the
-same MATLAB source. Ten parameter combinations — both plan lengths, safeguards
-on and off, both plausibility levels, both shock methods, both SFA assumptions —
-agree to 1.4e-14 across the full debt, balance, structural balance, structural
-primary balance, net expenditure and percentile paths. The harness is under
+same MATLAB source. Nineteen parameter combinations — both plan lengths, safeguards
+on and off, both plausibility levels, both shock methods, both SFA assumptions,
+each slider on its own, and several stacked at once — agree to 1.4e-14 across
+the full debt, balance, structural balance, structural primary balance, net
+expenditure and percentile paths. The harness is under
 `OneDrive/DSA/calculator/test` (`run_js.sh`, `compare.py`).
 
-A 720-point sweep over the slider ranges produces no failures and no non-finite
-values, with a worst case of 46 ms per full run including the simulation.
+A 784-point sweep produces no failures and no non-finite values, with a worst
+case of 148 ms per full run including the simulation: 720 points over the slider
+ranges, all 16 combinations of the rule switches on both plan lengths, and all
+32 combinations of the preset chips.
 
 The baseline also reproduces the figures published in chapter 3 of the National
 Audit Office's fiscal policy monitoring report 2024: 0.76 pp a year with the debt

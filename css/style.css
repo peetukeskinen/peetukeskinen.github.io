@@ -1135,12 +1135,46 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 .dsa-chart svg { width: 100%; height: auto; display: block; }
 
 .dsa-readout,
+/* Why the chart looks the way it does: the binding rule, in one sentence,
+   directly under the line it explains. */
+.dsa-why {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  max-width: var(--measure);
+  color: var(--ink);
+  border-left: 2px solid var(--rule-strong);
+  padding-left: 0.6rem;
+  margin: 0.55rem 0 0;
+}
+
+.dsa-stage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3rem 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.dsa-stage-buttons {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.dsa-button-quiet {
+  font-size: 0.68rem;
+  padding: 0.28rem 0.55rem;
+  background: transparent;
+}
+
 .dsa-refline {
   font-family: var(--sans);
   font-size: 0.78rem;
   color: var(--ink-muted);
   min-height: 1.3em;
-  margin: 0.15rem 0 0;
+  margin: 0;
 }
 
 .dsa-key {
@@ -1241,6 +1275,8 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .dsa-euro { font-size: 0.78rem; margin-top: 0.4rem; padding-top: 0.35rem; }
   .dsa-readout { display: none; }
   .dsa-refline { font-size: 0.7rem; }
+  .dsa-why { font-size: 0.76rem; padding-left: 0.5rem; }
+  .dsa-stage-actions { gap: 0.25rem 0.5rem; }
   .dsa-table { font-size: 0.8125rem; }
 }
 
@@ -1255,7 +1291,8 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   .entry, .biblio-item { break-inside: avoid; }
 
   /* On paper the controls are dead weight; the result and chart are not. */
-  .dsa-controls, .dsa-button, .dsa-readout, .dsa-presets, .dsa-presets-hint { display: none; }
+  .dsa-controls, .dsa-button, .dsa-readout, .dsa-presets, .dsa-presets-hint,
+  .dsa-stage-buttons { display: none; }
   .dsa-stage { position: static; }
   .dsa-headline { border-left-color: #000; }
   .dsa-chart, .dsa-table { break-inside: avoid; }

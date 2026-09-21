@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-21c">
+<link rel="stylesheet" href="css/style.css?v=2026-09-21d">
 </head>
 <body>
 
@@ -95,16 +95,23 @@
           </div>
 
           <div id="dsa-chart" class="dsa-chart"></div>
-          <p class="dsa-refline is-off" id="dsa-refline">
-            <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">Change a setting and a grey line shows where you started.</span>
-          </p>
+          <p class="dsa-why" id="dsa-why" hidden></p>
+          <div class="dsa-stage-actions">
+            <p class="dsa-refline is-off" id="dsa-refline">
+              <span class="dsa-key dsa-key-ref"></span><span id="dsa-ref-name">Change a setting and a grey line shows where you started.</span>
+            </p>
+            <div class="dsa-stage-buttons">
+              <button type="button" id="dsa-pin" class="dsa-button dsa-button-quiet" aria-pressed="false">Pin as reference</button>
+              <button type="button" id="dsa-copy" class="dsa-button dsa-button-quiet">Copy link</button>
+            </div>
+          </div>
           <ul id="dsa-legend" class="visually-hidden" aria-label="Values at the end of the projection"></ul>
           <p class="visually-hidden" id="dsa-status" role="status"></p>
         </div>
 
         <form id="dsa-form" class="dsa-controls" aria-label="Assumptions">
 
-          <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario. These combine: switch on as many as you like.">
+          <div id="dsa-presets" class="dsa-presets" role="group" aria-label="Try a scenario">
             <span class="dsa-presets-label">Try</span>
             <button type="button" data-set='{"rateShift":"1"}' aria-pressed="false">Rates +1 pp</button>
             <button type="button" data-set='{"growthShift":"-0.5"}' aria-pressed="false">Growth −0.5 pp</button>
@@ -184,7 +191,10 @@
               <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
               <label><input type="checkbox" name="useDeficitSafeguard" checked> Resilience safeguard</label>
             </div>
-            <p class="dsa-hint">The four debt scenarios always apply.</p>
+            <p class="dsa-hint">
+              These are legal requirements. Switching one off shows what it costs,
+              not a choice Finland has. The four debt scenarios always apply.
+            </p>
           </div>
 
           <details class="dsa-advanced">
@@ -222,7 +232,6 @@
           </details>
 
           <div class="dsa-buttons">
-            <button type="button" id="dsa-pin" class="dsa-button" aria-pressed="false">Pin as reference</button>
             <button type="button" id="dsa-reset" class="dsa-button">Reset</button>
           </div>
         </form>
@@ -365,6 +374,12 @@
             analysis, which is why they can be varied here.
           </li>
           <li>
+            Interest rates move the projection slowly because the Commission's data
+            assume only 3.2–3.8% of long-term debt matures each year. Running the
+            Commission's own formula on Eurostat figures for Finland gives about
+            6%, so a rate shock probably costs more than shown here.
+          </li>
+          <li>
             The simulations use the same fixed set of 1,000 draws each time. This means
             everyone sees the same fan chart, and reloading the page does not change the
             result.
@@ -396,9 +411,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-21c"></script>
-<script src="dsa/criteria.js?v=2026-09-21c"></script>
-<script src="dsa/chart.js?v=2026-09-21c"></script>
-<script src="dsa/app.js?v=2026-09-21c"></script>
+<script src="dsa/model.js?v=2026-09-21d"></script>
+<script src="dsa/criteria.js?v=2026-09-21d"></script>
+<script src="dsa/chart.js?v=2026-09-21d"></script>
+<script src="dsa/app.js?v=2026-09-21d"></script>
 </body>
 </html>
