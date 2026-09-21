@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-21k">
+<link rel="stylesheet" href="css/style.css?v=2026-09-21l">
 </head>
 <body>
 
@@ -162,7 +162,7 @@
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <span class="dsa-head-label"><label for="growthShift">Potential growth</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About potential growth" aria-describedby="tip-growth">i</button><span class="dsa-tip-body" role="tooltip" id="tip-growth">A change from the Commission's potential growth.</span></span></span>
+                <span class="dsa-head-label"><label for="growthShift">Potential growth</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About potential growth" aria-describedby="tip-growth">i</button><span class="dsa-tip-body" role="tooltip" id="tip-growth">A change from the Commission's assumption for how fast the economy can grow, from 2025 on. Real GDP growth moves with it one for one and the output gap is unchanged, so this is a permanently stronger or weaker economy — not a good year, which is the slider below.</span></span></span>
                 <output id="out-growthShift" for="growthShift">0.0 pp</output>
               </div>
               <div class="dsa-track">
@@ -173,7 +173,7 @@
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <span class="dsa-head-label"><label for="outputGap">Economic cycle</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the economic cycle" aria-describedby="tip-cycle">i</button><span class="dsa-tip-body" role="tooltip" id="tip-cycle">How much better or worse the economy is doing in 2025 than the Commission assumed. The gap then closes on the same schedule as before.</span></span></span>
+                <span class="dsa-head-label"><label for="outputGap">Economic cycle</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the economic cycle" aria-describedby="tip-cycle">i</button><span class="dsa-tip-body" role="tooltip" id="tip-cycle">How much better or worse the economy is doing in 2025 than the Commission assumed. The gap closes on the Commission's own schedule and is gone three years after the plan ends, so this is a good year or a bad one — not a permanently different economy, which is the slider above.</span></span></span>
                 <output id="out-outputGap" for="outputGap">0.0 pp</output>
               </div>
               <div class="dsa-track">
@@ -184,7 +184,7 @@
 
             <div class="dsa-control">
               <div class="dsa-control-head">
-                <span class="dsa-head-label"><label for="phi">Fiscal multiplier</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the fiscal multiplier" aria-describedby="tip-phi">i</button><span class="dsa-tip-body" role="tooltip" id="tip-phi">How much output a point of tightening costs. The Commission uses 0.75.</span></span></span>
+                <span class="dsa-head-label"><label for="phi">Fiscal multiplier</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the fiscal multiplier" aria-describedby="tip-phi">i</button><span class="dsa-tip-body" role="tooltip" id="tip-phi">How much output is lost in the short run for each point of GDP the budget tightens: at 0.75, a one-point tightening costs about 0.75% of GDP that year. The loss fades as the output gap closes, so a higher multiplier raises the tightening the rules demand but leaves output in the long run unchanged. The Commission uses 0.75.</span></span></span>
                 <output id="out-phi" for="phi">0.75</output>
               </div>
               <div class="dsa-track">
@@ -412,9 +412,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-21k"></script>
-<script src="dsa/criteria.js?v=2026-09-21k"></script>
-<script src="dsa/chart.js?v=2026-09-21k"></script>
-<script src="dsa/app.js?v=2026-09-21k"></script>
+<script src="dsa/model.js?v=2026-09-21l"></script>
+<script src="dsa/criteria.js?v=2026-09-21l"></script>
+<script src="dsa/chart.js?v=2026-09-21l"></script>
+<script src="dsa/app.js?v=2026-09-21l"></script>
 </body>
 </html>
