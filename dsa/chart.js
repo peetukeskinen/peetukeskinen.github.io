@@ -6,7 +6,7 @@
    code:
 
      draw(host, spec)      a line chart with percentile bands, thresholds,
-                           guides, direct end labels and annotations
+                           direct end labels and annotations
      drawBars(host, spec)  a horizontal bar chart of what each scenario needs
 
    Both size themselves to the host element, so type stays 11px at every
@@ -128,7 +128,6 @@
    *   bands       {Array}      [{lo, hi, opacity}] percentile ribbons
    *   shade       {Object}     {from, to, label} highlighted x range
    *   thresholds  {Array}      [{value, label}] dashed horizontal lines
-   *   guides      {Array}      [{fromYear, fromValue, toYear, toValue, label, emphasis}]
    *   links       {Array}      [{fromYear, fromValue, toYear, toValue, text}] dot-to-dot
    *   points      {Array}      [{year, value, text, color}]
    *   brackets    {Array}      [{year, from, to, text}] vertical gap markers
@@ -247,32 +246,6 @@
         d += 'L' + sx(j).toFixed(1) + ' ' + sy(b.lo[j]).toFixed(1);
       }
       if (d) svg.appendChild(el('path', { d: d + 'Z', fill: BAND, opacity: b.opacity, stroke: 'none' }));
-    });
-
-    /* ---- guides: rules drawn as geometry -------------------------------- */
-    (spec.guides || []).forEach(function (g) {
-      var gx0 = xOfYear(g.fromYear), gx1 = xOfYear(g.toYear);
-      if (!isNum(gx0) || !isNum(gx1)) return;
-      svg.appendChild(el('line', {
-        x1: gx0, y1: sy(g.fromValue), x2: gx1, y2: sy(g.toValue),
-        stroke: g.emphasis ? INK : AXIS, 'stroke-width': 1.2, 'stroke-dasharray': '5 3',
-        opacity: g.emphasis ? 0.9 : 0.6
-      }));
-      if (g.label) {
-        /* Below the guide's lower end, so neither the dashes nor the
-           end-of-plan dot cross the text; step under a threshold line
-           rather than onto its label. */
-        var ly = Math.max(sy(g.fromValue), sy(g.toValue)) + 14;
-        (spec.thresholds || []).forEach(function (t) {
-          if (!t.label || t.value < lo || t.value > hi) return;
-          var ty = sy(t.value);
-          if (ly > ty - 15 && ly < ty + 7) ly = ty + 12;
-        });
-        svg.appendChild(text({
-          x: (gx0 + gx1) / 2, y: ly, 'text-anchor': 'middle',
-          fill: g.emphasis ? INK : INK_MUTED
-        }, g.label, 10, null, true));
-      }
     });
 
     /* ---- series --------------------------------------------------------- */

@@ -61,11 +61,14 @@ What makes a change visible:
   and the binding rule shows `(Commission: <rule>)` when it differs. *Pin as
   reference* swaps the ghost for whatever is on screen, and the same labels
   then read "pinned".
-- **Rules as pictures.** 60 % and 90 % lines; the debt safeguard drawn as the
-  slope across the plan window that the path has to beat; when the stochastic
-  test binds, the two numbers it compares joined by a line; and under the chart
-  a bar per criterion with the binding one tagged and a tick at the reference
-  value.
+- **Rules as pictures.** 60 % and 90 % lines, labelled with the safeguard band
+  each one selects; when the stochastic test binds, the two numbers it compares
+  joined by a line; and under the chart a bar per criterion with the binding one
+  tagged and a tick at the reference value. The debt safeguard used to be drawn
+  as a sloped dashed line across the plan window. It crowded the years it ran
+  through, and it is said more precisely in words: the line under the chart now
+  gives the required average fall, the starting ratio and the resulting end
+  point, so `guides` has gone from the chart spec.
 - **Economic cycle.** The *Economic cycle* slider moves the 2025 output gap,
   the last year the Commission supplies one, and the model closes the gap from
   there on its own schedule -- always reaching zero three years after the

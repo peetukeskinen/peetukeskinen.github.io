@@ -286,8 +286,10 @@
       var sg = r.debtSafeguard;
       var start = r.paths[1].debt[r.inputs.adjustmentStart - 1];
       var target = start + sg.required * params.plan;
-      return 'The debt safeguard fixes where debt has to be in ' + planLast + ', at ' +
-        target.toFixed(1) + '% or below, so a change moves the effort needed, not the end point.';
+      return 'The debt safeguard asks for an average fall of ' + Math.abs(sg.required).toFixed(1) +
+        ' pp a year across the plan, from ' + start.toFixed(1) + '% in ' + (r.planYears[0] - 1) +
+        ' to ' + target.toFixed(1) + '% in ' + planLast +
+        '. That end point is fixed, so a change moves the effort needed, not where the line lands.';
     }
     if (b.key === 'stoch') {
       return 'The stochastic test binds: by ' + (planLast + 5) + ' debt has to be below its ' +
@@ -825,17 +827,9 @@
       { value: 90, label: params.useDebtSafeguard && !narrow ? '90% · safeguard 1 pp a year' : '90%' }
     ];
 
-    var guides = [];
-    var sg = r.debtSafeguard;
-    if (params.useDebtSafeguard && sg.applies) {
-      var startVal = p1.debt[r.inputs.adjustmentStart - 1];
-      guides.push({
-        fromYear: planFirst - 1, fromValue: startVal,
-        toYear: planLast, toValue: startVal + sg.required * params.plan,
-        label: narrow ? null : 'safeguard: ' + Math.abs(sg.required).toFixed(1) + ' pp a year on average',
-        emphasis: b.key === 'safeguard'
-      });
-    }
+    /* The safeguard used to be drawn as a sloped dashed line across the plan
+       window with its own label. It crowded the years it ran through, and what
+       it said is said better in words under the chart. */
 
     var links = [];
     if (r.fan && b.key === 'stoch' && !unmet.length) {
@@ -868,7 +862,7 @@
     Chart.draw(chartHost, {
       years: chartYears, series: series, bands: bands,
       shade: { from: planFirst, to: planLast, label: params.plan + '-YEAR PLAN ' + planFirst + '–' + String(planLast).slice(2) },
-      thresholds: thresholds, guides: guides, links: links, points: points, brackets: brackets, notes: notes,
+      thresholds: thresholds, links: links, points: points, brackets: brackets, notes: notes,
       include: BASE.r.paths[1].debt.slice(1, nChart + 1),
       yLabel: 'debt, % of GDP',
       ariaLabel: 'Projected government debt as a percentage of GDP, ' + chartYears[0] + ' to ' +
