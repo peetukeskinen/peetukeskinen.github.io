@@ -91,14 +91,13 @@ What makes a change visible:
   changes the effort needed to get there rather than where the line lands,
   which otherwise reads as a slider that does nothing.
 - **Euros.** Public debate is conducted in billions, not points of GDP, so the
-  headline restates the requirement in euros. It gives two figures, because one
-  is read wrongly whichever it is: the first year's measures, and the level the
-  budget reaches after four years — the horizon Finnish commentary uses. At the
-  shipped data that is €2.2 bn of measures in 2025 building to a budget €9.6 bn
-  a year tighter by 2028, and the four years together amount to about €23 bn of
-  spending not made or revenue raised. A single "€9.6 bn a year" reads as either
-  a yearly repeat or a four-year total and is neither. The year table carries
-  the same level for every plan year, and says so in its caption. Both follow the controls, because they
+  headline restates the requirement as the consolidation a four-year term needs
+  in total: €9.6 bn at the shipped data, which is where the 8-12 billion in
+  Finnish circulation comes from. That is the cumulative adjustment reached by
+  2028 — 0.76 points of GDP is €2.2 bn in 2025 and each year adds about that
+  much again — not the sum of the four years' flows, which is nearer €23 bn.
+  The year table carries the level for every plan year and says so in its
+  caption. Both follow the controls, because they
   value each year's adjustment at the model's own nominal GDP path.
 
 The interest-rate slider moves market rates from **2026**, not from the first

@@ -730,16 +730,15 @@
       /* The SPB path is linear in the adjustment, so the floored total adds exactly. */
       setText('stat-spb', (r.inputs.spb[r.inputs.adjustmentStart - 1] + total).toFixed(1) + '%');
       if (euroNode) {
-        /* Two figures, because one on its own reads as either a yearly
-           repeat or a four-year total, and it is neither: each year adds
-           measures on top of the last, and the level they reach is permanent.
-           The four-year horizon is the one Finnish debate uses. */
+        /* The figure Finnish debate quotes for a four-year term: the
+           cumulative adjustment reached by its end, which is where the
+           8-12 billion in circulation comes from. Not the sum of the four
+           years' flows, which is larger. */
         var eur = euroPath(r);
         var i4 = Math.min(3, eur.cumulative.length - 1);
-        euroNode.textContent = 'In euros: about ' + bn(eur.step[0]) + ' of measures in ' +
-          r.planYears[0] + '. The years stack, so by ' + r.planYears[i4] +
-          (params.plan > 4 ? '' : ', the end of the plan,') +
-          ' the budget is running about ' + bn(eur.cumulative[i4]) + ' a year tighter.';
+        euroNode.textContent = 'In euros: about ' + bn(eur.cumulative[i4]) +
+          ' of consolidation in total over ' +
+          (params.plan > 4 ? 'the four years to ' : 'the plan, to ') + r.planYears[i4] + '.';
         euroNode.hidden = false;
       }
     }
