@@ -229,9 +229,15 @@
         beta[t] = (dLtr + 0) / (dLtr + 0 + dO);
 
       } else {
-        /* Debt falls by more than the amount maturing: nothing is refinanced. */
+        /* Debt falls by more than the amount maturing: nothing is refinanced.
+           beta is the share of the long-term stock that is NEWLY ISSUED, so
+           when nothing is issued it is 0 and the surviving stock keeps its
+           coupons. The MATLAB source writes 1, which reprices the whole stock
+           at the current market rate the year after debt starts falling faster
+           than it matures -- +1.05 pp on the baseline plan, and worth 1.8 pp of
+           the final debt ratio. Corrected here and upstream; see the README. */
         alpha[t] = 0;
-        beta[t] = 1;
+        beta[t] = 0;
       }
 
       if (t >= 3) {

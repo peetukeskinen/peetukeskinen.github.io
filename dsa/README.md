@@ -258,6 +258,19 @@ errors.
    and averaged over different windows, from different sources, leaves a
    remainder of about 4% that is very sensitive to the mismatch.
 
+One deliberate departure, besides the bootstrap: **the refinancing branch
+reached when debt falls by more than the amount maturing set `beta = 1`**,
+where `beta` is the share of the long-term stock that is *newly issued*. Its
+own comment says nothing is refinanced, so the value should be 0 and the
+surviving stock should keep its coupons; 1 repriced the whole stock at the
+current market rate. On the baseline plan it lifted the implicit rate from
+2.37% to 3.42% in 2038 and cost 1.8 points of the 2041 debt ratio, and the sign
+of the error follows the market rate, so it was wrong rather than conservative.
+Corrected here and in both MATLAB repositories. Over a 2,592-setting comparison
+of the two versions the required adjustment, the binding criterion and the debt
+ratio at the end of the plan are identical in every one; only the years after
+the plan move, in 355 of them.
+
 One deliberate difference: where the MATLAB source flags the deficit resilience
 safeguard as binding even in years when it did not raise the adjustment, this
 page labels the year with the rule that actually set the number. The adjustment
