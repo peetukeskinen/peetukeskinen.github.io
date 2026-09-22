@@ -614,8 +614,10 @@
     if (r.failed) {
       renderExpenditure(null, null, null, 'No expenditure ceilings: no adjustment up to 2.00 pp a year satisfies the rules.');
       var inputs = r.inputs;
+      /* Same drawn window as the normal path: five years past the plan. */
       var fYears = [];
-      for (var t = 1; t <= inputs.totalPeriods; t++) fYears.push(inputs.baseYear + t - 1);
+      for (var t = 1; t <= inputs.adjustmentEnd + 5; t++) fYears.push(inputs.baseYear + t - 1);
+      var nf = fYears.length;
       var pf = fYears.slice(inputs.adjustmentStart - 1, inputs.adjustmentEnd);
       setText('result-figure', '> 2.00');
       setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + pf[0] + '–' + pf[pf.length - 1]);
@@ -626,10 +628,10 @@
       setHidden('result-euro', true);
       setHidden('dsa-why', true);
       ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
-      var two = C.project(inputs, 1, 2, null).debt.slice(1);
-      var none = C.project(inputs, 1, 0, null).debt.slice(1);
+      var two = C.project(inputs, 1, 2, null).debt.slice(1, nf + 1);
+      var none = C.project(inputs, 1, 0, null).debt.slice(1, nf + 1);
       var fSeries = [];
-      if (refOk) fSeries.push({ name: refShort, values: refR.paths[1].debt.slice(1, fYears.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
+      if (refOk) fSeries.push({ name: refShort, values: refR.paths[1].debt.slice(1, nf + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
       fSeries.push({ name: 'no consolidation', values: none, color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', label: true });
       fSeries.push({ name: 'even 2.00 a year', values: two, color: COLORS.line, width: 2.4, label: true });
       Chart.draw(chartHost, {
@@ -663,6 +665,16 @@
     renderExpenditure(r, refOk && !refUnmet.length ? refR : null, refName, unmet.length
       ? 'No expenditure ceilings: ' + joinNames(unmet) + ' cannot be met with up to 2.00 pp a year.' : null);
     var years = r.years;
+    /* The chart stops five years after the plan. That is the last year able to
+       decide any criterion -- the safeguard is settled inside the plan, the
+       stochastic test compares the plan's end with this year, and across the
+       whole slider space no deterministic scenario was ever the binding one on
+       a later year -- and it is where the fan ends, so the chart no longer
+       continues with deterministic lines that look firmer than they are. The
+       model still runs to its full horizon and that year stays in the stats. */
+    var chartYears = years.slice(0, r.inputs.adjustmentEnd + 5);
+    var nChart = chartYears.length;
+    var lastYear = years[years.length - 1];
     var planFirst = r.planYears[0], planLast = r.planYears[r.planYears.length - 1];
     var lifted = isLifted(r);
     var total = sum(r.finalPath);
@@ -745,7 +757,7 @@
     setText('stat-debt-end', r.debtEnd.toFixed(1) + '%');
     setText('stat-debt-final', r.debtFinal.toFixed(1) + '%');
     setText('stat-debt-end-year', String(planLast));
-    setText('stat-debt-final-year', String(years[years.length - 1]));
+    setText('stat-debt-final-year', String(lastYear));
 
     var whyNode = document.getElementById('dsa-why');
     if (whyNode) {
@@ -779,23 +791,23 @@
     /* ---- debt chart --------------------------------------------------------- */
     var series = [];
     if (refOk) {
-      series.push({ name: refShort, values: refR.paths[1].debt.slice(1, years.length + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
+      series.push({ name: refShort, values: refR.paths[1].debt.slice(1, nChart + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
     }
     if (state.showNoAdjustment) {
-      series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
+      series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1, nChart + 1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
     }
     if (state.showScenarios) {
-      series.push({ name: narrow ? 'low SPB' : 'lower SPB', values: r.paths[2].debt.slice(1), color: COLORS.alt1, width: 1.3, label: true });
-      series.push({ name: narrow ? 'adv. r–g' : 'adverse r–g', values: r.paths[3].debt.slice(1), color: COLORS.alt2, width: 1.3, label: true });
-      series.push({ name: narrow ? 'stress' : 'financial stress', values: r.paths[4].debt.slice(1), color: COLORS.alt3, width: 1.3, label: true });
+      series.push({ name: narrow ? 'low SPB' : 'lower SPB', values: r.paths[2].debt.slice(1, nChart + 1), color: COLORS.alt1, width: 1.3, label: true });
+      series.push({ name: narrow ? 'adv. r–g' : 'adverse r–g', values: r.paths[3].debt.slice(1, nChart + 1), color: COLORS.alt2, width: 1.3, label: true });
+      series.push({ name: narrow ? 'stress' : 'financial stress', values: r.paths[4].debt.slice(1, nChart + 1), color: COLORS.alt3, width: 1.3, label: true });
     }
-    series.push({ name: narrow ? 'with plan' : 'with the plan', values: p1.debt.slice(1), color: COLORS.line, width: 2.4, label: true });
+    series.push({ name: narrow ? 'with plan' : 'with the plan', values: p1.debt.slice(1, nChart + 1), color: COLORS.line, width: 2.4, label: true });
 
     var bands = [];
     var fanLastIdx = -1;
     if (r.fan) {
       var padTo = function (arr) {
-        var out = new Array(years.length).fill(null);
+        var out = new Array(nChart).fill(null);
         for (var i = 0; i < arr.length && i < out.length; i++) out[i] = arr[i];
         return out;
       };
@@ -849,22 +861,23 @@
 
     var points = [{ year: planLast, value: r.debtEnd, text: narrow ? null : r.debtEnd.toFixed(1) + '% at end of plan' }];
 
+    /* The fan's last year is now the axis's last year, so a note saying so
+       would only repeat the axis. */
     var notes = [];
-    if (r.fan && !narrow) {
-      notes.push({ year: r.fan.years[fanLastIdx], value: r.fan.p10[fanLastIdx], text: 'test ends ' + r.fan.years[fanLastIdx], anchor: 'end', below: true });
-    }
 
     Chart.draw(chartHost, {
-      years: years, series: series, bands: bands,
+      years: chartYears, series: series, bands: bands,
       shade: { from: planFirst, to: planLast, label: params.plan + '-YEAR PLAN ' + planFirst + '–' + String(planLast).slice(2) },
       thresholds: thresholds, guides: guides, links: links, points: points, brackets: brackets, notes: notes,
-      include: BASE.r.paths[1].debt.slice(1, years.length + 1),
+      include: BASE.r.paths[1].debt.slice(1, nChart + 1),
       yLabel: 'debt, % of GDP',
-      ariaLabel: 'Projected government debt as a percentage of GDP, ' + years[0] + ' to ' + years[years.length - 1] +
-                 ', with an adjustment of ' + r.adjustment.toFixed(2) + ' percentage points of GDP a year. ' +
-                 'Debt is ' + r.debtEnd.toFixed(1) + ' percent at the end of the plan and ' + r.debtFinal.toFixed(1) + ' percent in ' + years[years.length - 1] + '.'
+      ariaLabel: 'Projected government debt as a percentage of GDP, ' + chartYears[0] + ' to ' +
+                 chartYears[nChart - 1] + ', with an adjustment of ' + r.adjustment.toFixed(2) +
+                 ' percentage points of GDP a year. Debt is ' + r.debtEnd.toFixed(1) +
+                 ' percent at the end of the plan and ' + r.debtFinal.toFixed(1) + ' percent in ' +
+                 lastYear + ', beyond the chart.'
     });
-    writeLegend(series, years);
+    writeLegend(series, chartYears);
 
     /* ---- rule bars ---------------------------------------------------------- */
     var rows = ruleRows(r, params, refOk ? ref : null, unmet);
@@ -894,7 +907,7 @@
         : 'Required adjustment ' + r.adjustment.toFixed(2) + ' points a year' +
           (comparable ? ', ' + signed(r.adjustment - refR.adjustment) + ' versus ' + refName : '') +
           '. Binding rule: ' + b.text + '. ') +
-        'Debt ' + r.debtFinal.toFixed(1) + ' percent in ' + years[years.length - 1] + '.';
+        'Debt ' + r.debtFinal.toFixed(1) + ' percent in ' + lastYear + '.';
       if (sentence !== lastStatus) { status.textContent = sentence; lastStatus = sentence; }
     }
     padForStage();

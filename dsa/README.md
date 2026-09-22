@@ -109,6 +109,23 @@ shift in 2026 keeps the back-out year intact; it raises the 2026 pass-through to
 the implicit rate from 0.08 to 0.17 pp per pp of shock, and the adjustment a
 +1 pp shock requires from 0.81 to 0.83.
 
+The chart is drawn to **five years after the plan** -- 2036 on a seven-year
+plan, 2033 on a four-year one -- not to the model's own horizon ten years out.
+That is the last year able to decide anything. The safeguard is settled inside
+the plan window; the stochastic test compares the plan's end with exactly this
+year; and over a 2,592-setting census of both plan lengths, safeguards on and
+off and all five sliders at their extremes, the deterministic criteria bound in
+16.3% of cases and were located no later than 2036 in every one of them (the
+mode is 2032). It is also where the fan ends, so the chart no longer continues
+with deterministic lines that look firmer than the simulated band beside them.
+
+The projection itself is unchanged and still runs the full ten years, and that
+final figure stays in the stats row with an "i" saying why the chart stops
+earlier. Drawing those five extra years at the same weight as the rest implied
+they were equally solid; they are the part of the projection that moves most
+with the stock-flow assumption, the maturity share and the `beta` branch in the
+quirks list below.
+
 The chart keeps a stable frame while a line moves: the y axis snaps to 20-pp
 steps and always contains 40–80, and the baseline path is included in the
 domain so the ghost never rescales the axis when it appears.

@@ -1191,13 +1191,18 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 .dsa-controls .dsa-presets,
 .dsa-controls .dsa-origin { position: relative; }
 
-.dsa-controls .dsa-tip-body {
+.dsa-controls .dsa-tip-body,
+.dsa-stats .dsa-tip-body {
   left: 0;
   right: auto;
   width: 100%;
   max-width: none;
   top: calc(100% + 0.3rem);
 }
+
+/* The figure beyond the chart's end carries its own note. */
+.dsa-stats { position: relative; }
+.dsa-stats .dsa-tip { position: static; margin-left: 0.1rem; }
 
 /* Keeps the label and its "i" together while the value stays right. */
 .dsa-head-label {
