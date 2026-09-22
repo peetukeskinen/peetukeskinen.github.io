@@ -730,12 +730,16 @@
       /* The SPB path is linear in the adjustment, so the floored total adds exactly. */
       setText('stat-spb', (r.inputs.spb[r.inputs.adjustmentStart - 1] + total).toFixed(1) + '%');
       if (euroNode) {
-        /* One figure, on the horizon public debate uses: what the first four
-           years of the plan add up to as a permanent annual adjustment. */
+        /* Two figures, because one on its own reads as either a yearly
+           repeat or a four-year total, and it is neither: each year adds
+           measures on top of the last, and the level they reach is permanent.
+           The four-year horizon is the one Finnish debate uses. */
         var eur = euroPath(r);
         var i4 = Math.min(3, eur.cumulative.length - 1);
-        euroNode.textContent = 'In euros: about ' + bn(eur.cumulative[i4]) + ' a year by ' +
-          r.planYears[i4] + (params.plan > 4 ? ', after four years of the plan.' : ', the whole plan.');
+        euroNode.textContent = 'In euros: about ' + bn(eur.step[0]) + ' of measures in ' +
+          r.planYears[0] + '. The years stack, so by ' + r.planYears[i4] +
+          (params.plan > 4 ? '' : ', the end of the plan,') +
+          ' the budget is running about ' + bn(eur.cumulative[i4]) + ' a year tighter.';
         euroNode.hidden = false;
       }
     }
