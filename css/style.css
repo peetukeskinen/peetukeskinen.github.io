@@ -1339,10 +1339,15 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 /* --- numbers -------------------------------------------------------------- */
 
 /* The explanation lives behind a toggle, so the calculator is what loads. */
+/* At the top of the page Info needs air on both sides, or it reads as part of
+   the calculator below it rather than as its own thing. */
 .dsa-info {
-  margin-top: var(--space-lg);
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-lg);
   border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
   padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
 }
 
 .dsa-info > summary {
