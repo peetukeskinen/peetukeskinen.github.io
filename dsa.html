@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-23b">
+<link rel="stylesheet" href="css/style.css?v=2026-09-23c">
 </head>
 <body>
 
@@ -78,28 +78,32 @@
           <ul>
             <li>
               <strong>Debt keeps falling for ten years after the plan</strong>, under
-              four futures: the plan as written, weaker discipline once it ends, higher
-              interest rates with lower growth, and a bout of market stress.
+              four scenarios: the plan as written (the Commission's <em>baseline</em>),
+              weaker discipline once it ends (<em>lower SPB</em>), higher interest rates
+              with lower growth (<em>adverse r−g</em>), and a bout of market stress
+              (<em>financial stress</em>).
             </li>
             <li>
               <strong>Debt is still falling in most simulations.</strong> Five years
               after the plan, debt has to be lower than at its end in 70% of 1,000
-              simulated futures.
+              simulations (the <em>stochastic</em> analysis).
             </li>
             <li>
               <strong>Debt falls during the plan itself.</strong> By 0.5 points of GDP a
               year on average when debt is between 60% and 90% of GDP, and 1 point when
-              it is above 90%. For Finland this is usually the strictest of the lot.
+              it is above 90%. For Finland this is usually the strictest of the lot
+              (the <em>debt sustainability safeguard</em>).
             </li>
             <li>
               <strong>A deficit above 3% forces a minimum.</strong> If last year's
               deficit was above 3% of GDP, this year's improvement must be at least 0.5
-              points.
+              points (the <em>deficit benchmark</em>).
             </li>
             <li>
               <strong>A floor until the deficit is comfortable.</strong> Until the
               structural deficit is below 1.5% of GDP, each year must improve by at
-              least 0.4 points, or 0.25 under a seven-year plan.
+              least 0.4 points, or 0.25 under a seven-year plan (the <em>deficit
+              resilience safeguard</em>).
             </li>
           </ul>
         </details>
@@ -150,11 +154,20 @@
               Written <em>r − g</em>. When debt costs less than the economy grows, the
               debt ratio falls by itself; when it costs more, it snowballs.
             </dd>
+            <dt>Scenario</dt>
+            <dd>
+              One fixed story about the future that the projection is run under. Four of
+              them decide the rules: the plan as written, weaker discipline later,
+              higher rates with lower growth, and market stress. Switch on "Show the
+              adverse scenarios" to draw the other three on the chart.
+            </dd>
             <dt>The simulations</dt>
             <dd>
-              1,000 futures drawn from how Finland's growth, budget and interest rates
-              have actually moved in the past. The Commission calls this the stochastic
-              analysis; the shaded fan on the chart is those futures.
+              1,000 runs of the projection, drawn from how Finland's growth, budget and
+              interest rates have actually moved in the past. The Commission calls this
+              the <em>stochastic</em> analysis; the shaded fan on the chart is those
+              runs. Distinct from the four scenarios, which are fixed stories rather
+              than random draws.
             </dd>
             <dt>Safeguard</dt>
             <dd>
@@ -167,12 +180,6 @@
               Changes in debt that do not pass through the deficit, such as lending or
               share purchases. It has been adding to Finnish debt, which is a large part
               of why the required adjustment is as big as it is.
-            </dd>
-            <dt>The scenario names</dt>
-            <dd>
-              The bars are labelled plainly here. The Commission's own names are:
-              baseline, lower-SPB, adverse r−g and financial stress; deficit benchmark
-              for the 3% rule; deficit resilience safeguard for the floor.
             </dd>
           </dl>
         </details>
@@ -458,7 +465,7 @@
 
             <div class="dsa-checks">
               <label><input type="checkbox" name="showNoAdjustment" checked> Show no-consolidation path</label>
-              <label><input type="checkbox" name="showScenarios"> Show adverse scenarios</label>
+              <label><input type="checkbox" name="showScenarios"> Show the adverse scenarios</label>
             </div>
           </details>
 
@@ -500,7 +507,7 @@
               <th scope="col">Budget tighter by, € bn a year</th>
               <th scope="col">Spending cap, %</th>
               <th scope="col">Debt, % of GDP</th>
-              <th scope="col">Rule that sets it</th>
+              <th scope="col">What sets it</th>
             </tr>
           </thead>
           <tbody id="dsa-table-body"></tbody>
@@ -529,9 +536,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-23b"></script>
-<script src="dsa/criteria.js?v=2026-09-23b"></script>
-<script src="dsa/chart.js?v=2026-09-23b"></script>
-<script src="dsa/app.js?v=2026-09-23b"></script>
+<script src="dsa/model.js?v=2026-09-23c"></script>
+<script src="dsa/criteria.js?v=2026-09-23c"></script>
+<script src="dsa/chart.js?v=2026-09-23c"></script>
+<script src="dsa/app.js?v=2026-09-23c"></script>
 </body>
 </html>

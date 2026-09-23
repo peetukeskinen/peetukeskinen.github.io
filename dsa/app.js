@@ -89,6 +89,14 @@
     3: 'higher rates and lower growth', 4: 'market stress'
   };
 
+  /* criteria.js keeps the Commission's labels; the page says them plainly. */
+  var BINDING_PLAIN = {};
+  BINDING_PLAIN[C.BINDING[0]] = 'a scenario';
+  BINDING_PLAIN[C.BINDING[0.5]] = 'the simulations';
+  BINDING_PLAIN[C.BINDING[1]] = 'debt safeguard';
+  BINDING_PLAIN[C.BINDING[2]] = 'the 3% deficit rule';
+  BINDING_PLAIN[C.BINDING[3]] = 'deficit resilience';
+
   /* ---- form access ------------------------------------------------------- */
 
   function control(name) { return form.elements[name]; }
@@ -256,8 +264,8 @@
     if (!r || r.failed) return [];
     var u = [];
     [4, 3, 2, 1].forEach(function (s) { if (r.deterministic[s].a === null) u.push(SCENARIO_NAMES[s]); });
-    if (params.useStochastic && r.stochastic.a === null) u.push('simulations test');
-    if (params.useDebtSafeguard && r.debtSafeguard.applies && r.debtSafeguard.a === null) u.push('debt sustainability safeguard');
+    if (params.useStochastic && r.stochastic.a === null) u.push('the simulations');
+    if (params.useDebtSafeguard && r.debtSafeguard.applies && r.debtSafeguard.a === null) u.push('the debt safeguard');
     return u;
   }
 
@@ -275,7 +283,7 @@
       };
     }
     if (r.bindingLabel === C.BINDING[0.5]) return { key: 'stoch', keys: ['stoch'], text: 'the simulations (' + params.plausibility * 10 + '% of them)' };
-    if (r.bindingLabel === C.BINDING[1]) return { key: 'safeguard', keys: ['safeguard'], text: 'debt sustainability safeguard' };
+    if (r.bindingLabel === C.BINDING[1]) return { key: 'safeguard', keys: ['safeguard'], text: 'the debt safeguard' };
     return { key: 'other', keys: [], text: r.bindingLabel };
   }
 
@@ -296,10 +304,10 @@
     }
     if (b.key === 'stoch') {
       return 'The simulations decide it: by ' + (planLast + 5) + ' debt has to be below its ' +
-        planLast + ' level in ' + params.plausibility * 10 + '% of the 1,000 futures in the fan.';
+        planLast + ' level in ' + params.plausibility * 10 + '% of the 1,000 simulations in the fan.';
     }
     if (b.key.indexOf('det') === 0) {
-      return 'One future decides it: debt has to keep falling for ten years after the plan ' +
+      return 'One scenario decides it: debt has to keep falling for ten years after the plan ' +
         'under ' + b.text + '.';
     }
     return '';
@@ -695,7 +703,7 @@
     setText('result-unit', 'points of GDP a year · ' + params.plan + '-year plan ' + planFirst + '–' + planLast);
     if (unmet.length) {
       setText('result-figure', '> 2.00');
-      setText('result-binding', 'even 2.00 a year does not meet the ' + joinNames(unmet) +
+      setText('result-binding', 'even 2.00 a year does not meet ' + joinNames(unmet) +
         '; the chart shows ' + r.adjustment.toFixed(2) + ', what the other rules need');
     } else {
       setText('result-figure', r.adjustment.toFixed(2));
@@ -734,7 +742,8 @@
           if (!ys) return;
           var v = null;
           r.bindingLabels.forEach(function (l, i) { if (l === label && v === null) v = r.finalPath[i]; });
-          lifts.push(ys.replace(/^in /, '') + ' rises to ' + v.toFixed(2) + ' (' + label.toLowerCase() + ')');
+          lifts.push(ys.replace(/^in /, '') + ' rises to ' + v.toFixed(2) +
+            ' (' + (BINDING_PLAIN[label] || label.toLowerCase()) + ')');
         });
         floorsNode.textContent = 'Some years need more: ' + joinNames(lifts) +
           '. The chart uses ' + r.adjustment.toFixed(2) + '.';
@@ -795,7 +804,7 @@
              '<td>' + r.netExpenditure[i].toFixed(2) + '</td>' +
              '<td>' + p1.debt[r.inputs.adjustmentStart + i].toFixed(1) +
                (isFinite(refDebt) && refDebt !== null && refDebt !== undefined ? ' <span class="dsa-table-ref">(' + refName + ' ' + refDebt.toFixed(1) + ')</span>' : '') + '</td>' +
-             '<td>' + r.bindingLabels[i] + '</td></tr>';
+             '<td>' + (BINDING_PLAIN[r.bindingLabels[i]] || r.bindingLabels[i]) + '</td></tr>';
     }).join('');
 
     /* ---- debt chart --------------------------------------------------------- */
@@ -807,9 +816,9 @@
       series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1, nChart + 1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
     }
     if (state.showScenarios) {
-      series.push({ name: narrow ? 'low SPB' : 'lower SPB', values: r.paths[2].debt.slice(1, nChart + 1), color: COLORS.alt1, width: 1.3, label: true });
-      series.push({ name: narrow ? 'adv. r–g' : 'adverse r–g', values: r.paths[3].debt.slice(1, nChart + 1), color: COLORS.alt2, width: 1.3, label: true });
-      series.push({ name: narrow ? 'stress' : 'financial stress', values: r.paths[4].debt.slice(1, nChart + 1), color: COLORS.alt3, width: 1.3, label: true });
+      series.push({ name: narrow ? 'discipline' : 'discipline slips', values: r.paths[2].debt.slice(1, nChart + 1), color: COLORS.alt1, width: 1.3, label: true });
+      series.push({ name: narrow ? 'rates up' : 'rates up, growth down', values: r.paths[3].debt.slice(1, nChart + 1), color: COLORS.alt2, width: 1.3, label: true });
+      series.push({ name: narrow ? 'stress' : 'market stress', values: r.paths[4].debt.slice(1, nChart + 1), color: COLORS.alt3, width: 1.3, label: true });
     }
     series.push({ name: narrow ? 'with plan' : 'with the plan', values: p1.debt.slice(1, nChart + 1), color: COLORS.line, width: 2.4, label: true });
 
@@ -898,7 +907,7 @@
     if (unmetNode) {
       unmetNode.hidden = !unmet.length;
       unmetNode.textContent = unmet.length
-        ? 'Even 2.00 a year does not meet the ' + joinNames(unmet) + '. As in the original tool that rule drops out, and the chart shows what the other rules need.'
+        ? 'Even 2.00 a year does not meet ' + joinNames(unmet) + '. As in the original tool that one drops out, and the chart shows what the rest need.'
         : '';
     }
 

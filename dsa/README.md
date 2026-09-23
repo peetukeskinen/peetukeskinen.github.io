@@ -27,12 +27,16 @@ five nested dropdowns: the rules one by one, a glossary, where the numbers come
 from, sources and code, and the caveats. The detail and the references live
 there rather than on the page.
 
-Wording on the page itself is plain and the technical names are in the
-glossary. The bars read "Market stress", "Higher rates, lower growth", "Weaker
-discipline later", "The plan as written", "Simulations", "The 3% deficit rule"
-and "Deficit resilience"; the Commission's own names -- baseline, lower-SPB,
-adverse r-g, financial stress, deficit benchmark, deficit resilience safeguard
--- are given in Info. Units are "points" rather than "pp", and the readout
+Wording on the page itself is plain and the Commission's own names sit beside
+each rule in Info, in brackets: baseline, lower SPB, adverse r-g, financial
+stress, stochastic, debt sustainability safeguard, deficit benchmark, deficit
+resilience safeguard. One vocabulary is used everywhere a name appears -- the
+bars, the three adverse lines on the chart when they are switched on, the
+binding-rule line, the year table's last column, the floors note and the
+screen-reader text all say the same thing, and `criteria.js` keeps the
+Commission's labels internally so the reference comparison is untouched. A
+"scenario" is one of the four fixed stories; the "simulations" are the 1,000
+random draws. Neither is called a "future". Units are "points" rather than "pp", and the readout
 under the growth slider says "Interest rate minus growth" rather than "r - g".
 
 The calculator is a workbench. On screens 64rem and wider the controls form a
