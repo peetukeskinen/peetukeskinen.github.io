@@ -26,7 +26,16 @@ that width the stage comes first in the document and sticks to the top of the
 screen while the controls scroll underneath it (switched off on viewports under
 761px tall).
 
-The headline is the required annual adjustment in structural primary balance
+The headline carries the required annual adjustment, the binding rule, the
+euro figure and two debt ratios -- the end of the plan and the end of the
+projection. It used to carry two more: a running total in points of GDP, which
+is the headline times the plan length and is better said in euros, and the
+structural primary balance at the end of the plan, which is a diagnostic rather
+than a headline and now sits under the year-by-year table. The block is sticky
+on a phone, so every line in it is a line the reader carries while working the
+sliders.
+
+The headline figure is the adjustment in structural primary balance
 terms, with the binding rule beside it and, behind the "i" next to its label, a
 plain sentence saying what the number is: how much the budget has to improve each year,
 counted before interest and with the cycle taken out, from spending cuts or tax
@@ -58,7 +67,11 @@ What makes a change visible:
   and the Commission's option is marked in each method dropdown. Those settings
   are solved once at load. As soon as any control moves, that path is drawn as
   a grey ghost under the live line, the headline shows `+0.07 vs Commission`,
-  and the binding rule shows `(Commission: <rule>)` when it differs. *Pin as
+  and the binding rule shows `(Commission: <rule>)` when it differs. At the
+  baseline none of that appears: the delta chip is hidden and the reference
+  line is blank, because "nothing has changed yet" is already shown by the
+  untouched controls, and the line above them says whose settings they are.
+  Saying it in three places at once was the page's worst redundancy. *Pin as
   reference* swaps the ghost for whatever is on screen, and the same labels
   then read "pinned".
 - **Rules as pictures.** 60 % and 90 % lines, labelled with the safeguard band

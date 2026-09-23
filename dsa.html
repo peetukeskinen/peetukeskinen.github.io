@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-22c">
+<link rel="stylesheet" href="css/style.css?v=2026-09-23a">
 </head>
 <body>
 
@@ -87,8 +87,6 @@
             </div>
             <p class="dsa-euro" id="result-euro" hidden></p>
             <dl class="dsa-stats">
-              <div><dt>Total adjustment</dt><dd id="stat-total">—</dd></div>
-              <div><dt>SPB at end of plan</dt><dd id="stat-spb">—</dd></div>
               <div><dt>Debt <span id="stat-debt-end-year">2031</span></dt><dd id="stat-debt-end">—</dd></div>
               <div><dt>Debt <span id="stat-debt-final-year">2041</span></dt><dd id="stat-debt-final">—</dd><span class="dsa-tip"><button type="button" class="dsa-i" aria-label="Why the chart stops earlier" aria-describedby="tip-final">i</button><span class="dsa-tip-body" role="tooltip" id="tip-final">The chart stops five years after the plan: the last year that can decide any of the criteria, and where the simulated fan ends. The projection itself runs ten years past the plan, and this is the figure at its end.</span></span></div>
             </dl>
@@ -280,6 +278,10 @@
           </thead>
           <tbody id="dsa-table-body"></tbody>
         </table>
+        <p class="dsa-hint">
+          Structural primary balance at the end of the plan:
+          <strong id="stat-spb">—</strong> of GDP.
+        </p>
       </details>
     </section>
 
@@ -412,9 +414,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-22c"></script>
-<script src="dsa/criteria.js?v=2026-09-22c"></script>
-<script src="dsa/chart.js?v=2026-09-22c"></script>
-<script src="dsa/app.js?v=2026-09-22c"></script>
+<script src="dsa/model.js?v=2026-09-23a"></script>
+<script src="dsa/criteria.js?v=2026-09-23a"></script>
+<script src="dsa/chart.js?v=2026-09-23a"></script>
+<script src="dsa/app.js?v=2026-09-23a"></script>
 </body>
 </html>

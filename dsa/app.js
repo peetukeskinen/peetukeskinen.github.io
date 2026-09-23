@@ -575,7 +575,7 @@
       setText('result-figure', '—');
       setText('result-binding', 'projection unavailable; change a setting or reset to try again');
       ['result-delta', 'result-was', 'result-floors', 'dsa-refline', 'dsa-rules-panel', 'dsa-unmet', 'dsa-why'].forEach(function (id) { setHidden(id, true); });
-      ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
+      ['stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
       chartHost.__dsaSpec = null;
       chartHost.innerHTML = '';
       rulesHost.__dsaSpec = null;
@@ -604,13 +604,17 @@
       pinBtn.textContent = pinned ? 'Unpin reference' : 'Pin as reference';
       pinBtn.setAttribute('aria-pressed', pinned ? 'true' : 'false');
     }
+    /* The reference line names the grey line, so it says nothing when there is
+       no grey line: at the baseline the controls already say the settings are
+       the Commission's. The empty row keeps its height so the buttons beside
+       it do not move. */
     setHidden('dsa-refline', false);
     var refline = document.getElementById('dsa-refline');
     if (refline) refline.classList.toggle('is-off', !refOk);
     setText('dsa-ref-name', refOk
       ? (pinned ? 'Grey line: your pinned scenario (' + pinned.label + ')'
                 : "Grey line: the Commission's own settings")
-      : "Change a setting and a grey line shows the Commission's own settings.");
+      : '');
 
     /* ---- failed state: keep drawing ------------------------------------ */
     if (r.failed) {
@@ -629,7 +633,7 @@
       setHidden('result-floors', true);
       setHidden('result-euro', true);
       setHidden('dsa-why', true);
-      ['stat-total', 'stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
+      ['stat-spb', 'stat-debt-end', 'stat-debt-final'].forEach(function (id) { setText(id, '—'); });
       var two = C.project(inputs, 1, 2, null).debt.slice(1, nf + 1);
       var none = C.project(inputs, 1, 0, null).debt.slice(1, nf + 1);
       var fSeries = [];
@@ -679,7 +683,7 @@
     var lastYear = years[years.length - 1];
     var planFirst = r.planYears[0], planLast = r.planYears[r.planYears.length - 1];
     var lifted = isLifted(r);
-    var total = sum(r.finalPath);
+    var total = sum(r.finalPath);   // only the structural balance below uses this
     var p1 = r.paths[1];
     var adjEnd = r.inputs.adjustmentEnd;
 
@@ -707,7 +711,8 @@
         wasNode.hidden = true;
       }
     } else if (!showGhost) {
-      setDelta('= Commission', true);
+      /* Nothing has changed yet, which the untouched controls already show. */
+      setHidden('result-delta', true);
       setHidden('result-was', true);
     } else {
       setHidden('result-delta', true);
@@ -736,11 +741,9 @@
 
     var euroNode = document.getElementById('result-euro');
     if (unmet.length) {
-      setText('stat-total', '—');
       setText('stat-spb', '—');
       if (euroNode) euroNode.hidden = true;
     } else {
-      setText('stat-total', total.toFixed(1) + ' pp');
       /* The SPB path is linear in the adjustment, so the floored total adds exactly. */
       setText('stat-spb', (r.inputs.spb[r.inputs.adjustmentStart - 1] + total).toFixed(1) + '%');
       if (euroNode) {
