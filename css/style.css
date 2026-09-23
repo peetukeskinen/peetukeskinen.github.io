@@ -1302,6 +1302,35 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 .dsa-key-ref { background: var(--dsa-ref); height: 0.2rem; vertical-align: 0.2em; }
 .dsa-refline.is-off .dsa-key-ref { visibility: hidden; }
 
+/* Nested dropdowns inside Info, and its glossary. */
+.dsa-info-body > details {
+  border-top: 1px solid var(--rule);
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+}
+
+.dsa-info-body > details > summary {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  list-style-position: outside;
+}
+
+.dsa-info-body > details[open] > summary { margin-bottom: 0.4rem; }
+
+.dsa-glossary { margin: 0; }
+.dsa-glossary dt {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.6rem;
+}
+.dsa-glossary dd { margin: 0.1rem 0 0; }
+.dsa-glossary dd:first-of-type { margin-top: 0.1rem; }
+
+.dsa-sources li { margin-bottom: 0.45rem; }
+
 .dsa-table-ref { color: var(--ink-muted); font-weight: 400; }
 
 .dsa-rules-panel { margin-top: 1.1rem; }

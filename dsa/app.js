@@ -65,9 +65,9 @@
 
   var SLIDERS = {
     debtInitial: { unit: '% of GDP', decimals: 1, signed: false },
-    rateShift: { unit: ' pp', decimals: 1, signed: true },
-    growthShift: { unit: ' pp', decimals: 2, signed: true },
-    outputGap: { unit: ' pp', decimals: 1, signed: true },
+    rateShift: { unit: ' points', decimals: 1, signed: true },
+    growthShift: { unit: ' points', decimals: 2, signed: true },
+    outputGap: { unit: ' points', decimals: 1, signed: true },
     phi: { unit: '', decimals: 2, signed: false }
   };
 
@@ -81,9 +81,12 @@
     text: 'var(--ink-muted, #5b5449)'
   };
 
+  /* The Commission's names for these are baseline, lower-SPB, adverse r-g and
+     financial stress. Said plainly here; the glossary in Info gives the
+     official ones. */
   var SCENARIO_NAMES = {
-    1: 'DSA baseline scenario', 2: 'DSA lower-SPB scenario',
-    3: 'DSA adverse r–g scenario', 4: 'DSA financial-stress scenario'
+    1: 'the plan as written', 2: 'weaker discipline later',
+    3: 'higher rates and lower growth', 4: 'market stress'
   };
 
   /* ---- form access ------------------------------------------------------- */
@@ -253,7 +256,7 @@
     if (!r || r.failed) return [];
     var u = [];
     [4, 3, 2, 1].forEach(function (s) { if (r.deterministic[s].a === null) u.push(SCENARIO_NAMES[s]); });
-    if (params.useStochastic && r.stochastic.a === null) u.push('DSA stochastic test');
+    if (params.useStochastic && r.stochastic.a === null) u.push('simulations test');
     if (params.useDebtSafeguard && r.debtSafeguard.applies && r.debtSafeguard.a === null) u.push('debt sustainability safeguard');
     return u;
   }
@@ -271,7 +274,7 @@
           : joinNames(tied.map(function (s) { return SCENARIO_NAMES[s]; })) + ' (tie)'
       };
     }
-    if (r.bindingLabel === C.BINDING[0.5]) return { key: 'stoch', keys: ['stoch'], text: 'DSA stochastic test (' + params.plausibility * 10 + '% of paths)' };
+    if (r.bindingLabel === C.BINDING[0.5]) return { key: 'stoch', keys: ['stoch'], text: 'the simulations (' + params.plausibility * 10 + '% of them)' };
     if (r.bindingLabel === C.BINDING[1]) return { key: 'safeguard', keys: ['safeguard'], text: 'debt sustainability safeguard' };
     return { key: 'other', keys: [], text: r.bindingLabel };
   }
@@ -287,17 +290,17 @@
       var start = r.paths[1].debt[r.inputs.adjustmentStart - 1];
       var target = start + sg.required * params.plan;
       return 'The debt safeguard asks for an average fall of ' + Math.abs(sg.required).toFixed(1) +
-        ' pp a year across the plan, from ' + start.toFixed(1) + '% in ' + (r.planYears[0] - 1) +
+        ' points a year across the plan, from ' + start.toFixed(1) + '% in ' + (r.planYears[0] - 1) +
         ' to ' + target.toFixed(1) + '% in ' + planLast +
         '. That end point is fixed, so a change moves the effort needed, not where the line lands.';
     }
     if (b.key === 'stoch') {
-      return 'The stochastic test binds: by ' + (planLast + 5) + ' debt has to be below its ' +
-        planLast + ' level in ' + params.plausibility * 10 + '% of the 1,000 paths in the fan.';
+      return 'The simulations decide it: by ' + (planLast + 5) + ' debt has to be below its ' +
+        planLast + ' level in ' + params.plausibility * 10 + '% of the 1,000 futures in the fan.';
     }
     if (b.key.indexOf('det') === 0) {
-      return 'A scenario binds: debt has to keep falling for ten years after the plan under ' +
-        b.text.replace(/^DSA[^a-z]*/, '') + '.';
+      return 'One future decides it: debt has to keep falling for ten years after the plan ' +
+        'under ' + b.text + '.';
     }
     return '';
   }
@@ -315,8 +318,10 @@
   }
 
   function ruleRows(r, params, ref, unmet) {
-    var det = { 4: 'DSA: financial stress', 3: 'DSA: adverse r–g', 2: 'DSA: lower SPB', 1: 'DSA: baseline' };
-    var short = { 4: 'Fin. stress', 3: 'Adverse r–g', 2: 'Lower SPB', 1: 'Baseline' };
+    var det = { 4: 'Market stress', 3: 'Higher rates, lower growth',
+                2: 'Weaker discipline later', 1: 'The plan as written' };
+    var short = { 4: 'Market stress', 3: 'Rates up, growth down',
+                  2: 'Discipline slips', 1: 'Plan as written' };
     var rows = [];
     var refR = ref && ref.r && !ref.r.failed ? ref.r : null;
     var lifted = isLifted(r);
@@ -339,7 +344,7 @@
     });
     var stochBinding = top(r.stochastic.a) && r.bindingLabel === C.BINDING[0.5];
     rows.push({
-      label: 'DSA: stochastic (' + params.plausibility * 10 + '%)', short: 'Stochastic',
+      label: 'Simulations (' + params.plausibility * 10 + '%)', short: 'Simulations',
       value: r.stochastic.a,
       state: !params.useStochastic ? 'off' : (r.stochastic.a === null ? 'unmet' : (stochBinding ? 'binding' : 'on')),
       note: bindNote(stochBinding),
@@ -355,14 +360,14 @@
     });
     var benchYears = yearsWith(r, C.BINDING[2]);
     rows.push({
-      label: 'Deficit benchmark (floor)', short: 'Deficit floor', value: 0.5,
+      label: 'The 3% deficit rule (floor)', short: '3% deficit rule', value: 0.5,
       state: !params.useDeficitBenchmark ? 'off' : (benchYears ? 'floor-binding' : 'floor'),
       note: benchYears
     });
     var resil = params.plan === 7 ? 0.25 : 0.4;
     var resilYears = yearsWith(r, C.BINDING[3]);
     rows.push({
-      label: 'Resilience safeguard (floor)', short: 'Resilience floor', value: resil,
+      label: 'Deficit resilience (floor)', short: 'Deficit resilience', value: resil,
       state: !params.useDeficitSafeguard ? 'off' : (resilYears ? 'floor-binding' : 'floor'),
       note: resilYears
     });
@@ -388,9 +393,9 @@
     node.innerHTML = rows.map(function (row) {
       var s = row.label + ': ';
       if (row.state === 'off' || row.state === 'na') s += row.note || 'off';
-      else if (row.state === 'unmet') s += 'more than 2.00 pp a year';
+      else if (row.state === 'unmet') s += 'more than 2.00 points a year';
       else {
-        s += row.value.toFixed(2) + ' pp a year';
+        s += row.value.toFixed(2) + ' points a year';
         if (row.state === 'binding' || row.state === 'floor-binding') s += ', binding' + (row.note ? ' ' + row.note : '');
         if (row.state === 'floor' && !row.note) s += ' (floor, not reached)';
       }
@@ -618,7 +623,7 @@
 
     /* ---- failed state: keep drawing ------------------------------------ */
     if (r.failed) {
-      renderExpenditure(null, null, null, 'No expenditure ceilings: no adjustment up to 2.00 pp a year satisfies the rules.');
+      renderExpenditure(null, null, null, 'No expenditure ceilings: no adjustment up to 2.00 points a year satisfies the rules.');
       var inputs = r.inputs;
       /* Same drawn window as the normal path: five years past the plan. */
       var fYears = [];
@@ -626,7 +631,7 @@
       var nf = fYears.length;
       var pf = fYears.slice(inputs.adjustmentStart - 1, inputs.adjustmentEnd);
       setText('result-figure', '> 2.00');
-      setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + pf[0] + '–' + pf[pf.length - 1]);
+      setText('result-unit', 'points of GDP a year · ' + params.plan + '-year plan ' + pf[0] + '–' + pf[pf.length - 1]);
       setHidden('result-delta', true);
       setText('result-binding', 'no adjustment up to 2.00 a year meets the rules');
       setHidden('result-was', true);
@@ -669,7 +674,7 @@
     var unmet = unmetRules(r, params);
     var refUnmet = refR.failed ? [] : unmetRules(refR, ref.params);
     renderExpenditure(r, refOk && !refUnmet.length ? refR : null, refName, unmet.length
-      ? 'No expenditure ceilings: ' + joinNames(unmet) + ' cannot be met with up to 2.00 pp a year.' : null);
+      ? 'No expenditure ceilings: ' + joinNames(unmet) + ' cannot be met with up to 2.00 points a year.' : null);
     var years = r.years;
     /* The chart stops five years after the plan. That is the last year able to
        decide any criterion -- the safeguard is settled inside the plan, the
@@ -687,7 +692,7 @@
     var p1 = r.paths[1];
     var adjEnd = r.inputs.adjustmentEnd;
 
-    setText('result-unit', 'pp of GDP a year · ' + params.plan + '-year plan ' + planFirst + '–' + planLast);
+    setText('result-unit', 'points of GDP a year · ' + params.plan + '-year plan ' + planFirst + '–' + planLast);
     if (unmet.length) {
       setText('result-figure', '> 2.00');
       setText('result-binding', 'even 2.00 a year does not meet the ' + joinNames(unmet) +
@@ -773,7 +778,7 @@
 
     /* r - g at the end of the plan: the snowball in one number. */
     var rg = p1.iir[adjEnd] - 100 * p1.g[adjEnd];
-    setText('out-rg', 'r − g at the end of the plan: ' + signed(rg, 1) + ' pp');
+    setText('out-rg', 'Interest rate minus growth at the end of the plan: ' + signed(rg, 1) + ' points');
 
     /* The gap the starting-position slider produces, as a level. */
     setText('out-og', 'Output gap in ' + planFirst + ': ' +
@@ -826,8 +831,8 @@
     }
 
     var thresholds = [
-      { value: 60, label: params.useDebtSafeguard && !narrow ? '60% · safeguard 0.5 pp a year' : '60%' },
-      { value: 90, label: params.useDebtSafeguard && !narrow ? '90% · safeguard 1 pp a year' : '90%' }
+      { value: 60, label: params.useDebtSafeguard && !narrow ? '60% · safeguard 0.5 points a year' : '60%' },
+      { value: 90, label: params.useDebtSafeguard && !narrow ? '90% · safeguard 1 points a year' : '90%' }
     ];
 
     /* The safeguard used to be drawn as a sloped dashed line across the plan
@@ -850,8 +855,8 @@
       if (isFinite(refAtPlanLast) && Math.abs(r.debtEnd - refAtPlanLast) >= 0.5) {
         brackets.push({
           year: planLast, from: refAtPlanLast, to: r.debtEnd,
-          text: narrow ? signed(r.debtEnd - refAtPlanLast, 1) + ' pp'
-                       : r.debtEnd.toFixed(1) + '%, ' + signed(r.debtEnd - refAtPlanLast, 1) + ' pp vs ' + refName
+          text: narrow ? signed(r.debtEnd - refAtPlanLast, 1) + ' points'
+                       : r.debtEnd.toFixed(1) + '%, ' + signed(r.debtEnd - refAtPlanLast, 1) + ' points vs ' + refName
         });
       }
     }
@@ -883,7 +888,7 @@
       rows: rows, max: 2,
       marker: unmet.length ? null : r.adjustment,
       markerLabel: lifted ? r.adjustment.toFixed(2) + ' before floors' : 'required ' + r.adjustment.toFixed(2),
-      unit: 'pp of GDP a year',
+      unit: 'points of GDP a year',
       ariaLabel: 'What each scenario would require on its own. ' + (unmet.length
         ? joinNames(unmet) + ' cannot be met with up to 2 points a year.'
         : 'The binding rule is ' + b.text + ' at ' + r.adjustment.toFixed(2) + ' points a year.')

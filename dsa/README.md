@@ -6,7 +6,7 @@ The browser version of the MATLAB DSA 5.1 tool
 and no third-party code.
 
 ```text
-dsa.html          the page: workbench (stage + controls + rule bars), notes
+dsa.html          the page: Info, workbench (stage + controls + rule bars), notes
 dsa/model.js      debt projection      <- project_debt5_1v.m
 dsa/criteria.js   rules and safeguards <- runDsaModel5_1.m
 dsa/chart.js      hand-written SVG: debt, expenditure growth and rule bars
@@ -18,6 +18,22 @@ Styling lives in section 11 of `css/style.css`, so the calculator follows the
 site's palette in light and dark mode.
 
 ## How the page is put together
+
+Info sits at the top, collapsed, directly under the lead: one line above the
+calculator. The question it answers -- what are these rules, and who says so --
+arises before a reader trusts the number, not after, and a reader arriving from
+a link has no context at all. Inside it a short plain summary is followed by
+five nested dropdowns: the rules one by one, a glossary, where the numbers come
+from, sources and code, and the caveats. The detail and the references live
+there rather than on the page.
+
+Wording on the page itself is plain and the technical names are in the
+glossary. The bars read "Market stress", "Higher rates, lower growth", "Weaker
+discipline later", "The plan as written", "Simulations", "The 3% deficit rule"
+and "Deficit resilience"; the Commission's own names -- baseline, lower-SPB,
+adverse r-g, financial stress, deficit benchmark, deficit resilience safeguard
+-- are given in Info. Units are "points" rather than "pp", and the readout
+under the growth slider says "Interest rate minus growth" rather than "r - g".
 
 The calculator is a workbench. On screens 64rem and wider the controls form a
 sticky rail on the left and the stage (headline, debt chart, rule bars) sits on
