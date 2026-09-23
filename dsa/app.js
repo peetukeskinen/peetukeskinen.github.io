@@ -81,9 +81,9 @@
     text: 'var(--ink-muted, #5b5449)'
   };
 
-  /* The Commission's names for these are baseline, lower-SPB, adverse r-g and
-     financial stress. Said plainly here; the glossary in Info gives the
-     official ones. */
+  /* Said plainly here. The Commission's own names -- baseline, lower SPB,
+     adverse r-g, financial stress -- are given in brackets beside each rule in
+     the page's Info section. */
   var SCENARIO_NAMES = {
     1: 'the plan as written', 2: 'weaker discipline later',
     3: 'higher rates and lower growth', 4: 'market stress'
