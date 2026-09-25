@@ -125,6 +125,22 @@
       }
     }
 
+    /* Inflation: shift the GDP deflator from the first plan year, and move
+       market rates by the same amount from the year after, as the rate shift
+       does. Real market rates are therefore unchanged; what remains is the
+       gain from old debt keeping its coupons while nominal GDP grows faster.
+       Combined with rateShift this covers any pass-through: inflation +1 with
+       rates -1 is inflation that the central bank does not answer. */
+    if (params.inflationShift) {
+      for (t = adjustmentStart; t <= totalPeriods; t++) {
+        inflation[t] += params.inflationShift / 100;
+      }
+      for (t = adjustmentStart + 1; t <= totalPeriods; t++) {
+        iSt[t] += params.inflationShift;
+        iLt[t] += params.inflationShift;
+      }
+    }
+
     /* Where the economy starts the plan: the output gap in the last year the
        Commission supplies one. From the next year on the model closes the gap
        on its own schedule, so this moves the starting point and nothing else. */

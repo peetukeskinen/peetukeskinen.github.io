@@ -102,6 +102,16 @@ What makes a change visible:
   through, and it is said more precisely in words: the line under the chart now
   gives the required average fall, the starting ratio and the resulting end
   point, so `guides` has gone from the chart spec.
+- **Inflation.** Shifts the GDP deflator from 2025 and both market rates by
+  the same amount from 2026, so real market rates are unchanged. What is left
+  is the gain from old debt keeping its lower rates while nominal GDP grows
+  faster: +1 point takes the required adjustment from 0.76 to 0.56. The
+  spending cap is nominal, so it rises with inflation. Inflation the central
+  bank does not answer is inflation +1 with the rate slider at -1, which gives
+  0.49 -- so the two sliders together cover any pass-through without a third
+  control. It re-runs the plan under a different inflation assumption; it is
+  not the case of inflation surprising after a plan is agreed, when the
+  nominal cap is already fixed.
 - **Economic cycle.** The *Economic cycle* slider moves the 2025 output gap,
   the last year the Commission supplies one, and the model closes the gap from
   there on its own schedule -- always reaching zero three years after the
@@ -217,17 +227,17 @@ export `e_g`, `e_pb`, `e_i_st` and `e_i_lt` after the shock-generation block in
 ## Checking against the MATLAB tool
 
 The port was checked against an independently written Python translation of the
-same MATLAB source. Twenty-one parameter combinations — both plan lengths, safeguards
+same MATLAB source. Twenty-four parameter combinations — both plan lengths, safeguards
 on and off, both plausibility levels, both shock methods, both SFA assumptions,
-each slider on its own including the starting output gap, and five stacked at
-once — agree to 1.4e-14 across
+each slider on its own including the output gap and inflation, inflation with
+the rate response removed, and six stacked at once — agree to 1.4e-14 across
 the full debt, balance, structural balance, structural primary balance, net
 expenditure and percentile paths. The harness is under
 `OneDrive/DSA/calculator/test` (`run_js.sh`, `compare.py`).
 
-A 2,224-point sweep produces no failures and no non-finite values, with a worst
-case of 144 ms per full run including the simulation: 2,160 points over the
-slider ranges, all 16 combinations of the rule switches on both plan lengths,
+A 2,384-point sweep produces no failures and no non-finite values, with a worst
+case of 242 ms per full run including the simulation: 2,320 points over the
+slider ranges and inflation crossed with rates and debt, all 16 combinations of the rule switches on both plan lengths,
 and all 32 combinations of the preset chips.
 
 The baseline also reproduces the figures published in chapter 3 of the National

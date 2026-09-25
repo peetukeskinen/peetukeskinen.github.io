@@ -17,7 +17,7 @@
 <meta name="twitter:description" content="How much consolidation the reformed EU fiscal rules require of Finland, and which rule binds. Runs in your browser.">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css?v=2026-09-23d">
+<link rel="stylesheet" href="css/style.css?v=2026-09-25a">
 </head>
 <body>
 
@@ -270,10 +270,9 @@
               which is why they can be moved here.
             </li>
             <li>
-              Interest rates move the projection slowly, because the Commission's data
-              assume only 3.2–3.8% of long-term debt matures each year. The same formula
-              run on Eurostat's figures for Finland gives about 6%, so a rate shock
-              probably costs more than this page shows.
+              Interest rates move the projection slowly. In the data only 3.2–3.8% of
+              long-term debt matures each year, and only debt that matures is refinanced
+              at new rates.
             </li>
             <li>
               The simulations use one fixed set of 1,000 draws, so everyone sees the
@@ -389,6 +388,16 @@
               </div>
               <div class="dsa-track">
                 <input type="range" id="rateShift" name="rateShift" min="-2" max="4" step="0.1" value="0">
+              </div>
+            </div>
+
+            <div class="dsa-control">
+              <div class="dsa-control-head">
+                <span class="dsa-head-label"><label for="inflationShift">Inflation</label> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About inflation" aria-describedby="tip-infl">i</button><span class="dsa-tip-body" role="tooltip" id="tip-infl">A change from the Commission’s inflation path, from 2025 on. Market interest rates move with it, so real rates stay the same; the gain comes from old debt keeping its lower rates while the economy grows faster in euros. The spending cap is set in euros too, so it rises with inflation. For inflation the central bank does not answer, lower the interest-rate slider by the same amount. This re-runs the plan under a different assumption; it is not what happens if inflation surprises after a plan is agreed.</span></span></span>
+                <output id="out-inflationShift" for="inflationShift">0.0 points</output>
+              </div>
+              <div class="dsa-track">
+                <input type="range" id="inflationShift" name="inflationShift" min="-1.5" max="3" step="0.1" value="0">
               </div>
             </div>
 
@@ -536,9 +545,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-23d"></script>
-<script src="dsa/criteria.js?v=2026-09-23d"></script>
-<script src="dsa/chart.js?v=2026-09-23d"></script>
-<script src="dsa/app.js?v=2026-09-23d"></script>
+<script src="dsa/model.js?v=2026-09-25a"></script>
+<script src="dsa/criteria.js?v=2026-09-25a"></script>
+<script src="dsa/chart.js?v=2026-09-25a"></script>
+<script src="dsa/app.js?v=2026-09-25a"></script>
 </body>
 </html>

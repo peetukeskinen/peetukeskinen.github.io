@@ -43,6 +43,7 @@
     plan: '7',
     debtInitial: data.scalars.debt_initial.toFixed(1),
     rateShift: '0',
+    inflationShift: '0',
     growthShift: '0',
     outputGap: '0',
     phi: data.scalars.phi.toFixed(2),
@@ -58,7 +59,7 @@
   };
 
   /* The keys that change the numbers, as opposed to what is drawn. */
-  var MODEL_KEYS = ['plan', 'debtInitial', 'rateShift', 'growthShift', 'outputGap', 'phi', 'plausibility',
+  var MODEL_KEYS = ['plan', 'debtInitial', 'rateShift', 'inflationShift', 'growthShift', 'outputGap', 'phi', 'plausibility',
                     'method', 'sfaMethod', 'useStochastic', 'useDebtSafeguard',
                     'useDeficitBenchmark', 'useDeficitSafeguard'];
   var SELECTS = ['plausibility', 'method', 'sfaMethod'];
@@ -66,6 +67,7 @@
   var SLIDERS = {
     debtInitial: { unit: '% of GDP', decimals: 1, signed: false },
     rateShift: { unit: ' points', decimals: 1, signed: true },
+    inflationShift: { unit: ' points', decimals: 1, signed: true },
     growthShift: { unit: ' points', decimals: 2, signed: true },
     outputGap: { unit: ' points', decimals: 1, signed: true },
     phi: { unit: '', decimals: 2, signed: false }
@@ -145,6 +147,7 @@
       plan: parseInt(state.plan, 10),
       debtInitial: parseFloat(state.debtInitial),
       rateShift: parseFloat(state.rateShift),
+      inflationShift: parseFloat(state.inflationShift),
       growthShift: parseFloat(state.growthShift),
       outputGap: parseFloat(state.outputGap),
       phi: parseFloat(state.phi),
@@ -239,6 +242,7 @@
     if (state.plan !== DEFAULTS.plan) parts.push(state.plan + '-year plan');
     if (parseFloat(state.debtInitial) !== parseFloat(DEFAULTS.debtInitial)) parts.push('debt ' + parseFloat(state.debtInitial).toFixed(0) + '%');
     if (parseFloat(state.rateShift) !== 0) parts.push('rates ' + sliderText('rateShift', state.rateShift));
+    if (parseFloat(state.inflationShift) !== 0) parts.push('inflation ' + sliderText('inflationShift', state.inflationShift));
     if (parseFloat(state.growthShift) !== 0) parts.push('growth ' + sliderText('growthShift', state.growthShift));
     if (parseFloat(state.outputGap) !== 0) parts.push('cycle ' + sliderText('outputGap', state.outputGap));
     if (parseFloat(state.phi) !== parseFloat(DEFAULTS.phi)) parts.push('multiplier ' + parseFloat(state.phi).toFixed(2));
