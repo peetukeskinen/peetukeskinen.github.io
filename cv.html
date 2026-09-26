@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>CV — Peetu Keskinen</title>
 <meta name="description" content="Curriculum vitae of Peetu Keskinen: education, work experience at the National Audit Office of Finland and Pellervo Economic Research PTT, teaching, grants, skills and languages.">
 <meta name="author" content="Peetu Keskinen">
@@ -20,7 +21,8 @@
 <meta name="twitter:image" content="https://peetukeskinen.github.io/assets/portrait.jpg">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css">
+<link rel="preload" href="assets/fonts/source-serif-4-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=2026-09-26a">
 </head>
 <body>
 
@@ -31,7 +33,6 @@
     <p class="site-title"><a href="index.html">Peetu Keskinen</a></p>
     <nav class="site-nav" aria-label="Main">
       <ul>
-        <li><a href="index.html">Home</a></li>
         <li><a href="research.html">Research</a></li>
         <li><a href="publications.html">Publications</a></li>
         <li><a href="dsa.html">Calculator</a></li>
@@ -47,13 +48,10 @@
 
     <h1>Curriculum vitae</h1>
 
-    <!-- To publish a PDF: add it to papers/ and replace the note below with
-         <p><a href="papers/peetu-keskinen-cv.pdf">Download CV (PDF)</a></p>
+    <!-- To publish a PDF: add it to papers/ and put a link here, e.g.
+         <p class="page-intro"><a href="papers/peetu-keskinen-cv.pdf">Download CV (PDF)</a></p>
          Use a version without the referees' personal phone numbers and email
          addresses — the Finnish PDF lists them. -->
-    <div class="note">
-      <p>A PDF version of the CV will be added here.</p>
-    </div>
 
     <!-- ====================================================================
          Timeline entry template — dates in the left gutter.
@@ -77,8 +75,10 @@
           <span class="when">Sep 2021 –</span>
           <div class="what">
             Doctor of Social Sciences (Economics)
-            <p class="entry-meta"><span class="entry-status">Work in progress</span></p>
             <span class="meta">University of Helsinki · Main advisor: Niku Määttänen</span>
+            <span class="meta">Dissertation projects: EU fiscal rules and multiple equilibria;
+              mechanisms of fiscal consolidation · <a href="research.html">summaries</a></span>
+            <p class="entry-meta"><span class="entry-status">Work in progress</span></p>
           </div>
         </li>
         <li>
@@ -146,14 +146,46 @@
       </ul>
     </section>
 
-    <section aria-labelledby="research">
-      <h2 id="research">Doctoral research</h2>
-      <p class="entry-meta"><span class="entry-status">Work in progress</span></p>
-      <p>
-        Dissertation with current projects on EU fiscal rules and multiple equilibria
-        and on the mechanisms of fiscal consolidation. See the
-        <a href="research.html">research page</a> for summaries.
-      </p>
+    <section aria-labelledby="publications">
+      <h2 id="publications">Selected publications</h2>
+      <ul class="timeline">
+        <li>
+          <span class="when">2025</span>
+          <div class="what">
+            <span lang="fi">EU:n finanssipoliittiset säännöt uudistuksen jälkeen – ensimmäisiä havaintoja toimeenpanosta</span>
+            <span class="meta">with Simo Pesola and Mika Sainio · <span lang="fi">Kansantaloudellinen aikakauskirja</span> 1/2025</span>
+          </div>
+        </li>
+        <li>
+          <span class="when">2025</span>
+          <div class="what">
+            State budget expenditure increases during the COVID-19 pandemic
+            <span class="meta">with Suvi Kangasrääsiö · National Audit Office of Finland, Fiscal policy monitoring reports 2/2025</span>
+          </div>
+        </li>
+        <li>
+          <span class="when">2023–2025</span>
+          <div class="what">
+            Fiscal policy monitoring report, three annual editions
+            <span class="meta">with colleagues at the National Audit Office of Finland</span>
+          </div>
+        </li>
+        <li>
+          <span class="when">2024</span>
+          <div class="what">
+            Methods of forecasting general government debt
+            <span class="meta">with Simo Pesola and Mika Sainio · National Audit Office of Finland, Audit reports 13/2024</span>
+          </div>
+        </li>
+        <li>
+          <span class="when">2019</span>
+          <div class="what">
+            The overall costs of unemployment for the national economy
+            <span class="meta">with Juho Alasalmi and others · Publications of the Government's analysis, assessment and research activities 16/2019</span>
+          </div>
+        </li>
+      </ul>
+      <p>The full list, with links, is on the <a href="publications.html">publications page</a>.</p>
     </section>
 
     <section aria-labelledby="teaching">
@@ -221,18 +253,7 @@
       </dl>
     </section>
 
-    <section aria-labelledby="publications">
-      <h2 id="publications">Publications</h2>
-      <p>
-        A full list of journal articles, monitoring reports, policy work and
-        writing is on the <a href="publications.html">publications page</a>.
-      </p>
-    </section>
-
-    <section aria-labelledby="references">
-      <h2 id="references">References</h2>
-      <p>Available on request.</p>
-    </section>
+    <p class="page-intro cv-closing">References are available on request.</p>
 
   </div>
 </main>

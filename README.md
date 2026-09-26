@@ -11,13 +11,13 @@ no JavaScript. Editing a page means editing that page.
 
 ```text
 .
-├── index.html          Home — name, role, research interests
+├── index.html          Home — name, role, quick links, interests, current work
 ├── research.html       Doctoral research projects; code and tools
 ├── publications.html   Bibliography by category
 ├── cv.html             Positions, teaching, funding; CV PDF goes here
 ├── contact.html        Email and profiles
 ├── css/style.css       All styling; numbered sections with comments
-├── assets/             Images and the favicon
+├── assets/             Images, the favicon and fonts/ (Source Serif 4, OFL)
 ├── papers/             PDFs (working papers, appendices, CV)
 ├── .nojekyll           Serve files as-is, skipping Jekyll processing
 └── README.md
@@ -65,8 +65,8 @@ itself, so the page never shows a broken image.
 Put the file in `papers/` and link it relatively, e.g.
 `<a href="papers/my-paper.pdf">PDF</a>`.
 
-To publish the CV, add `papers/peetu-keskinen-cv.pdf` and replace the placeholder
-note in `cv.html` with a link to it (the required markup is in a comment there).
+To publish the CV, add `papers/peetu-keskinen-cv.pdf` and link it under the
+heading in `cv.html` (the required markup is in a comment there).
 
 ## Previewing locally
 

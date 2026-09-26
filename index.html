@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
 <title>Peetu Keskinen — Economist and Doctoral Researcher</title>
 <meta name="description" content="Peetu Keskinen is an economist at the National Audit Office of Finland and a doctoral researcher in economics at the University of Helsinki, working on fiscal policy, macroeconometrics and sovereign debt.">
 <meta name="author" content="Peetu Keskinen">
@@ -20,7 +21,8 @@
 <meta name="twitter:image" content="https://peetukeskinen.github.io/assets/portrait.jpg">
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/style.css">
+<link rel="preload" href="assets/fonts/source-serif-4-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css?v=2026-09-26a">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -81,10 +83,9 @@
 
 <header class="site-header">
   <div class="container">
-    <p class="site-title"><a href="index.html">Peetu Keskinen</a></p>
+    <p class="site-title"><a href="index.html" aria-current="page">Peetu Keskinen</a></p>
     <nav class="site-nav" aria-label="Main">
       <ul>
-        <li><a href="index.html" aria-current="page">Home</a></li>
         <li><a href="research.html">Research</a></li>
         <li><a href="publications.html">Publications</a></li>
         <li><a href="dsa.html">Calculator</a></li>
@@ -102,6 +103,11 @@
       <div class="identity-text">
         <h1>Peetu Keskinen</h1>
         <p class="role">Economist &nbsp;·&nbsp; Doctoral Researcher</p>
+        <ul class="entry-links quick-links" aria-label="Profiles">
+          <li><a href="https://scholar.google.com/citations?user=zKnmVV0AAAAJ">Google Scholar</a></li>
+          <li><a href="https://github.com/peetukeskinen">GitHub</a></li>
+          <li><a href="cv.html">CV</a></li>
+        </ul>
       </div>
 
       <!-- Portrait: save the photo as assets/portrait.jpg and it appears here.
@@ -121,7 +127,7 @@
 
     <section aria-labelledby="interests">
       <h2 id="interests">Research interests</h2>
-      <ul>
+      <ul class="inline-list">
         <li>Macroeconomics</li>
         <li>Fiscal policy</li>
         <li>Sovereign debt</li>
@@ -136,11 +142,33 @@
 
     <section aria-labelledby="current">
       <h2 id="current">Current work</h2>
+      <div class="entries-compact">
+        <article class="entry">
+          <h3 class="entry-title"><a href="dsa.html">EU fiscal rules calculator for Finland</a></h3>
+          <p class="entry-abstract">
+            How much Finland has to tighten its budget under the reformed EU fiscal
+            rules, and which rule decides it. Change the assumptions and see the
+            answer move.
+          </p>
+        </article>
+        <article class="entry">
+          <h3 class="entry-title">EU fiscal rules and multiple equilibria</h3>
+          <p class="entry-abstract">
+            Whether the reformed rules guarantee a unique low-debt equilibrium.
+            Dissertation project, in progress.
+          </p>
+        </article>
+        <article class="entry">
+          <h3 class="entry-title">Mechanisms of fiscal consolidation</h3>
+          <p class="entry-abstract">
+            How successful fiscal consolidations work, estimated with a Bayesian
+            structural VAR. Dissertation project, in progress.
+          </p>
+        </article>
+      </div>
       <p>
-        My dissertation is in progress, with current projects on EU fiscal rules and
-        multiple equilibria and on the mechanisms of fiscal consolidation. Details are
-        on the <a href="research.html">research page</a>; earlier reports and articles
-        are listed under <a href="publications.html">publications</a>.
+        Details are on the <a href="research.html">research page</a>; earlier reports
+        and articles are listed under <a href="publications.html">publications</a>.
       </p>
     </section>
 

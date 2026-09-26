@@ -845,7 +845,7 @@
 
     var thresholds = [
       { value: 60, label: params.useDebtSafeguard && !narrow ? '60% · safeguard 0.5 points a year' : '60%' },
-      { value: 90, label: params.useDebtSafeguard && !narrow ? '90% · safeguard 1 points a year' : '90%' }
+      { value: 90, label: params.useDebtSafeguard && !narrow ? '90% · safeguard 1 point a year' : '90%' }
     ];
 
     /* The safeguard used to be drawn as a sloped dashed line across the plan
@@ -929,13 +929,38 @@
   }
 
   /* On narrow screens the stage is sticky, so a focused control could scroll
-     underneath it; scroll-padding keeps focus targets below it. */
+     underneath it; scroll-padding keeps focus targets below it. When the
+     stage is too tall to stick (most phones), a slim strip with the result
+     pins itself to the top instead, while the figure is out of view and the
+     controls are on screen. */
   var stage = document.querySelector ? document.querySelector('.dsa-stage') : null;
+  var peek = document.getElementById('dsa-peek');
+  var peekSeen = { figure: true, controls: false };
+
+  function syncPeek() {
+    var delta = document.getElementById('result-delta');
+    var peekDelta = document.getElementById('peek-delta');
+    setText('peek-figure', (document.getElementById('result-figure') || {}).textContent || '—');
+    setText('peek-binding', (document.getElementById('result-binding') || {}).textContent || '—');
+    if (delta && peekDelta) {
+      peekDelta.textContent = delta.hidden ? '' : delta.textContent;
+      peekDelta.classList.toggle('is-neutral', delta.classList.contains('is-neutral'));
+    }
+  }
+
   function padForStage() {
     if (!stage || typeof getComputedStyle !== 'function' || !document.documentElement) return;
     stage.classList.toggle('is-too-tall', stage.offsetHeight > window.innerHeight * 0.65);
     var stuck = getComputedStyle(stage).position === 'sticky';
-    document.documentElement.style.scrollPaddingTop = stuck ? (stage.offsetHeight + 8) + 'px' : '';
+    var shown = false;
+    if (peek) {
+      syncPeek();
+      var narrow = typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 63.99rem)').matches;
+      shown = narrow && !stuck && !peekSeen.figure && peekSeen.controls;
+      peek.classList.toggle('is-shown', shown);
+    }
+    document.documentElement.style.scrollPaddingTop = stuck ? (stage.offsetHeight + 8) + 'px'
+      : shown ? (peek.offsetHeight + 8) + 'px' : '';
   }
 
   /* ---- wiring ------------------------------------------------------------------ */
@@ -1017,6 +1042,37 @@
     window.addEventListener('resize', padForStage);
     if (stage) stage.addEventListener('toggle', padForStage, true);
     if (stage && typeof ResizeObserver !== 'undefined') new ResizeObserver(padForStage).observe(stage);
+    var figureNode = document.getElementById('result-figure');
+    if (peek && figureNode && typeof IntersectionObserver !== 'undefined') {
+      var seen = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.target === figureNode) peekSeen.figure = entry.isIntersecting;
+          else peekSeen.controls = entry.isIntersecting;
+        });
+        padForStage();
+      });
+      seen.observe(figureNode);
+      seen.observe(form);
+    }
+  }
+
+  /* Escape closes an open explanation without moving focus. It stays closed
+     until the pointer leaves it or focus comes back to it. */
+  if (document.addEventListener) {
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' && e.key !== 'Esc') return;
+      var open;
+      try { open = document.querySelectorAll('.dsa-tip:hover, .dsa-tip:focus-within'); } catch (err) { return; }
+      Array.prototype.forEach.call(open, function (tip) { tip.classList.add('is-dismissed'); });
+    });
+    document.addEventListener('pointerout', function (e) {
+      var tip = e.target && e.target.closest ? e.target.closest('.dsa-tip.is-dismissed') : null;
+      if (tip && !(e.relatedTarget && tip.contains(e.relatedTarget))) tip.classList.remove('is-dismissed');
+    });
+    document.addEventListener('focusin', function (e) {
+      var tip = e.target && e.target.closest ? e.target.closest('.dsa-tip.is-dismissed') : null;
+      if (tip) tip.classList.remove('is-dismissed');
+    });
   }
 
   /* Baseline tick under each slider, at the default's position on the track. */

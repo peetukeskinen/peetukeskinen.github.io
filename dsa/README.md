@@ -44,7 +44,11 @@ sticky rail on the left and the stage (headline, debt chart, rule bars) sits on
 the right, so a slider and the line it moves are always in view together. Below
 that width the stage comes first in the document and sticks to the top of the
 screen while the controls scroll underneath it (switched off on viewports under
-761px tall).
+761px tall). Where it cannot stick, which is most phones, a slim strip with the
+figure and the binding rule (`.dsa-peek`) pins itself to the top instead while
+the figure is out of view and the controls are on screen; it is fixed, so it
+never moves the page, and hidden from screen readers, which hear the status
+line. Between 40rem and 64rem the economy sliders sit in two columns.
 
 The headline carries the required annual adjustment, the binding rule, the
 euro figure and two debt ratios -- the end of the plan and the end of the

@@ -63,6 +63,24 @@
 
   function isNum(v) { return v !== null && v !== undefined && isFinite(v); }
 
+  /* Width of a label before it is drawn, so a column can be sized to its
+     longest entry. Falls back to an average glyph width without a canvas. */
+  var measureCtx = null;
+  function textWidth(str, size, weight) {
+    try {
+      if (!measureCtx && typeof document !== 'undefined' && document.createElement) {
+        var canvas = document.createElement('canvas');
+        measureCtx = canvas && canvas.getContext ? canvas.getContext('2d') : null;
+      }
+      if (measureCtx) {
+        measureCtx.font = (weight || 400) + ' ' + size + 'px ' + SANS;
+        var w = measureCtx.measureText(str).width;
+        if (w > 0) return w;
+      }
+    } catch (e) { /* fall through to the estimate */ }
+    return String(str).length * size * 0.58;
+  }
+
   function hostWidth(host, fallback) {
     var w = host.clientWidth || (host.getBoundingClientRect && host.getBoundingClientRect().width);
     return Math.max(300, Math.round(w || fallback));
@@ -406,11 +424,18 @@
     var W = hostWidth(host, 760);
     var narrow = W < 480;
     var rowH = narrow ? 24 : 22;
-    var labelW = narrow ? 118 : 168;
+    var small = narrow ? 11 : 10;
     /* Give the marker its own header row so small requirements cannot
        collide with the unit caption. */
     var PAD = { top: 30, right: 54, bottom: 20 };
     var rows = spec.rows || [];
+    /* The label column fits the longest label as drawn (bold, the binding
+       row's weight), so no label runs off the left edge. */
+    var longest = 0;
+    rows.forEach(function (r) {
+      longest = Math.max(longest, textWidth(narrow && r.short ? r.short : r.label, 11, 600));
+    });
+    var labelW = Math.min(Math.round(W * 0.48), Math.max(narrow ? 100 : 168, Math.ceil(longest) + 14));
     var H = PAD.top + rows.length * rowH + PAD.bottom;
     var max = spec.max || 2;
     var px0 = labelW, px1 = W - PAD.right;
@@ -434,9 +459,9 @@
     for (tick = 0; tick <= max + 1e-9; tick += 0.5) {
       var tx = sx(tick);
       svg.appendChild(el('line', { x1: tx, x2: tx, y1: PAD.top - 4, y2: H - PAD.bottom + 2, stroke: GRID, 'stroke-width': 1 }));
-      svg.appendChild(text({ x: tx, y: H - PAD.bottom + 14, 'text-anchor': 'middle' }, tick.toFixed(1), 10));
+      svg.appendChild(text({ x: tx, y: H - PAD.bottom + 14, 'text-anchor': 'middle' }, tick.toFixed(1), small));
     }
-    if (spec.unit) svg.appendChild(text({ x: 2, y: 10, 'text-anchor': 'start' }, spec.unit, 10));
+    if (spec.unit) svg.appendChild(text({ x: 2, y: 11, 'text-anchor': 'start' }, spec.unit, small));
 
     /* The chosen adjustment, painted under the rows so the value labels stay
        legible where it crosses them. */
@@ -444,7 +469,7 @@
       var mx = sx(spec.marker);
       svg.appendChild(el('line', { x1: mx, x2: mx, y1: PAD.top - 6, y2: H - PAD.bottom + 2, stroke: LINE, 'stroke-width': 1.2, 'stroke-dasharray': '3 3' }));
       if (spec.markerLabel) {
-        svg.appendChild(text({ x: mx, y: PAD.top - 8, 'text-anchor': 'middle', fill: LINE }, spec.markerLabel, 10, 600, true));
+        svg.appendChild(text({ x: mx, y: PAD.top - 8, 'text-anchor': 'middle', fill: LINE }, spec.markerLabel, small, 600, true));
       }
     }
 
@@ -460,12 +485,12 @@
       }, label, 11, binding ? 600 : null));
 
       if (r.state === 'off' || r.state === 'na') {
-        svg.appendChild(text({ x: px0 + 4, y: mid + 4, 'text-anchor': 'start' }, r.note || 'off', 10, null, true));
+        svg.appendChild(text({ x: px0 + 4, y: mid + 4, 'text-anchor': 'start' }, r.note || 'off', small, null, true));
         return;
       }
       if (r.state === 'unmet') {
         svg.appendChild(el('rect', { x: px0, y: mid - barH / 2, width: px1 - px0, height: barH, fill: 'url(#dsa-hatch)' }));
-        svg.appendChild(text({ x: px1 + 5, y: mid + 4, fill: INK }, '> ' + max.toFixed(2), 10, 600, true));
+        svg.appendChild(text({ x: px1 + 5, y: mid + 4, fill: INK }, '> ' + max.toFixed(2), small, 600, true));
         return;
       }
       if (!isNum(r.value)) return;
@@ -482,7 +507,7 @@
         svg.appendChild(el('line', { x1: bx, x2: bx, y1: mid - 7, y2: mid + 7, stroke: INK, 'stroke-width': 1.5, opacity: 0.55 }));
       }
       var valueText = r.value.toFixed(2) + (binding ? '  binds' : '') + (r.note ? '  ' + r.note : '');
-      svg.appendChild(text({ x: sx(r.value) + 5, y: mid + 4, fill: binding ? INK : INK_MUTED }, valueText, 10, binding ? 600 : null, true));
+      svg.appendChild(text({ x: sx(r.value) + 5, y: mid + 4, fill: binding ? INK : INK_MUTED }, valueText, small, binding ? 600 : null, true));
     });
 
     host.innerHTML = '';
