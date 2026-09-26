@@ -6,10 +6,10 @@ The browser version of the MATLAB DSA 5.1 tool
 and no third-party code.
 
 ```text
-dsa.html          the page: Info, workbench (stage + controls + rule bars), notes
+dsa.html          the page: Info, workbench (stage + controls + criterion bars + spending cap), notes
 dsa/model.js      debt projection      <- project_debt5_1v.m
 dsa/criteria.js   rules and safeguards <- runDsaModel5_1.m
-dsa/chart.js      hand-written SVG: debt, expenditure growth and rule bars
+dsa/chart.js      hand-written SVG: debt, expenditure growth and criterion bars
 dsa/app.js        form handling, reference ghost, pin, presets, rendering
 dsa/data/*.js     data and shock draws, generated (see below)
 ```
@@ -50,9 +50,10 @@ the figure is out of view and the controls are on screen; it is fixed, so it
 never moves the page, and hidden from screen readers, which hear the status
 line. Between 40rem and 64rem the economy sliders sit in two columns.
 
-The headline carries the required annual adjustment, the binding rule, the
-euro figure and two debt ratios -- the end of the plan and the end of the
-projection. It used to carry two more: a running total in points of GDP, which
+The headline carries the required annual adjustment, the binding criterion,
+the euro figure, the spending cap (the plan-period average of the net
+expenditure ceilings) and two debt ratios -- the end of the plan and the end
+of the projection. It used to carry two more: a running total in points of GDP, which
 is the headline times the plan length and is better said in euros, and the
 structural primary balance at the end of the plan, which is a diagnostic rather
 than a headline and now sits under the year-by-year table. The block is sticky
@@ -73,13 +74,38 @@ script is involved. Inside the controls rail the panel spans the rail rather
 than hanging off the "i", so it cannot run past either edge whatever the
 label's length. What stays visible is the control, its value, and any number
 the model computed for it. The one line that stays in the open is under the
-chart, naming what the binding rule is doing, because it answers a question the
-reader has at that moment. The net expenditure growth ceilings —
-the operational form the rules are written in, `netExpenditure` after the
-year-specific deficit floors — sit in a secondary `<details>` below the
-workbench with a short explainer, because their role is not obvious to a
-general reader. A failed or individually unmet rule clears that path rather
-than presenting an infeasible plan as a ceiling. The sticky stage switches off
+chart, naming what the binding criterion is doing, because it answers a
+question the reader has at that moment.
+
+The page follows one chain: assumptions, then the debt projections, then what
+each criterion asks for, then the spending cap a plan actually promises. The
+criterion bars come in two groups, as in Info: the debt sustainability
+analysis (four scenarios and the simulations) and the safeguards (minimums
+that apply whatever the projections say), with one sentence under them saying
+what the analysis asks for on its own and what the safeguards add. For
+Finland the analysis alone asks for 0.29 and the debt safeguard lifts it to
+0.76.
+
+The net expenditure growth ceilings -- the operational form the rules are
+written in, `netExpenditure` after the year-specific deficit floors -- sit in
+a panel under the bars, built as a sum: the economy's trend growth in money
+terms (potential growth plus inflation), minus the tightening expressed as a
+share of net primary spending (the adjustment over the spending share of
+GDP), equals the cap. That is the identity `criteria.js` uses, so the parts
+add up exactly; the averages shown are rounded so they also add up on screen,
+with the trend and the tightening rounded as they are and the cap shown as
+their difference. The chart draws the trend line above the cap and shades
+the gap between them as the tightening. Because the cap is built on trend
+growth, the cycle does not move it; potential growth and inflation move it
+directly, every other setting only through the tightening. A failed or
+individually unmet criterion clears the cap rather than presenting an
+infeasible plan as a ceiling.
+
+Every criterion has one name, the same on the bars, the checkboxes, the
+year table, the chart and in sentences: the plan as written; weaker
+discipline later; higher rates, lower growth; market stress; simulations;
+debt safeguard; 3% deficit rule; and deficit resilience. The Commission's own names are given once, in
+brackets, in Info. Short forms on a phone only drop words from the end. The sticky stage switches off
 whenever it would occupy more than 65% of the viewport height.
 
 What makes a change visible:

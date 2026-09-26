@@ -19,7 +19,7 @@
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/source-serif-4-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css?v=2026-09-26b">
+<link rel="stylesheet" href="css/style.css?v=2026-09-26c">
 </head>
 <body>
 
@@ -70,41 +70,45 @@
           this page.
         </p>
         <p>
-          Several requirements apply at once and the strictest one decides. The bars
-          under the chart show what each would ask for on its own.
+          Several criteria apply at once and the strictest one decides. The bars
+          under the chart show what each would ask for on its own, and the spending
+          cap under them is the same answer in the form a plan actually promises.
         </p>
 
         <details>
-          <summary>The rules, one by one</summary>
+          <summary>The criteria, one by one</summary>
+          <p class="dsa-info-group">Debt sustainability analysis: projections of the debt ratio</p>
           <ul>
             <li>
-              <strong>Debt keeps falling for ten years after the plan</strong>, under
-              four scenarios: the plan as written (the Commission's <em>baseline</em>),
-              weaker discipline once it ends (<em>lower SPB</em>), higher interest rates
-              with lower growth (<em>adverse r−g</em>), and a bout of market stress
+              <strong>Four scenarios.</strong> Debt keeps falling for ten years after
+              the plan under each of them: the plan as written (the Commission's
+              <em>baseline</em>); weaker discipline later (<em>lower SPB</em>); higher
+              rates, lower growth (<em>adverse r−g</em>); and market stress
               (<em>financial stress</em>).
             </li>
             <li>
-              <strong>Debt is still falling in most simulations.</strong> Five years
-              after the plan, debt has to be lower than at its end in 70% of 1,000
-              simulations (the <em>stochastic</em> analysis).
+              <strong>Simulations.</strong> Five years after the plan, debt has to be
+              lower than at its end in 70% of 1,000 simulations (the
+              <em>stochastic</em> analysis).
+            </li>
+          </ul>
+          <p class="dsa-info-group">Safeguards: minimums that apply whatever the projections say</p>
+          <ul>
+            <li>
+              <strong>Debt safeguard.</strong> Debt falls during the plan itself: by
+              0.5 points of GDP a year on average when debt is between 60% and 90% of
+              GDP, and 1 point when it is above 90%. For Finland this is usually the
+              strictest of the lot (the <em>debt sustainability safeguard</em>).
             </li>
             <li>
-              <strong>Debt falls during the plan itself.</strong> By 0.5 points of GDP a
-              year on average when debt is between 60% and 90% of GDP, and 1 point when
-              it is above 90%. For Finland this is usually the strictest of the lot
-              (the <em>debt sustainability safeguard</em>).
+              <strong>3% deficit rule.</strong> If last year's deficit was above 3% of
+              GDP, this year's improvement must be at least 0.5 points (the
+              <em>deficit benchmark</em>).
             </li>
             <li>
-              <strong>A deficit above 3% forces a minimum.</strong> If last year's
-              deficit was above 3% of GDP, this year's improvement must be at least 0.5
-              points (the <em>deficit benchmark</em>).
-            </li>
-            <li>
-              <strong>A floor until the deficit is comfortable.</strong> Until the
-              structural deficit is below 1.5% of GDP, each year must improve by at
-              least 0.4 points, or 0.25 under a seven-year plan (the <em>deficit
-              resilience safeguard</em>).
+              <strong>Deficit resilience.</strong> Until the structural deficit is below
+              1.5% of GDP, each year must improve by at least 0.4 points, or 0.25 under
+              a seven-year plan (the <em>deficit resilience safeguard</em>).
             </li>
           </ul>
         </details>
@@ -132,7 +136,7 @@
             <dt>Net expenditure</dt>
             <dd>
               Spending before interest and after any new taxes — the thing the rules
-              actually cap. Shown under "Spending cap" below the calculator.
+              actually cap. Shown under "Spending cap", below the bars.
             </dd>
             <dt>Output gap</dt>
             <dd>
@@ -158,9 +162,9 @@
             <dt>Scenario</dt>
             <dd>
               One fixed story about the future that the projection is run under. Four of
-              them decide the rules: the plan as written, weaker discipline later,
-              higher rates with lower growth, and market stress. Switch on "Show the
-              adverse scenarios" to draw the other three on the chart.
+              them count: the plan as written; weaker discipline later; higher rates,
+              lower growth; and market stress. Switch on "Show the adverse scenarios"
+              to draw the other three on the chart.
             </dd>
             <dt>The simulations</dt>
             <dd>
@@ -172,9 +176,8 @@
             </dd>
             <dt>Safeguard</dt>
             <dd>
-              A minimum that applies whatever the projections say. Two of them: debt has
-              to fall by a set amount during the plan, and the deficit has to keep
-              improving until it is comfortably below the limit.
+              A minimum that applies whatever the projections say. There are three: the
+              debt safeguard, the 3% deficit rule and deficit resilience.
             </dd>
             <dt>Stock-flow adjustment</dt>
             <dd>
@@ -314,13 +317,14 @@
             <div class="dsa-headline-side">
               <p class="dsa-delta is-neutral" id="result-delta">= baseline</p>
               <p class="dsa-binding">
-                Binding rule: <strong id="result-binding">—</strong>
+                Binding criterion: <strong id="result-binding">—</strong>
                 <span class="dsa-was" id="result-was" hidden></span>
               </p>
               <p class="dsa-floors" id="result-floors" hidden></p>
             </div>
             <p class="dsa-euro" id="result-euro" hidden></p>
             <dl class="dsa-stats">
+              <div><dt><a href="#dsa-cap">Spending cap</a></dt><dd id="stat-cap">—</dd></div>
               <div><dt>Debt <span id="stat-debt-end-year">2031</span></dt><dd id="stat-debt-end">—</dd></div>
               <div><dt>Debt <span id="stat-debt-final-year">2041</span></dt><dd id="stat-debt-final">—</dd><span class="dsa-tip"><button type="button" class="dsa-i" aria-label="Why the chart stops earlier" aria-describedby="tip-final">i</button><span class="dsa-tip-body" role="tooltip" id="tip-final">The chart stops five years after the plan: the last year that can decide any of the criteria, and where the simulated fan ends. The projection itself runs ten years past the plan, and this is the figure at its end.</span></span></div>
             </dl>
@@ -349,7 +353,7 @@
           <span class="dsa-peek-figure" id="peek-figure">—</span>
           <span class="dsa-peek-unit">points of GDP a year</span>
           <span class="dsa-peek-delta is-neutral" id="peek-delta"></span>
-          <span class="dsa-peek-binding">Binding rule: <strong id="peek-binding">—</strong></span>
+          <span class="dsa-peek-binding">Binding criterion: <strong id="peek-binding">—</strong></span>
         </div>
 
         <form id="dsa-form" class="dsa-controls" aria-label="Assumptions">
@@ -449,10 +453,10 @@
           <div class="dsa-group">
             <p class="dsa-eyebrow"><span id="rules-label">Criteria used</span> <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the criteria" aria-describedby="tip-criteria">i</button><span class="dsa-tip-body" role="tooltip" id="tip-criteria">In practice, every criterion has to be satisfied at the same time, and the strictest one sets the required consolidation.</span></span></p>
             <div class="dsa-checks" role="group" aria-labelledby="rules-label">
-              <label><input type="checkbox" name="useStochastic" checked> Stochastic test</label>
+              <label><input type="checkbox" name="useStochastic" checked> Simulations</label>
               <label><input type="checkbox" name="useDebtSafeguard" checked> Debt safeguard</label>
-              <label><input type="checkbox" name="useDeficitBenchmark" checked> Deficit benchmark</label>
-              <label><input type="checkbox" name="useDeficitSafeguard" checked> Resilience safeguard</label>
+              <label><input type="checkbox" name="useDeficitBenchmark" checked> 3% deficit rule</label>
+              <label><input type="checkbox" name="useDeficitSafeguard" checked> Deficit resilience</label>
             </div>
           </div>
 
@@ -496,26 +500,38 @@
         </form>
 
         <div class="dsa-rules-panel" id="dsa-rules-panel">
-          <p class="dsa-eyebrow">What each scenario needs <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the bars" aria-describedby="tip-bars">i</button><span class="dsa-tip-body" role="tooltip" id="tip-bars">What each scenario would require on its own. The longest bar sets the headline. Hollow bars are minimums that only bite in some years; a striped bar is a scenario that even 2.00 a year cannot meet.</span></span></p>
+          <p class="dsa-eyebrow">What each criterion asks for <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the bars" aria-describedby="tip-bars">i</button><span class="dsa-tip-body" role="tooltip" id="tip-bars">What each criterion would ask for on its own. The longest bar sets the headline. Hollow bars are floors that only bite in some years; a striped bar is one that even 2.00 a year cannot meet.</span></span></p>
           <div id="dsa-rules" class="dsa-rules"></div>
           <ul id="dsa-rules-text" class="visually-hidden"></ul>
+          <p class="dsa-hint dsa-rules-summary" id="dsa-rules-summary" hidden></p>
           <p class="dsa-hint" id="dsa-unmet" hidden></p>
         </div>
 
-      </div>
+        <!-- The same answer in the unit a plan promises: how fast net spending
+             may grow. Built as trend growth minus the tightening, so the step
+             from the adjustment to the cap is visible. -->
+        <div class="dsa-cap-panel" id="dsa-cap">
+          <p class="dsa-eyebrow">Spending cap — what the plan promises <span class="dsa-tip"><button type="button" class="dsa-i" aria-label="About the spending cap" aria-describedby="tip-cap">i</button><span class="dsa-tip-body" role="tooltip" id="tip-cap">A plan does not promise the adjustment above but a cap on how fast net spending may grow: spending before interest, after any new taxes. Same requirement, different unit, and it is what the Commission checks.</span></span></p>
+          <dl class="dsa-cap-sum" id="dsa-cap-sum">
+            <div>
+              <dt>The economy's trend growth <span class="dsa-cap-note" id="cap-trend-note"></span></dt>
+              <dd id="cap-trend">—</dd>
+            </div>
+            <div>
+              <dt>Minus the tightening <span class="dsa-cap-note" id="cap-take-note"></span></dt>
+              <dd id="cap-take">—</dd>
+            </div>
+            <div class="dsa-cap-total">
+              <dt>Spending cap <span class="dsa-cap-note" id="cap-total-note"></span></dt>
+              <dd id="cap-total">—</dd>
+            </div>
+          </dl>
+          <div id="dsa-expenditure-chart" class="dsa-chart"></div>
+          <dl id="dsa-expenditure-values" class="visually-hidden" aria-label="Annual net expenditure growth ceilings"></dl>
+          <p id="dsa-expenditure-note" class="dsa-hint"></p>
+        </div>
 
-      <details class="dsa-numbers" id="dsa-expenditure-details">
-        <summary>Spending cap — what the plan actually promises</summary>
-        <p class="dsa-hint dsa-explainer">
-          A plan does not promise the adjustment above. It promises a cap on how fast
-          spending may grow — spending before interest, and after any new taxes. Same
-          requirement, different unit. This is what the Commission checks a country
-          against.
-        </p>
-        <div id="dsa-expenditure-chart" class="dsa-chart"></div>
-        <dl id="dsa-expenditure-values" class="visually-hidden" aria-label="Annual net expenditure growth ceilings"></dl>
-        <p id="dsa-expenditure-note" class="dsa-hint"></p>
-      </details>
+      </div>
 
       <details class="dsa-numbers">
         <summary>Year by year</summary>
@@ -557,9 +573,9 @@
 
 <script src="dsa/data/finland.js"></script>
 <script src="dsa/data/shocks.js"></script>
-<script src="dsa/model.js?v=2026-09-26b"></script>
-<script src="dsa/criteria.js?v=2026-09-26b"></script>
-<script src="dsa/chart.js?v=2026-09-26b"></script>
-<script src="dsa/app.js?v=2026-09-26b"></script>
+<script src="dsa/model.js?v=2026-09-26c"></script>
+<script src="dsa/criteria.js?v=2026-09-26c"></script>
+<script src="dsa/chart.js?v=2026-09-26c"></script>
+<script src="dsa/app.js?v=2026-09-26c"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 
      draw(host, spec)      a line chart with percentile bands, thresholds,
                            direct end labels and annotations
-     drawBars(host, spec)  a horizontal bar chart of what each scenario needs
+     drawBars(host, spec)  a horizontal bar chart of what each criterion asks for
 
    Both size themselves to the host element, so type stays 11px at every
    width, and redraw when the host's width changes.
@@ -412,13 +412,14 @@
   }
 
   /* ------------------------------------------------------------------------
-     Bar chart: what each scenario would require
+     Bar chart: what each criterion asks for on its own
      ------------------------------------------------------------------------ */
 
   /**
    * @param {HTMLElement} host
    * @param {Object} spec
-   *   rows    {Array}   [{label, short, value, state, note, base}]
+   *   rows    {Array}   [{label, short, value, state, note, base}], or
+   *                     [{heading}] to open a group of rows
    *                     state: 'binding' | 'on' | 'off' | 'unmet' | 'floor' |
    *                            'floor-binding' | 'na'
    *                     base: the value under the reference settings, drawn
@@ -441,12 +442,14 @@
     var PAD = { top: 30, right: 54, bottom: 20 };
     var rows = spec.rows || [];
     /* The label column fits the longest label as drawn (bold, the binding
-       row's weight), so no label runs off the left edge. */
+       row's weight), so no label runs off the left edge. Group headings sit
+       on rows of their own and do not count. */
     var longest = 0;
     rows.forEach(function (r) {
+      if (r.heading) return;
       longest = Math.max(longest, textWidth(narrow && r.short ? r.short : r.label, 11, 600));
     });
-    var labelW = Math.min(Math.round(W * 0.48), Math.max(narrow ? 100 : 168, Math.ceil(longest) + 14));
+    var labelW = Math.min(Math.round(W * 0.5), Math.max(narrow ? 100 : 168, Math.ceil(longest) + 14));
     var H = PAD.top + rows.length * rowH + PAD.bottom;
     var max = spec.max || 2;
     var px0 = labelW, px1 = W - PAD.right;
@@ -454,7 +457,7 @@
 
     var svg = el('svg', {
       viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img',
-      'aria-label': spec.ariaLabel || 'What each scenario would require',
+      'aria-label': spec.ariaLabel || 'What each criterion asks for',
       style: 'max-width: 100%; height: auto; display: block;'
     });
 
@@ -488,6 +491,16 @@
       var y = PAD.top + i * rowH;
       var mid = y + rowH / 2;
       var barH = 9;
+
+      /* A group heading: a small-caps label across the row, with a hairline
+         above every group after the first. */
+      if (r.heading) {
+        if (i > 0) svg.appendChild(el('line', { x1: 0, x2: W, y1: y + 2, y2: y + 2, stroke: GRID, 'stroke-width': 1 }));
+        svg.appendChild(text({ x: 0, y: mid + 5, 'text-anchor': 'start', 'letter-spacing': '0.08em' },
+          r.heading.toUpperCase(), small, 600, true));
+        return;
+      }
+
       var binding = r.state === 'binding' || r.state === 'floor-binding';
       var label = narrow && r.short ? r.short : r.label;
 
@@ -526,13 +539,19 @@
   }
 
   /* Annual expenditure ceilings use their own percentage scale, not the
-     debt chart's thresholds or its ten-year review horizon. */
+     debt chart's thresholds or its ten-year review horizon. Given spec.trend,
+     the economy's trend growth in money terms year by year, the chart also
+     shows where the cap comes from: the trend line above, the cap below, and
+     the shaded gap between the two is the tightening. */
   function drawExpenditure(host, spec) {
     host.__dsaSpec = spec;
     watch(host, drawExpenditure);
-    var W = hostWidth(host, 600), H = 150;
+    var trend = spec.trend || null;
+    var W = hostWidth(host, 600), H = trend ? 185 : 150;
+    var narrow = W < 480;
+    var n = spec.years.length;
     var left = 32, right = W - 26, top = 27, bottom = H - 25;
-    var all = spec.values.concat(spec.reference || []).filter(isNum);
+    var all = spec.values.concat(spec.reference || [], trend || []).filter(isNum);
     var lo = Math.floor((Math.min.apply(null, all) - 0.25) * 2) / 2;
     var hi = Math.ceil((Math.max.apply(null, all) + 0.25) * 2) / 2;
     if (hi - lo < 1) hi = lo + 1;
@@ -549,22 +568,47 @@
     }
     if (lo < 0 && hi > 0) svg.appendChild(el('line', { x1: left, x2: right,
       y1: y(0), y2: y(0), stroke: AXIS, 'stroke-dasharray': '2 3' }));
-    function path(values, color, dash) {
+    function path(values, color, dash, width) {
       var d = '', connected = false;
       values.forEach(function (v, i) {
         if (!isNum(v)) { connected = false; return; }
         d += (connected ? 'L' : 'M') + x(i) + ' ' + y(v); connected = true;
       });
       svg.appendChild(el('path', { d: d, fill: 'none', stroke: color,
-        'stroke-width': dash ? 1.5 : 2.2, 'stroke-dasharray': dash || null }));
+        'stroke-width': width, 'stroke-dasharray': dash || null }));
     }
-    if (spec.reference) path(spec.reference, 'var(--dsa-ref, #978d79)', '4 3');
-    path(spec.values, LINE);
-    spec.years.forEach(function (year, i) {
-      var v = spec.values[i];
-      svg.appendChild(el('circle', { cx: x(i), cy: y(v), r: 3, fill: LINE }));
-      svg.appendChild(text({ x: x(i) + (i === 0 ? 4 : 0), y: y(v) - 9, 'text-anchor': i === 0 ? 'start' : 'middle', fill: INK }, v.toFixed(2), 11, 600, true));
-      svg.appendChild(text({ x: x(i), y: H - 6, 'text-anchor': 'middle' }, String(year), 10));
+
+    /* The tightening: the gap between trend growth and the cap. */
+    var i;
+    if (trend) {
+      var band = '';
+      for (i = 0; i < n; i++) band += (i ? 'L' : 'M') + x(i) + ' ' + y(trend[i]);
+      for (i = n - 1; i >= 0; i--) band += 'L' + x(i) + ' ' + y(spec.values[i]);
+      svg.appendChild(el('path', { d: band + 'Z', fill: BAND, opacity: 0.12, stroke: 'none' }));
+    }
+    if (spec.reference) path(spec.reference, 'var(--dsa-ref, #978d79)', '4 3', 1.5);
+    if (trend) path(trend, INK_MUTED, null, 1.3);
+    path(spec.values, LINE, null, 2.2);
+
+    if (trend) {
+      /* Above the line's highest point, so the rising line never runs
+         through the words. */
+      var trendTop = Math.max.apply(null, trend.filter(isNum));
+      svg.appendChild(text({ x: x(0) + 2, y: y(trendTop) - 7, 'text-anchor': 'start' },
+        narrow ? 'trend growth' : 'the economy’s trend growth', narrow ? 11 : 10, null, true));
+      /* Between the two middle years, where the band is clear of the dots. */
+      var m = Math.max(0, Math.floor((n - 1) / 2)), m2 = Math.min(n - 1, m + 1);
+      var gapTop = y((trend[m] + trend[m2]) / 2), gapBottom = y((spec.values[m] + spec.values[m2]) / 2);
+      svg.appendChild(text({ x: (x(m) + x(m2)) / 2, y: (gapTop + gapBottom) / 2 + 4, 'text-anchor': 'middle', fill: LINE },
+        'the tightening', narrow ? 11 : 10, 600, true));
+    }
+
+    /* With the trend line above the cap, the values move below their dots. */
+    spec.years.forEach(function (year, k) {
+      var v = spec.values[k];
+      svg.appendChild(el('circle', { cx: x(k), cy: y(v), r: 3, fill: LINE }));
+      svg.appendChild(text({ x: x(k) + (k === 0 ? 4 : 0), y: trend ? y(v) + 16 : y(v) - 9, 'text-anchor': k === 0 ? 'start' : 'middle', fill: INK }, v.toFixed(2), 11, 600, true));
+      svg.appendChild(text({ x: x(k), y: H - 6, 'text-anchor': 'middle' }, String(year), 10));
     });
     host.innerHTML = '';
     host.appendChild(svg);

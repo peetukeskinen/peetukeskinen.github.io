@@ -83,19 +83,29 @@
     text: 'var(--ink-muted, #5b5449)'
   };
 
-  /* Said plainly here. The Commission's own names -- baseline, lower SPB,
-     adverse r-g, financial stress -- are given in brackets beside each rule in
-     the page's Info section. */
+  /* One name per criterion, the same on the bars, the checkboxes, the table,
+     the chart and in sentences. The Commission's own names -- baseline, lower
+     SPB, adverse r-g, financial stress, stochastic analysis, deficit
+     benchmark -- are given in brackets beside each one in the Info section.
+     Short forms are for phones and only ever drop words from the end. */
+  var SCENARIO_LABELS = {
+    1: 'The plan as written', 2: 'Weaker discipline later',
+    3: 'Higher rates, lower growth', 4: 'Market stress'
+  };
+  var SCENARIO_SHORT = {
+    1: 'Plan as written', 2: 'Weaker discipline',
+    3: 'Higher rates, lower growth', 4: 'Market stress'
+  };
   var SCENARIO_NAMES = {
     1: 'the plan as written', 2: 'weaker discipline later',
-    3: 'higher rates and lower growth', 4: 'market stress'
+    3: 'higher rates, lower growth', 4: 'market stress'
   };
 
   /* criteria.js keeps the Commission's labels; the page says them plainly. */
   var BINDING_PLAIN = {};
   BINDING_PLAIN[C.BINDING[0]] = 'a scenario';
   BINDING_PLAIN[C.BINDING[0.5]] = 'the simulations';
-  BINDING_PLAIN[C.BINDING[1]] = 'debt safeguard';
+  BINDING_PLAIN[C.BINDING[1]] = 'the debt safeguard';
   BINDING_PLAIN[C.BINDING[2]] = 'the 3% deficit rule';
   BINDING_PLAIN[C.BINDING[3]] = 'deficit resilience';
 
@@ -247,10 +257,10 @@
     if (parseFloat(state.outputGap) !== 0) parts.push('cycle ' + sliderText('outputGap', state.outputGap));
     if (parseFloat(state.phi) !== parseFloat(DEFAULTS.phi)) parts.push('multiplier ' + parseFloat(state.phi).toFixed(2));
     var off = [];
-    if (!state.useStochastic) off.push('stochastic test');
+    if (!state.useStochastic) off.push('simulations');
     if (!state.useDebtSafeguard) off.push('debt safeguard');
-    if (!state.useDeficitBenchmark) off.push('deficit benchmark');
-    if (!state.useDeficitSafeguard) off.push('resilience safeguard');
+    if (!state.useDeficitBenchmark) off.push('3% deficit rule');
+    if (!state.useDeficitSafeguard) off.push('deficit resilience');
     if (off.length === 3 && state.useStochastic) parts.push('safeguards off');
     else if (off.length) parts.push(off.join(', ') + ' off');
     if (state.plausibility !== DEFAULTS.plausibility) parts.push(state.plausibility * 10 + '% of paths');
@@ -311,10 +321,45 @@
         planLast + ' level in ' + params.plausibility * 10 + '% of the 1,000 simulations in the fan.';
     }
     if (b.key.indexOf('det') === 0) {
-      return 'One scenario decides it: debt has to keep falling for ten years after the plan ' +
-        'under ' + b.text + '.';
+      return 'One scenario decides it: under ' + b.text +
+        ', debt has to keep falling for ten years after the plan.';
     }
     return '';
+  }
+
+  /* The criterion behind a year of the path, named as on the bars. */
+  function ruleLabel(label, r, params) {
+    if (label === C.BINDING[0]) {
+      var b = bindingParts(r, params);
+      return b.keys.length ? b.keys.map(function (k) { return SCENARIO_LABELS[+k.slice(3)]; }).join(' and ') : 'A scenario';
+    }
+    if (label === C.BINDING[0.5]) return 'Simulations (' + params.plausibility * 10 + '%)';
+    if (label === C.BINDING[1]) return 'Debt safeguard';
+    if (label === C.BINDING[2]) return '3% deficit rule';
+    if (label === C.BINDING[3]) return 'Deficit resilience';
+    return label;
+  }
+
+  /* One sentence under the bars that separates the two halves: what the debt
+     sustainability analysis asks for on its own, and what the safeguards add.
+     For Finland the analysis alone asks for far less than the headline. */
+  function rulesSummary(r, params, unmet) {
+    if (unmet.length) return '';
+    var dsa = [1, 2, 3, 4].map(function (s) { return r.deterministic[s].a; });
+    if (params.useStochastic) dsa.push(r.stochastic.a);
+    if (dsa.some(function (v) { return v === null || v === undefined; })) return '';
+    var alone = Math.max.apply(null, dsa);
+    var a = r.adjustment;
+    var floors = isLifted(r) ? ', and in some years a floor lifts it higher' : '';
+    if (!params.useDebtSafeguard && !params.useDeficitBenchmark && !params.useDeficitSafeguard) {
+      return 'With the safeguards off, the analysis alone sets it: ' + a.toFixed(2) + ' points a year.';
+    }
+    if (r.bindingLabel === C.BINDING[1] && a > alone + 0.005) {
+      return 'The analysis alone asks for ' + alone.toFixed(2) + ' points a year; the debt safeguard lifts it to ' +
+        a.toFixed(2) + floors + '.';
+    }
+    return 'The analysis sets it at ' + a.toFixed(2) + ' points a year' +
+      (floors || '; the safeguards ask for less') + '.';
   }
 
   /* Years in which a given rule label set the year-by-year path. */
@@ -329,12 +374,11 @@
     return r.finalPath.some(function (v) { return v > r.adjustment + 1e-9; });
   }
 
+  /* Two groups, as in Info: the debt sustainability analysis (four scenarios
+     and the simulations), then the safeguards (minimums that apply whatever
+     the projections say). */
   function ruleRows(r, params, ref, unmet) {
-    var det = { 4: 'Market stress', 3: 'Higher rates, lower growth',
-                2: 'Weaker discipline later', 1: 'The plan as written' };
-    var short = { 4: 'Market stress', 3: 'Rates up, growth down',
-                  2: 'Discipline slips', 1: 'Plan as written' };
-    var rows = [];
+    var rows = [{ heading: 'Debt sustainability analysis' }];
     var refR = ref && ref.r && !ref.r.failed ? ref.r : null;
     var lifted = isLifted(r);
     /* A bar binds when it reaches the headline value; with an unmet rule the
@@ -348,7 +392,7 @@
       var d = r.deterministic[s];
       var binding = top(d.a) && r.bindingLabel === C.BINDING[0];
       rows.push({
-        label: det[s], short: short[s], value: d.a,
+        label: SCENARIO_LABELS[s], short: SCENARIO_SHORT[s], value: d.a,
         state: d.a === null ? 'unmet' : (binding ? 'binding' : 'on'),
         note: bindNote(binding),
         base: refR ? refR.deterministic[s].a : null
@@ -362,6 +406,7 @@
       note: bindNote(stochBinding),
       base: refR ? refR.stochastic.a : null
     });
+    rows.push({ heading: 'Safeguards' });
     var sg = r.debtSafeguard;
     var sgBinding = top(sg.a) && r.bindingLabel === C.BINDING[1];
     rows.push({
@@ -372,7 +417,7 @@
     });
     var benchYears = yearsWith(r, C.BINDING[2]);
     rows.push({
-      label: 'The 3% deficit rule (floor)', short: '3% deficit rule', value: 0.5,
+      label: '3% deficit rule (floor)', short: '3% deficit rule', value: 0.5,
       state: !params.useDeficitBenchmark ? 'off' : (benchYears ? 'floor-binding' : 'floor'),
       note: benchYears
     });
@@ -403,6 +448,7 @@
     var node = document.getElementById('dsa-rules-text');
     if (!node) return;
     node.innerHTML = rows.map(function (row) {
+      if (row.heading) return '<li>' + row.heading + ':</li>';
       var s = row.label + ': ';
       if (row.state === 'off' || row.state === 'na') s += row.note || 'off';
       else if (row.state === 'unmet') s += 'more than 2.00 points a year';
@@ -544,9 +590,30 @@
     node.classList.toggle('is-neutral', !!neutral);
   }
 
-  /* The expenditure ceilings are the operational form of the same requirement,
-     kept as a secondary block because the adjustment is the clearer number for
-     a general reader. */
+  /* How the cap is built, year by year: the economy's trend growth in money
+     terms (potential growth plus inflation) minus the tightening, expressed as
+     a share of net primary spending. The same identity criteria.js uses, so
+     the parts add up to r.netExpenditure exactly. */
+  function capParts(r) {
+    var inp = r.inputs, parts = { pot: [], infl: [], trend: [], take: [] };
+    r.planYears.forEach(function (year, i) {
+      var t = inp.adjustmentStart + i;
+      var pot = (inp.potgdp[t] - inp.potgdp[t - 1]) * 100 / inp.potgdp[t - 1];
+      var infl = inp.inflation[t] * 100;
+      parts.pot.push(pot);
+      parts.infl.push(infl);
+      parts.trend.push(pot + infl);
+      parts.take.push(r.finalPath[i] / inp.primExpenditure * 100);
+    });
+    return parts;
+  }
+
+  function mean(list) { return sum(list) / list.length; }
+  function round2(v) { return Math.round(v * 100) / 100; }
+
+  /* The expenditure ceilings are the operational form of the same requirement:
+     what a plan actually promises. The headline carries their average, and the
+     panel under the bars shows how they follow from the adjustment. */
   function renderExpenditure(r, ref, refName, reason) {
     var values = document.getElementById('dsa-expenditure-values');
     if (reason) {
@@ -554,23 +621,55 @@
       expenditureHost.innerHTML = '';
       values.innerHTML = '';
       setText('dsa-expenditure-note', reason);
+      setText('stat-cap', '—');
+      setHidden('dsa-cap-sum', true);
       return;
     }
     var reference = ref ? r.planYears.map(function (year) {
       var i = ref.planYears.indexOf(year);
       return i < 0 ? null : ref.netExpenditure[i];
     }) : null;
+    var parts = capParts(r);
     Chart.drawExpenditure(expenditureHost, {
-      years: r.planYears, values: r.netExpenditure, reference: reference,
+      years: r.planYears, values: r.netExpenditure, reference: reference, trend: parts.trend,
       ariaLabel: 'Annual nominal net expenditure growth ceilings: ' + r.planYears.map(function (year, i) {
         return year + ': ' + r.netExpenditure[i].toFixed(2) + ' percent';
-      }).join('; ') + '.'
+      }).join('; ') + '. The economy’s trend growth in money terms is ' +
+        Math.min.apply(null, parts.trend).toFixed(2) + ' to ' + Math.max.apply(null, parts.trend).toFixed(2) +
+        ' percent; the gap between the two is the tightening.'
     });
     values.innerHTML = r.planYears.map(function (year, i) {
       return '<div><dt>' + year + '</dt><dd>' + r.netExpenditure[i].toFixed(2) + '%</dd></div>';
     }).join('');
-    setText('dsa-expenditure-note', 'Ceilings include any year lifted by a deficit floor.' +
-      (reference ? ' The dashed grey line is the ' + refName + ' path, over the plan years the two share.' : ''));
+
+    /* The plan-period averages, rounded so the three lines add up on screen.
+       The trend and the tightening are rounded as they are, so each moves only
+       with its own inputs: the trend with potential growth and inflation, the
+       tightening with the adjustment. The cap is shown as their difference,
+       never more than 0.01 from its own rounding, and the headline uses the
+       same figure. Likewise inflation inside the trend. */
+    var trendAvg = round2(mean(parts.trend));
+    var takeAvg = round2(mean(parts.take));
+    var capAvg = round2(trendAvg - takeAvg);
+    var potAvg = round2(mean(parts.pot));
+    var lifted = isLifted(r);
+    setText('cap-trend', trendAvg.toFixed(2) + '%');
+    setText('cap-trend-note', 'potential growth ' + potAvg.toFixed(2) + '% + inflation ' +
+      (trendAvg - potAvg).toFixed(2) + '%');
+    setText('cap-take', '−' + takeAvg.toFixed(2) + '%');
+    setText('cap-take-note', mean(r.finalPath).toFixed(2) + ' points of GDP' + (lifted ? ' on average' : '') +
+      ', on spending worth ' + Math.round(r.inputs.primExpenditure) + '% of GDP');
+    setText('cap-total', capAvg.toFixed(2) + '%');
+    setText('cap-total-note', 'a year on average, ' + r.planYears[0] + '–' +
+      String(r.planYears[r.planYears.length - 1]).slice(2));
+    setHidden('dsa-cap-sum', false);
+    setText('stat-cap', capAvg.toFixed(2) + '% a year');
+
+    setText('dsa-expenditure-note', 'The cap follows trend growth, not the year’s actual growth, ' +
+      'so a recession does not tighten it. Potential growth and inflation move it directly; ' +
+      'every other setting moves it only through the tightening.' +
+      (lifted ? ' Years lifted by a deficit floor get a lower cap.' : '') +
+      (reference ? ' The dashed grey line is the ' + refName + ' cap.' : ''));
   }
 
   function render(announce) {
@@ -707,7 +806,7 @@
     if (unmet.length) {
       setText('result-figure', '> 2.00');
       setText('result-binding', 'even 2.00 a year does not meet ' + joinNames(unmet) +
-        '; the chart shows ' + r.adjustment.toFixed(2) + ', what the other rules need');
+        '; the chart shows ' + r.adjustment.toFixed(2) + ', what the other criteria need');
     } else {
       setText('result-figure', r.adjustment.toFixed(2));
       setText('result-binding', b.text);
@@ -807,7 +906,7 @@
              '<td>' + r.netExpenditure[i].toFixed(2) + '</td>' +
              '<td>' + p1.debt[r.inputs.adjustmentStart + i].toFixed(1) +
                (isFinite(refDebt) && refDebt !== null && refDebt !== undefined ? ' <span class="dsa-table-ref">(' + refName + ' ' + refDebt.toFixed(1) + ')</span>' : '') + '</td>' +
-             '<td>' + (BINDING_PLAIN[r.bindingLabels[i]] || r.bindingLabels[i]) + '</td></tr>';
+             '<td>' + ruleLabel(r.bindingLabels[i], r, params) + '</td></tr>';
     }).join('');
 
     /* ---- debt chart --------------------------------------------------------- */
@@ -819,9 +918,11 @@
       series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1, nChart + 1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
     }
     if (state.showScenarios) {
-      series.push({ name: narrow ? 'discipline' : 'discipline slips', values: r.paths[2].debt.slice(1, nChart + 1), color: COLORS.alt1, width: 1.3, label: true });
-      series.push({ name: narrow ? 'rates up' : 'rates up, growth down', values: r.paths[3].debt.slice(1, nChart + 1), color: COLORS.alt2, width: 1.3, label: true });
-      series.push({ name: narrow ? 'stress' : 'market stress', values: r.paths[4].debt.slice(1, nChart + 1), color: COLORS.alt3, width: 1.3, label: true });
+      /* The same names as the bars; on a phone the end label keeps their
+         first words, which is all the margin holds. */
+      series.push({ name: narrow ? 'weaker discipline' : SCENARIO_NAMES[2], values: r.paths[2].debt.slice(1, nChart + 1), color: COLORS.alt1, width: 1.3, label: true });
+      series.push({ name: narrow ? 'higher rates' : SCENARIO_NAMES[3], values: r.paths[3].debt.slice(1, nChart + 1), color: COLORS.alt2, width: 1.3, label: true });
+      series.push({ name: SCENARIO_NAMES[4], values: r.paths[4].debt.slice(1, nChart + 1), color: COLORS.alt3, width: 1.3, label: true });
     }
     series.push({ name: narrow ? 'with plan' : 'with the plan', values: p1.debt.slice(1, nChart + 1), color: COLORS.line, width: 2.4, label: true });
 
@@ -901,11 +1002,14 @@
       marker: unmet.length ? null : r.adjustment,
       markerLabel: lifted ? r.adjustment.toFixed(2) + ' before floors' : 'required ' + r.adjustment.toFixed(2),
       unit: 'points of GDP a year',
-      ariaLabel: 'What each scenario would require on its own. ' + (unmet.length
+      ariaLabel: 'What each criterion asks for on its own. ' + (unmet.length
         ? joinNames(unmet) + ' cannot be met with up to 2 points a year.'
-        : 'The binding rule is ' + b.text + ' at ' + r.adjustment.toFixed(2) + ' points a year.')
+        : 'The binding criterion is ' + b.text + ' at ' + r.adjustment.toFixed(2) + ' points a year.')
     });
     writeRulesText(rows);
+    var summary = rulesSummary(r, params, unmet);
+    setText('dsa-rules-summary', summary);
+    setHidden('dsa-rules-summary', !summary);
     var unmetNode = document.getElementById('dsa-unmet');
     if (unmetNode) {
       unmetNode.hidden = !unmet.length;
@@ -920,7 +1024,7 @@
         ? 'Required adjustment above 2 points a year: ' + joinNames(unmet) + ' cannot be met. '
         : 'Required adjustment ' + r.adjustment.toFixed(2) + ' points a year' +
           (comparable ? ', ' + signed(r.adjustment - refR.adjustment) + ' versus ' + refName : '') +
-          '. Binding rule: ' + b.text + '. ') +
+          '. Binding criterion: ' + b.text + '. ') +
         'Debt ' + r.debtFinal.toFixed(1) + ' percent in ' + lastYear + '.';
       if (sentence !== lastStatus) { status.textContent = sentence; lastStatus = sentence; }
     }

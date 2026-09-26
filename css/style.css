@@ -841,12 +841,13 @@ h2 + .entry-meta { margin-top: 0.9rem; }
   }
   .dsa-controls {
     grid-column: 1;
-    grid-row: 1 / span 2;
+    grid-row: 1 / span 3;
     position: sticky;
     top: 1rem;
   }
   .dsa-stage { grid-column: 2; grid-row: 1; }
   .dsa-rules-panel { grid-column: 2; grid-row: 2; }
+  .dsa-cap-panel { grid-column: 2; grid-row: 3; }
 }
 
 /* Narrow screens: the chart stays in view while the controls scroll. */
@@ -1208,14 +1209,53 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 /* The stage releases its sticky position when it would crowd the controls. */
 .dsa-stage.is-too-tall { position: static; }
 
-/* Explainer inside a secondary <details>: prose measure, not a caption. */
-.dsa-explainer {
-  max-width: var(--measure);
-  font-size: 0.8125rem;
-  margin-bottom: 0.7rem;
+/* --- spending cap ---------------------------------------------------------
+   The same answer in the unit a plan promises, built as a small sum: trend
+   growth, minus the tightening, equals the cap. */
+.dsa-cap-panel {
+  margin-top: 1.6rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--rule);
 }
 
-#dsa-expenditure-details .dsa-chart { max-width: 34rem; }
+.dsa-cap-sum {
+  max-width: 30rem;
+  margin: 0.2rem 0 0.8rem;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.dsa-cap-sum > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.3rem 0;
+}
+
+.dsa-cap-sum dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dsa-cap-note {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.dsa-cap-total { border-top: 1px solid var(--rule-strong); }
+.dsa-cap-total dt { font-weight: 600; }
+.dsa-cap-total dd { color: var(--accent); font-size: 0.9375rem; }
+
+#dsa-cap .dsa-chart { max-width: 34rem; }
+
+/* The one sentence under the bars: the analysis on its own, then what the
+   safeguards add. */
+.dsa-rules-summary { color: var(--ink); font-size: 0.8125rem; margin-top: 0.4rem; }
 
 /* --- headline ------------------------------------------------------------- */
 
@@ -1446,6 +1486,8 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 
 .dsa-stats div { display: flex; gap: 0.4rem; align-items: baseline; }
 .dsa-stats dt { color: var(--ink-muted); }
+.dsa-stats dt a { color: inherit; }
+.dsa-stats dt a:hover { color: var(--link); }
 .dsa-stats dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* --- chart ---------------------------------------------------------------- */
@@ -1545,6 +1587,14 @@ h2 + .entry-meta { margin-top: 0.9rem; }
 .dsa-glossary dd:first-of-type { margin-top: 0.1rem; }
 
 .dsa-sources li { margin-bottom: 0.45rem; }
+
+/* Group labels inside "The criteria, one by one", matching the bars. */
+.dsa-info-group {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin: 0.7rem 0 0.35rem;
+}
 
 .dsa-table-ref { color: var(--ink-muted); font-weight: 400; }
 
