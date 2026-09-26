@@ -165,13 +165,27 @@
     if (vh && typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 63.99rem)').matches) {
       H = Math.max(170, Math.min(H, Math.round(vh * 0.4)));
     }
-    var PAD = { top: 38, right: narrow ? 86 : 138, bottom: 30, left: 34 };
-
     var years = spec.years;
     var series = (spec.series || []).filter(function (s) { return s && s.values; });
     var bands = spec.bands || [];
     var fmt = spec.valueFormat || function (v) { return v.toFixed(1); };
     var i, j, s;
+
+    /* End labels: a series' name and its last value. The right margin fits
+       the longest one, so a label keeps its full name at every width. */
+    function endLabel(sr) {
+      if (!sr.label) return null;
+      for (var k = sr.values.length - 1; k >= 0; k--) {
+        if (isNum(sr.values[k])) return { idx: k, text: sr.label === true ? sr.name + ' ' + fmt(sr.values[k]) : sr.label };
+      }
+      return null;
+    }
+    var PAD = { top: 38, right: narrow ? 86 : 138, bottom: 30, left: 34 };
+    series.forEach(function (sr) {
+      var lb = endLabel(sr);
+      if (lb) PAD.right = Math.max(PAD.right, Math.ceil(textWidth(lb.text, 11, 600)) + 10);
+    });
+    PAD.right = Math.min(PAD.right, Math.round(W * 0.4));
 
     /* ---- domain: snapped to 20-pp steps, always holding 40-80, so the
        frame stays still while a line moves ------------------------------ */
@@ -289,12 +303,9 @@
     /* ---- direct labels at the right end, pushed apart ------------------- */
     var labels = [];
     series.forEach(function (sr) {
-      if (!sr.label) return;
-      var lastIdx = -1;
-      for (j = sr.values.length - 1; j >= 0; j--) if (isNum(sr.values[j])) { lastIdx = j; break; }
-      if (lastIdx < 0) return;
-      var content = sr.label === true ? sr.name + ' ' + fmt(sr.values[lastIdx]) : sr.label;
-      labels.push({ y: sy(sr.values[lastIdx]), text: content, color: sr.labelColor || sr.color, x: sx(lastIdx) });
+      var lb = endLabel(sr);
+      if (!lb) return;
+      labels.push({ y: sy(sr.values[lb.idx]), text: lb.text, color: sr.labelColor || sr.color, x: sx(lb.idx) });
     });
     spread(labels, 13, y1 + 4, y0 - 2);
     labels.forEach(function (lb) {

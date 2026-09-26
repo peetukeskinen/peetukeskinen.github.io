@@ -611,7 +611,6 @@
     /* The grey line is the Commission's own settings until something is
        pinned, and it is named that way everywhere it is referred to. */
     var refName = pinned ? 'pinned' : 'Commission';
-    var refShort = narrow && !pinned ? 'EC' : refName;
     var showGhost = !!pinned || !sameModel(state, BASE.state);
     var refR = ref.r;
     var refOk = showGhost && !refR.failed;
@@ -654,7 +653,7 @@
       var two = C.project(inputs, 1, 2, null).debt.slice(1, nf + 1);
       var none = C.project(inputs, 1, 0, null).debt.slice(1, nf + 1);
       var fSeries = [];
-      if (refOk) fSeries.push({ name: refShort, values: refR.paths[1].debt.slice(1, nf + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
+      if (refOk) fSeries.push({ name: refName, values: refR.paths[1].debt.slice(1, nf + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.5, label: true });
       fSeries.push({ name: 'no consolidation', values: none, color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', label: true });
       fSeries.push({ name: 'even 2.00 a year', values: two, color: COLORS.line, width: 2.4, label: true });
       Chart.draw(chartHost, {
@@ -814,7 +813,7 @@
     /* ---- debt chart --------------------------------------------------------- */
     var series = [];
     if (refOk) {
-      series.push({ name: refShort, values: refR.paths[1].debt.slice(1, nChart + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
+      series.push({ name: refName, values: refR.paths[1].debt.slice(1, nChart + 1), color: COLORS.ref, labelColor: COLORS.text, width: 1.6, label: true });
     }
     if (state.showNoAdjustment) {
       series.push({ name: narrow ? 'no plan' : 'no consolidation', values: r.noAdjustment.debt.slice(1, nChart + 1), color: COLORS.noPlan, labelColor: COLORS.text, dash: '5 4', width: 1.6, label: true });
